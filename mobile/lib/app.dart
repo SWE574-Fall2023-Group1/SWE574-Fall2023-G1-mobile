@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memories_app/routes/login/bloc/login_bloc.dart';
 import 'package:memories_app/routes/login/login_route.dart';
+import 'package:memories_app/routes/login/model/login_repository.dart';
+
+class _Constants {
+  static final loginRepository = LoginRepositoryImp();
+}
 
 void runApplication() {
   runApp(const App());
@@ -14,7 +19,8 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: BlocProvider<LoginBloc>(
-        create: (context) => LoginBloc()..add(LoginLoadDisplayEvent()),
+        create: (context) => LoginBloc(repository: _Constants.loginRepository)
+          ..add(LoginLoadDisplayEvent()),
         child: const LoginRoute(),
       ),
     );

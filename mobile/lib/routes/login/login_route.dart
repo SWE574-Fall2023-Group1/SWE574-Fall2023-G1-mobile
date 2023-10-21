@@ -23,7 +23,7 @@ class _LoginRouteState extends State<LoginRoute> {
             child: Container(color: Colors.blue),
           );
         }
-        return Container();
+        return Container(color: Colors.red);
       },
       listener: (context, state) {
         if (state is LoginSuccess) {
