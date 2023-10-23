@@ -28,6 +28,7 @@ jobs:
         with: 
           flutter-version: 3.13.8
       - run: echo "Current directory:$PWD"
+      - run: ls -l
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
