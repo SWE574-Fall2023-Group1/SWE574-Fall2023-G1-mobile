@@ -17,6 +17,10 @@ jobs:
           echo "Current directory: $PWD"
           echo "Contents of the current directory:"
           ls -l
+          cd mobile
+          echo "Current directory: $PWD"
+          echo "Contents of the current directory:"
+          ls -l
       - uses: actions/setup-java@v1
         with:
           java-version: '12.x'
