@@ -11,32 +11,30 @@ jobs:
     name: build_upload_apk
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - name: Show Current Directory
-        run: |
-          echo "Current directory: $PWD"
-          echo "Contents of the current directory:"
-          ls -l
-          cd mobile
-          echo "Current directory: $PWD"
-          echo "Contents of the current directory:"
-          ls -l
-      - uses: actions/setup-java@v1
+      - name: Checkout Repository
+        uses: actions/checkout@v1
+
+      - name: Set up Java
+        uses: actions/setup-java@v1
         with:
           java-version: '12.x'
-      - uses: subosito/flutter-action@v1
-        with: 
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v1
+        with:
           flutter-version: 3.13.8
-      - run: echo "Current directory:$PWD"
-      - run: ls -l
-      - run: |
+
+      - name: Change to "mobile" directory, set up Flutter, and build APK
+        run: |
           cd mobile
-          echo "Current directory:$PWD"
+          flutter --version
           flutter pub get
           flutter analyze
           flutter test
-          flutter build apk
-      - uses: actions/upload-artifact@v2
-        with: 
+          flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v1
+        with:
           name: app-release
           path: mobile/build/app/outputs/flutter-apk
