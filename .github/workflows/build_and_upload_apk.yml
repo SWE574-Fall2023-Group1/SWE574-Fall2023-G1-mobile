@@ -20,6 +20,7 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
+          distribution: 'temurin'
           java-version: '12.x'
 
       - name: Set up Flutter
