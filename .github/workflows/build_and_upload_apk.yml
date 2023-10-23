@@ -11,6 +11,7 @@ jobs:
     name: build_upload_apk
     runs-on: ubuntu-latest
     steps:
+      - run: cd mobile
       - uses: actions/checkout@v1
       - uses: actions/setup-java@v1
         with:
@@ -18,7 +19,6 @@ jobs:
       - uses: subosito/flutter-action@v1
         with: 
           flutter-version: 3.13.8
-      - run: cd mobile
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
