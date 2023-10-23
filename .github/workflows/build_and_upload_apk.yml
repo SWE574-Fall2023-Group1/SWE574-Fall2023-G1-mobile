@@ -1,9 +1,9 @@
 name: build_upload_apk
 
 on:
-  push:
+  pull_request:
     branches:
-      - feature/pipeline-test
+      - main
 
 
 jobs:
