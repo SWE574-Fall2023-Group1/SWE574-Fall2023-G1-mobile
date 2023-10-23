@@ -13,10 +13,25 @@ class LoginInitial extends LoginState {
 
 // TODO: Add necessary state variables
 class LoginDisplayState extends LoginState {
-  const LoginDisplayState();
+  final bool isUsernameFieldFocused;
+  final String? usernameValidationMessage;
+  final bool isPasswordFieldFocused;
+  final String? passwordValidationMessage;
+
+  const LoginDisplayState({
+    this.isUsernameFieldFocused = false,
+    this.usernameValidationMessage,
+    this.isPasswordFieldFocused = false,
+    this.passwordValidationMessage,
+  });
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [
+        isUsernameFieldFocused,
+        usernameValidationMessage,
+        isPasswordFieldFocused,
+        passwordValidationMessage,
+      ];
 
   @override
   String toString() => 'Displaying login state';

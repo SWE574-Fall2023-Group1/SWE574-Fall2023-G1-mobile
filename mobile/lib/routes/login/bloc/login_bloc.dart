@@ -21,10 +21,51 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<LoginPressLoginButtonEvent>(_onPressLoginButtonEvent);
   }
 
-  // TODO: Add business logic
+  bool _isUsernameFieldFocused = false;
+  String? _usernameValidationMessage;
+  bool _isPasswordFieldFocused = false;
+  String? _passwordValidationMessage;
+
+  String? validateUsername(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Username is required';
+    }
+    if (value.length < 6 || value.length > 10) {
+      return 'Username should be between 6 and 10 characters';
+    }
+    return ''; // Return empty if the validation is successful
+  }
+
+  String? validatePassword(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Password is required';
+    }
+    if (value.length != 6) {
+      return 'Password should be 6 characters';
+    }
+    return ''; // Return empty if the validation is successful
+  }
 
   LoginDisplayState _displayState() {
-    return const LoginDisplayState();
+    return LoginDisplayState(
+        isUsernameFieldFocused: _isUsernameFieldFocused,
+        usernameValidationMessage: _usernameValidationMessage,
+        isPasswordFieldFocused: _isPasswordFieldFocused,
+        passwordValidationMessage: _passwordValidationMessage);
+  }
+
+  void _onUsernameChangedEvent(
+      LoginUsernameChangedEvent event, Emitter<LoginState> emit) {
+    _isUsernameFieldFocused = event.username.isNotEmpty;
+    _usernameValidationMessage = validateUsername(event.username);
+    emit(_displayState());
+  }
+
+  void _onPasswordChangedEvent(
+      LoginPasswordChangedEvent event, Emitter<LoginState> emit) {
+    _isPasswordFieldFocused = event.password.isNotEmpty;
+    _passwordValidationMessage = validatePassword(event.password);
+    emit(_displayState());
   }
 
   Future<void> _onLoadDisplayEvent(
@@ -32,14 +73,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     emit(_displayState());
   }
 
-  void _onUsernameChangedEvent(
-      LoginUsernameChangedEvent event, Emitter<LoginState> emit) {
-    emit(_displayState());
+  Future<void> _saveRefreshToken(String refreshToken) async {
+    await SPHelper.setString(SPKeys.refreshTokenKey, refreshToken);
   }
 
-  void _onPasswordChangedEvent(
-      LoginPasswordChangedEvent event, Emitter<LoginState> emit) {
-    emit(_displayState());
+  Future<void> _saveLoginInfo() async {
+    await SPHelper.setBool(SPKeys.isLoggedIn, true);
   }
 
   FutureOr<void> _onPressLoginButtonEvent(
@@ -59,12 +98,11 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
     if (response != null && response.refresh != null) {
       /// INFO: save refresh token locally
-      await SPHelper.setString(SPKeys.refreshTokenKey, response.refresh!);
-      /*String? test = await SPHelper.getString(SPKeys.refreshTokenKey);
-      print(test);*/
+      await _saveRefreshToken(response.refresh!);
+      await _saveLoginInfo();
       emit(const LoginSuccess());
     } else {
-      emit(LoginFailure(error: "Error"));
+      emit(LoginFailure(error: "Username or password is wrong!"));
     }
   }
 }
