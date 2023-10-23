@@ -29,12 +29,13 @@ jobs:
           flutter-version: 3.13.8
       - run: echo "Current directory:$PWD"
       - run: ls -l
-      - run: cd mobile
-      - run: echo "Current directory:$PWD"
-      - run: flutter pub get
-      - run: flutter analyze
-      - run: flutter test
-      - run: flutter build apk
+      - run: |
+          cd mobile
+          echo "Current directory:$PWD"
+          flutter pub get
+          flutter analyze
+          flutter test
+          flutter build apk
       - uses: actions/upload-artifact@v2
         with: 
           name: app-release
