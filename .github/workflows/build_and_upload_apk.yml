@@ -1,0 +1,43 @@
+name: build_upload_apk
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+
+jobs:
+  build_upload_apk:
+    name: build_upload_apk
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v1
+
+      - name: Set up Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: '12.x'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          flutter-version: 3.13.8
+
+      - name: Change to "mobile" directory, set up Flutter, and build APK
+        run: |
+          cd mobile
+          flutter --version
+          flutter pub get
+          flutter analyze
+          flutter test
+          flutter build apk --release
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v1
+        with:
+          name: app-release
+          path: mobile/build/app/outputs/flutter-apk
