@@ -12,14 +12,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
+      - name: Show Current Directory
+        run: |
+          echo "Current directory: $PWD"
+          echo "Contents of the current directory:"
+          ls -l
       - uses: actions/setup-java@v1
         with:
           java-version: '12.x'
       - uses: subosito/flutter-action@v1
         with: 
           flutter-version: 3.13.8
-      - run: cd mobile
-      - run: echo "Current directory:$GITHUB_WORKSPACE"
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
