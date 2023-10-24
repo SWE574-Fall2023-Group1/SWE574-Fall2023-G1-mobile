@@ -77,11 +77,7 @@ class NetworkManager {
       responseJson = {};
     }
 
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return Result(responseJson, response.statusCode);
-    } else {
-      throw Exception('Failed load data. Status code: ${response.statusCode}');
-    }
+    return Result(responseJson, response.statusCode);
   }
 
   /// INFO: Create custom headers map to use refreshToken if there is any in local storage

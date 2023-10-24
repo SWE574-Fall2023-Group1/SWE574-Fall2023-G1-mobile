@@ -96,13 +96,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       emit(LoginFailure(error: error.toString()));
     }
 
-    if (response != null && response.refresh != null) {
+    if (response != null &&
+        response.success == true &&
+        response.refresh != null) {
       /// INFO: save refresh token locally
       await _saveRefreshToken(response.refresh!);
       await _saveLoginInfo();
       emit(const LoginSuccess());
     } else {
-      emit(LoginFailure(error: "Username or password is wrong!"));
+      emit(LoginFailure(error: response?.msg.toString()));
     }
   }
 }
