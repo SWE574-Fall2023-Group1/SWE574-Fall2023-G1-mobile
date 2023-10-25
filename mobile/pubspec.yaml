@@ -20,6 +20,7 @@ dependencies:
   shared_preferences: ^2.1.0
   json_annotation: ^4.8.1
   build_runner: ^2.3.3
+  connectivity_plus: ^5.0.1
 
 dev_dependencies:
   flutter_test:

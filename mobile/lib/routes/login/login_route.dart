@@ -36,7 +36,7 @@ class _LoginRouteState extends State<LoginRoute> {
   Widget build(BuildContext context) {
     return BlocConsumer<LoginBloc, LoginState>(
       buildWhen: (previousState, state) {
-        return state is! LoginFailure;
+        return !(state is LoginFailure || state is LoginOffline);
       },
       builder: (context, state) {
         if (state is LoginInitial) {
@@ -73,6 +73,10 @@ class _LoginRouteState extends State<LoginRoute> {
           AppRoute.home.navigate(context);
         } else if (state is LoginFailure) {
           ShowsDialog.showAlertDialog(context, 'Oops!', state.error.toString(),
+              isLoginFail: true);
+        } else if (state is LoginOffline) {
+          ShowsDialog.showAlertDialog(
+              context, 'Oops!', state.offlineMessage.toString(),
               isLoginFail: true);
         }
       },

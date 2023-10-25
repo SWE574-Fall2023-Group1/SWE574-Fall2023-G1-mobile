@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:memories_app/util/sp_helper.dart';
 
@@ -36,35 +38,51 @@ class NetworkManager {
   /// INFO: get and post with headers methods use refresh token as headers.
   /// Use these methods for all the calls except register and login.
   Future<dynamic> get(String endpoint) async {
-    final response = await http.get(Uri.parse('$baseUrl/$endpoint'),
-        headers: _NetworkConstant.defaultHeaders);
-    return _createResponse(response);
+    if (!await _isConnectedToInternet()) {
+      throw const SocketException('');
+    } else {
+      final response = await http.get(Uri.parse('$baseUrl/$endpoint'),
+          headers: _NetworkConstant.defaultHeaders);
+      return _createResponse(response);
+    }
   }
 
   Future<dynamic> getWithHeaders(String endpoint) async {
-    final customHeaders = await _constructHeaders();
+    if (!await _isConnectedToInternet()) {
+      throw const SocketException('');
+    } else {
+      final customHeaders = await _constructHeaders();
 
-    final response = await http.get(
-      Uri.parse('$baseUrl/$endpoint'),
-      headers: customHeaders,
-    );
+      final response = await http.get(
+        Uri.parse('$baseUrl/$endpoint'),
+        headers: customHeaders,
+      );
 
-    return _createResponse(response);
+      return _createResponse(response);
+    }
   }
 
   Future<dynamic> post(String endpoint, Object body) async {
-    final response = await http.post(Uri.parse('$baseUrl/$endpoint'),
-        body: jsonEncode(body), headers: _NetworkConstant.defaultHeaders);
+    if (!await _isConnectedToInternet()) {
+      throw const SocketException('');
+    } else {
+      final response = await http.post(Uri.parse('$baseUrl/$endpoint'),
+          body: jsonEncode(body), headers: _NetworkConstant.defaultHeaders);
 
-    return _createResponse(response);
+      return _createResponse(response);
+    }
   }
 
   Future<dynamic> postWithHeaders(String endpoint, Object body) async {
-    final customHeaders = await _constructHeaders();
-    final response = await http.post(Uri.parse('$baseUrl/$endpoint'),
-        body: jsonEncode(body), headers: customHeaders);
+    if (!await _isConnectedToInternet()) {
+      throw const SocketException('');
+    } else {
+      final customHeaders = await _constructHeaders();
+      final response = await http.post(Uri.parse('$baseUrl/$endpoint'),
+          body: jsonEncode(body), headers: customHeaders);
 
-    return _createResponse(response);
+      return _createResponse(response);
+    }
   }
 
   Result _createResponse(http.Response response) {
@@ -93,6 +111,15 @@ class NetworkManager {
       return customHeaders;
     } else {
       return _NetworkConstant.defaultHeaders;
+    }
+  }
+
+  Future<bool> _isConnectedToInternet() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      return false;
+    } else {
+      return true;
     }
   }
 }

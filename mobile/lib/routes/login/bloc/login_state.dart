@@ -59,11 +59,13 @@ class LoginFailure extends LoginState {
 }
 
 class LoginOffline extends LoginState {
-  const LoginOffline();
+  final String? offlineMessage;
+
+  const LoginOffline({required this.offlineMessage});
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => [offlineMessage];
 
   @override
-  String toString() => 'Login service is offline';
+  String toString() => 'Login service is offline with message: $offlineMessage';
 }

@@ -1,4 +1,5 @@
-import 'package:bloc/bloc.dart';
+import 'dart:io';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
 import 'package:equatable/equatable.dart';
 import 'package:memories_app/routes/login/model/login_repository.dart';
@@ -8,6 +9,17 @@ import 'package:memories_app/util/sp_helper.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
+
+class _Constants {
+  static const String usernameRequiredMessage = 'Username is required';
+  static const String usernameCharLimitMessage =
+      'Username should be between 6 and 10 characters';
+  static const String passswordRequiredMessage = 'Password is required';
+  static const String passwordCharLimitMessage =
+      'Password should be 6 characters';
+  static const String offlineMessage =
+      'You are currently offline.\n Please check your internet connection!';
+}
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginRepository _repository;
@@ -29,20 +41,20 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   String? validateUsername(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Username is required';
+      return _Constants.usernameRequiredMessage;
     }
     if (value.length < 6 || value.length > 10) {
-      return 'Username should be between 6 and 10 characters';
+      return _Constants.usernameCharLimitMessage;
     }
     return ''; // Return empty if the validation is successful
   }
 
   String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Password is required';
+      return _Constants.passswordRequiredMessage;
     }
     if (value.length != 6) {
-      return 'Password should be 6 characters';
+      return _Constants.passwordCharLimitMessage;
     }
     return ''; // Return empty if the validation is successful
   }
@@ -93,19 +105,21 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
     try {
       response = await _repository.login(request);
+    } on SocketException {
+      emit(const LoginOffline(offlineMessage: _Constants.offlineMessage));
     } catch (error) {
       emit(LoginFailure(error: error.toString()));
     }
 
-    if (response != null &&
-        response.success == true &&
-        response.refresh != null) {
-      /// INFO: save refresh token locally
-      await _saveRefreshToken(response.refresh!);
-      await _saveLoginInfo();
-      emit(const LoginSuccess());
-    } else {
-      emit(LoginFailure(error: response?.msg.toString()));
+    if (response != null) {
+      if (response.success == true && response.refresh != null) {
+        /// INFO: save refresh token locally
+        await _saveRefreshToken(response.refresh!);
+        await _saveLoginInfo();
+        emit(const LoginSuccess());
+      } else {
+        emit(LoginFailure(error: response.msg.toString()));
+      }
     }
   }
 
