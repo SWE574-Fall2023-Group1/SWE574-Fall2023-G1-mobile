@@ -13,20 +13,22 @@ class RegisterInitial extends RegisterState {
 
 class RegisterDisplayState extends RegisterState {
   final bool isUsernameFieldFocused;
-  final bool isEmailFieldFocused;
-  final bool isPasswordFieldFocused;
-  final bool isPasswordAgainFieldFocused;
   final String? usernameValidationMessage;
+  final bool isEmailFieldFocused;
+  final String? emailValidationMessage;
+  final bool isPasswordFieldFocused;
   final String? passwordValidationMessage;
+  final bool isPasswordAgainFieldFocused;
   final String? passwordAgainValidationMessage;
 
   const RegisterDisplayState({
     this.isUsernameFieldFocused = false,
-    this.isEmailFieldFocused = false,
-    this.isPasswordFieldFocused = false,
-    this.isPasswordAgainFieldFocused = false,
     this.usernameValidationMessage,
+    this.isEmailFieldFocused = false,
+    this.emailValidationMessage,
+    this.isPasswordFieldFocused = false,
     this.passwordValidationMessage,
+    this.isPasswordAgainFieldFocused = false,
     this.passwordAgainValidationMessage,
   });
 
@@ -34,8 +36,11 @@ class RegisterDisplayState extends RegisterState {
   List<Object?> get props => [
         isUsernameFieldFocused,
         usernameValidationMessage,
+        isEmailFieldFocused,
+        emailValidationMessage,
         isPasswordFieldFocused,
         passwordValidationMessage,
+        isPasswordAgainFieldFocused,
         passwordAgainValidationMessage,
       ];
 

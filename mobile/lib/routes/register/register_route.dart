@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memories_app/routes/register/bloc/register_bloc.dart';
@@ -24,8 +23,6 @@ class _RegisterRouteState extends State<RegisterRoute> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _passwordAgainController = TextEditingController();
-
-  final ScrollController _scrollController = ScrollController();
 
   @override
   void dispose() {
@@ -89,12 +86,6 @@ class _RegisterRouteState extends State<RegisterRoute> {
                 bottom: AppScreenSizeUtils.getScrollPadding(context),
               ),
               controller: _usernameController,
-              onTap: () {
-                Timer(const Duration(milliseconds: 200), () {
-                  _scrollController
-                      .jumpTo(_scrollController.position.maxScrollExtent);
-                });
-              },
               style: const TextStyle(color: Colors.black),
               obscureText: false,
               decoration: InputDecoration(
@@ -120,9 +111,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
                   borderRadius: BorderRadius.circular(SpaceSizes.x12),
                 ),
                 focusedErrorBorder: null,
-                errorText: state.usernameValidationMessage != ""
-                    ? state.usernameValidationMessage
-                    : null,
+                errorText: state.usernameValidationMessage,
               ),
               onChanged: (username) {
                 BlocProvider.of<RegisterBloc>(context)
@@ -139,12 +128,6 @@ class _RegisterRouteState extends State<RegisterRoute> {
                 bottom: AppScreenSizeUtils.getScrollPadding(context),
               ),
               controller: _emailController,
-              onTap: () {
-                Timer(const Duration(milliseconds: 200), () {
-                  _scrollController
-                      .jumpTo(_scrollController.position.maxScrollExtent);
-                });
-              },
               style: const TextStyle(color: Colors.black),
               obscureText: false,
               decoration: InputDecoration(
@@ -170,13 +153,11 @@ class _RegisterRouteState extends State<RegisterRoute> {
                   borderRadius: BorderRadius.circular(SpaceSizes.x12),
                 ),
                 focusedErrorBorder: null,
-                errorText: state.usernameValidationMessage != ""
-                    ? state.usernameValidationMessage
-                    : null,
+                errorText: state.emailValidationMessage,
               ),
-              onChanged: (username) {
+              onChanged: (email) {
                 BlocProvider.of<RegisterBloc>(context)
-                    .add(RegisterEmailChangedEvent(username));
+                    .add(RegisterEmailChangedEvent(email));
               },
             ),
           ),
@@ -189,12 +170,6 @@ class _RegisterRouteState extends State<RegisterRoute> {
                 bottom: AppScreenSizeUtils.getScrollPadding(context),
               ),
               controller: _passwordController,
-              onTap: () {
-                Timer(const Duration(milliseconds: 200), () {
-                  _scrollController
-                      .jumpTo(_scrollController.position.maxScrollExtent);
-                });
-              },
               style: const TextStyle(color: Colors.black),
               obscureText: true,
               decoration: InputDecoration(
@@ -220,9 +195,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
                   borderRadius: BorderRadius.circular(SpaceSizes.x12),
                 ),
                 focusedErrorBorder: null,
-                errorText: state.passwordValidationMessage != ""
-                    ? state.passwordValidationMessage
-                    : null,
+                errorText: state.passwordValidationMessage,
               ),
               onChanged: (password) {
                 BlocProvider.of<RegisterBloc>(context)
@@ -239,12 +212,6 @@ class _RegisterRouteState extends State<RegisterRoute> {
                 bottom: AppScreenSizeUtils.getScrollPadding(context),
               ),
               controller: _passwordAgainController,
-              onTap: () {
-                Timer(const Duration(milliseconds: 200), () {
-                  _scrollController
-                      .jumpTo(_scrollController.position.maxScrollExtent);
-                });
-              },
               style: const TextStyle(color: Colors.black),
               obscureText: true,
               decoration: InputDecoration(
@@ -271,13 +238,11 @@ class _RegisterRouteState extends State<RegisterRoute> {
                   borderRadius: BorderRadius.circular(SpaceSizes.x12),
                 ),
                 focusedErrorBorder: null,
-                errorText: state.passwordAgainValidationMessage != ""
-                    ? state.passwordAgainValidationMessage
-                    : null,
+                errorText: state.passwordAgainValidationMessage,
               ),
-              onChanged: (password) {
+              onChanged: (passwordAgain) {
                 BlocProvider.of<RegisterBloc>(context)
-                    .add(RegisterPasswordAgainChangedEvent(password));
+                    .add(RegisterPasswordAgainChangedEvent(_passwordController.text, passwordAgain));
               },
             ),
           ),
@@ -288,10 +253,10 @@ class _RegisterRouteState extends State<RegisterRoute> {
 
   Widget _buildRegisterButton(
       BuildContext context, RegisterDisplayState state) {
-    var isValid = ((state.usernameValidationMessage == '' ||
-            state.usernameValidationMessage == null) &&
+    var isValid = (state.usernameValidationMessage == null &&
         _usernameController.text.isNotEmpty &&
-        state.passwordValidationMessage == '' &&
+        _emailController.text.isNotEmpty &&
+        state.passwordValidationMessage == null &&
         _passwordController.text == _passwordAgainController.text);
 
     return Padding(

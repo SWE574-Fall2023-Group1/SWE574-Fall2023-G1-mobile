@@ -13,11 +13,14 @@ part 'register_state.dart';
 
 class _Constants {
   static const String usernameRequiredMessage = 'Username is required';
+  static const String emailRequiredMessage = 'Email is required';
+  static const String invalidEmailMessage = 'Email is invalid';
   static const String usernameCharLimitMessage =
       'Username should be between 6 and 10 characters';
   static const String passwordRequiredMessage = 'Password is required';
   static const String passwordCharLimitMessage =
       'Password should be 6 characters';
+  static const String passwordsNotMatch = 'Passwords must be same';
   static const String offlineMessage =
       'You are currently offline.\n Please check your internet connection!';
 }
@@ -30,15 +33,21 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
         super(const RegisterInitial()) {
     on<RegisterLoadDisplayEvent>(_onLoadDisplayEvent);
     on<RegisterUsernameChangedEvent>(_onUsernameChangedEvent);
+    on<RegisterEmailChangedEvent>(_onEmailChangedEvent);
     on<RegisterPasswordChangedEvent>(_onPasswordChangedEvent);
+    on<RegisterPasswordAgainChangedEvent>(_onPasswordAgainChangedEvent);
     on<RegisterPressRegisterButtonEvent>(_onPressRegisterButtonEvent);
     on<RegisterErrorPopupClosedEvent>(_onErrorPopupClosedEvent);
   }
 
   bool _isUsernameFieldFocused = false;
   String? _usernameValidationMessage;
+  bool _isEmailFieldFocused = false;
+  String? _emailValidationMessage;
   bool _isPasswordFieldFocused = false;
   String? _passwordValidationMessage;
+  bool _isPasswordAgainFieldFocused = false;
+  String? _passwordAgainValidationMessage;
 
   String? validateUsername(String? value) {
     if (value == null || value.isEmpty) {
@@ -47,25 +56,51 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     if (value.length < 6 || value.length > 10) {
       return _Constants.usernameCharLimitMessage;
     }
-    return ''; // Return empty if the validation is successful
+    return null;
   }
 
-  String? validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
+  String? validateEmail(String? email) {
+    if (email == null || email.isEmpty) {
+      return _Constants.emailRequiredMessage;
+    }
+
+    final emailRegex =
+        RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+    if (!emailRegex.hasMatch(email)) {
+      return _Constants.invalidEmailMessage;
+    }
+
+    return null;
+  }
+
+  String? validatePassword(String? password) {
+    if (password == null || password.isEmpty) {
       return _Constants.passwordRequiredMessage;
     }
-    if (value.length != 6) {
+    if (password.length != 6) {
       return _Constants.passwordCharLimitMessage;
     }
-    return ''; // Return empty if the validation is successful
+    return null;
+  }
+
+  String? validatePasswordAgain(String? password, String? passwordAgain) {
+    if (password != passwordAgain) {
+      return _Constants.passwordsNotMatch;
+    }
+    return null;
   }
 
   RegisterDisplayState _displayState() {
     return RegisterDisplayState(
-        isUsernameFieldFocused: _isUsernameFieldFocused,
-        usernameValidationMessage: _usernameValidationMessage,
-        isPasswordFieldFocused: _isPasswordFieldFocused,
-        passwordValidationMessage: _passwordValidationMessage);
+      isUsernameFieldFocused: _isUsernameFieldFocused,
+      usernameValidationMessage: _usernameValidationMessage,
+      isEmailFieldFocused: _isEmailFieldFocused,
+      emailValidationMessage: _emailValidationMessage,
+      isPasswordFieldFocused: _isPasswordFieldFocused,
+      passwordValidationMessage: _passwordValidationMessage,
+      isPasswordAgainFieldFocused: _isPasswordAgainFieldFocused,
+      passwordAgainValidationMessage: _passwordAgainValidationMessage,
+    );
   }
 
   void _onUsernameChangedEvent(
@@ -75,10 +110,25 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     emit(_displayState());
   }
 
+  void _onEmailChangedEvent(
+      RegisterEmailChangedEvent event, Emitter<RegisterState> emit) {
+    _isEmailFieldFocused = event.email.isNotEmpty;
+    _emailValidationMessage = validateEmail(event.email);
+    emit(_displayState());
+  }
+
   void _onPasswordChangedEvent(
       RegisterPasswordChangedEvent event, Emitter<RegisterState> emit) {
     _isPasswordFieldFocused = event.password.isNotEmpty;
     _passwordValidationMessage = validatePassword(event.password);
+    emit(_displayState());
+  }
+
+  void _onPasswordAgainChangedEvent(
+      RegisterPasswordAgainChangedEvent event, Emitter<RegisterState> emit) {
+    _isPasswordAgainFieldFocused = event.passwordAgain.isNotEmpty;
+    _passwordAgainValidationMessage =
+        validatePasswordAgain(event.password, event.passwordAgain);
     emit(_displayState());
   }
 

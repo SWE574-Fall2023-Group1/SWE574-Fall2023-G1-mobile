@@ -40,12 +40,13 @@ class RegisterPasswordChangedEvent extends RegisterEvent {
 }
 
 class RegisterPasswordAgainChangedEvent extends RegisterEvent {
+  final String password;
   final String passwordAgain;
 
-  const RegisterPasswordAgainChangedEvent(this.passwordAgain);
+  const RegisterPasswordAgainChangedEvent(this.password, this.passwordAgain);
 
   @override
-  List<Object> get props => [passwordAgain];
+  List<Object> get props => [password, passwordAgain];
 }
 
 class RegisterPressRegisterButtonEvent extends RegisterEvent {
