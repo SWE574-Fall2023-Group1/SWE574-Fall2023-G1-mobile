@@ -8,10 +8,9 @@ sealed class LoginState extends Equatable {
 }
 
 class LoginInitial extends LoginState {
-  LoginInitial();
+  const LoginInitial();
 }
 
-// TODO: Add necessary state variables
 class LoginDisplayState extends LoginState {
   final bool isUsernameFieldFocused;
   final String? usernameValidationMessage;
@@ -50,7 +49,7 @@ class LoginSuccess extends LoginState {
 class LoginFailure extends LoginState {
   final String? error;
 
-  LoginFailure({required this.error});
+  const LoginFailure({required this.error});
 
   @override
   List<Object?> get props => [error];

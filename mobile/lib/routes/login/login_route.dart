@@ -5,6 +5,7 @@ import "package:flutter_bloc/flutter_bloc.dart";
 import "package:memories_app/routes/login/bloc/login_bloc.dart";
 import "package:memories_app/ui/logo_widget.dart";
 import "package:memories_app/ui/primary_button.dart";
+import "package:memories_app/util/router.dart";
 import "package:memories_app/util/utils.dart";
 
 // TODO: add login design and login bloc
@@ -67,7 +68,7 @@ class _LoginRouteState extends State<LoginRoute> {
       },
       listener: (context, state) {
         if (state is LoginSuccess) {
-          // TODO: Navigate to home page
+          AppRoute.home.navigate(context);
         } else if (state is LoginFailure) {
           // TODO: Show error popup
         }
@@ -212,7 +213,7 @@ class _LoginRouteState extends State<LoginRoute> {
           ),
           GestureDetector(
             onTap: () {
-              // TODO: Navigate to register
+              AppRoute.register.navigate(context);
             },
             child: const Text(
               'Register Now!',
