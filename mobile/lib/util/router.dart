@@ -4,7 +4,10 @@ import 'package:memories_app/routes/home/home_route.dart';
 import 'package:memories_app/routes/login/bloc/login_bloc.dart';
 import 'package:memories_app/routes/login/login_route.dart';
 import 'package:memories_app/routes/login/model/login_repository.dart';
+import 'package:memories_app/routes/register/bloc/register_bloc.dart';
 import 'package:memories_app/routes/register/register_route.dart';
+
+import '../routes/register/model/register_repository.dart';
 
 // TODO: Edit this file as needed
 
@@ -28,11 +31,15 @@ extension AppRouteExtension on AppRoute {
             (route) => false);
       case AppRoute.register:
         Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const RegisterRoute(),
-          ),
-        );
+            context,
+            MaterialPageRoute(
+              builder: (context) => BlocProvider(
+                create: (context) =>
+                    RegisterBloc(repository: RegisterRepositoryImp())
+                      ..add(RegisterLoadDisplayEvent()),
+                child: RegisterRoute(),
+              ),
+            ));
       case AppRoute.home:
         Navigator.pushAndRemoveUntil(
             context,
