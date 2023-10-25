@@ -14,11 +14,12 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   LoginBloc({required LoginRepository repository})
       : _repository = repository,
-        super(LoginInitial()) {
+        super(const LoginInitial()) {
     on<LoginLoadDisplayEvent>(_onLoadDisplayEvent);
     on<LoginUsernameChangedEvent>(_onUsernameChangedEvent);
     on<LoginPasswordChangedEvent>(_onPasswordChangedEvent);
     on<LoginPressLoginButtonEvent>(_onPressLoginButtonEvent);
+    on<LoginErrorPopupClosedEvent>(_onErrorPopupClosedEvent);
   }
 
   bool _isUsernameFieldFocused = false;
@@ -106,5 +107,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     } else {
       emit(LoginFailure(error: response?.msg.toString()));
     }
+  }
+
+  void _onErrorPopupClosedEvent(
+      LoginErrorPopupClosedEvent event, Emitter<LoginState> emit) {
+    emit(_displayState());
   }
 }

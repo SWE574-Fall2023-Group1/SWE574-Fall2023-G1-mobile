@@ -5,10 +5,9 @@ import "package:flutter_bloc/flutter_bloc.dart";
 import "package:memories_app/routes/login/bloc/login_bloc.dart";
 import "package:memories_app/ui/logo_widget.dart";
 import "package:memories_app/ui/primary_button.dart";
+import "package:memories_app/ui/shows_dialog.dart";
 import "package:memories_app/util/router.dart";
 import "package:memories_app/util/utils.dart";
-
-// TODO: add login design and login bloc
 
 class LoginRoute extends StatefulWidget {
   const LoginRoute({super.key});
@@ -36,6 +35,9 @@ class _LoginRouteState extends State<LoginRoute> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<LoginBloc, LoginState>(
+      buildWhen: (previousState, state) {
+        return state is! LoginFailure;
+      },
       builder: (context, state) {
         if (state is LoginInitial) {
           return const CircularProgressIndicator();
@@ -64,13 +66,14 @@ class _LoginRouteState extends State<LoginRoute> {
             ),
           );
         }
-        return Container(color: Colors.red);
+        return Container();
       },
       listener: (context, state) {
         if (state is LoginSuccess) {
           AppRoute.home.navigate(context);
         } else if (state is LoginFailure) {
-          // TODO: Show error popup
+          ShowsDialog.showAlertDialog(context, 'Oops!', state.error.toString(),
+              isLoginFail: true);
         }
       },
     );
