@@ -15,7 +15,7 @@ extension AppRouteExtension on AppRoute {
     switch (this) {
       case AppRoute.login:
         final loginBloc = LoginBloc(repository: LoginRepositoryImp());
-        final loginRoute = LoginRoute();
+        const loginRoute = LoginRoute();
 
         Navigator.pushAndRemoveUntil(
             context,

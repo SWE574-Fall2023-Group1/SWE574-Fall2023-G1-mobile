@@ -18,5 +18,6 @@ class LoginResponseModel extends ResponseModel {
   factory LoginResponseModel.fromJson(Map<String, dynamic> json) =>
       _$LoginResponseModelFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$LoginResponseModelToJson(this);
 }
