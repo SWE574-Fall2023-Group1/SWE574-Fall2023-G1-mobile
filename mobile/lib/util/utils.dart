@@ -15,16 +15,16 @@ class SpaceSizes {
 }
 
 class WidgetKeys {
-  static const usernameFieldKey = Key('login_username_field');
-  static const passwordFieldKey = Key('login_password_field');
-  static const loginButtonKey = Key('login_button');
+  static const Key usernameFieldKey = Key('login_username_field');
+  static const Key passwordFieldKey = Key('login_password_field');
+  static const Key loginButtonKey = Key('login_button');
 }
 
 class AppColors {
-  static const textFieldBorderColor = Color(0xFFE2E2E2);
-  static const textFieldHintColor = Color(0xFF757575);
-  static const buttonColor = Color(0xFF7E49FF);
-  static const disabledButtonTextColor = Color(0xFF757575);
+  static const Color textFieldBorderColor = Color(0xFFE2E2E2);
+  static const Color textFieldHintColor = Color(0xFF757575);
+  static const Color buttonColor = Color(0xFF7E49FF);
+  static const Color disabledButtonTextColor = Color(0xFF757575);
 }
 
 class AppScreenSizeUtils {

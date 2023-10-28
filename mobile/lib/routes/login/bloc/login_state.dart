@@ -4,7 +4,7 @@ sealed class LoginState extends Equatable {
   const LoginState();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => <Object?>[];
 }
 
 class LoginInitial extends LoginState {
@@ -25,7 +25,7 @@ class LoginDisplayState extends LoginState {
   });
 
   @override
-  List<Object?> get props => [
+  List<Object?> get props => <Object?>[
         isUsernameFieldFocused,
         usernameValidationMessage,
         isPasswordFieldFocused,
@@ -40,7 +40,7 @@ class LoginSuccess extends LoginState {
   const LoginSuccess();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => <Object?>[];
 
   @override
   String toString() => 'Login is successful';
@@ -52,7 +52,7 @@ class LoginFailure extends LoginState {
   const LoginFailure({required this.error});
 
   @override
-  List<Object?> get props => [error];
+  List<Object?> get props => <Object?>[error];
 
   @override
   String toString() => 'Login is failed with $error';
@@ -64,7 +64,7 @@ class LoginOffline extends LoginState {
   const LoginOffline({required this.offlineMessage});
 
   @override
-  List<Object?> get props => [offlineMessage];
+  List<Object?> get props => <Object?>[offlineMessage];
 
   @override
   String toString() => 'Login service is offline with message: $offlineMessage';
