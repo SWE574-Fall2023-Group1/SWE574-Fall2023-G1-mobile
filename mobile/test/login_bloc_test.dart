@@ -8,11 +8,11 @@ import 'package:memories_app/routes/login/model/login_response_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _Constants {
-  static const username = 'ayhanc';
-  static const invalidUsername = 'ayhan';
-  static const successPassword = '123456';
-  static const failPassword = '123457';
-  static const invalidPassword = '12345';
+  static const String username = 'ayhanc';
+  static const String invalidUsername = 'ayhan';
+  static const String successPassword = '123456';
+  static const String failPassword = '123457';
+  static const String invalidPassword = '12345';
 
   static const String usernameCharLimitMessage =
       'Username should be between 6 and 10 characters';
@@ -22,12 +22,12 @@ class _Constants {
       'Password should be 6 characters';
   static const String passswordRequiredMessage = 'Password is required';
 
-  static final responseSuccess = LoginResponseModel(
+  static final LoginResponseModel responseSuccess = LoginResponseModel(
       success: true,
       msg: 'Login success',
       refresh: "mockRefreshToken",
       access: "mockAccessToken");
-  static final responseFailure =
+  static final LoginResponseModel responseFailure =
       LoginResponseModel(success: false, msg: 'Invalid username or password');
 }
 
@@ -43,7 +43,7 @@ class MockLoginRepository extends LoginRepository {
 }
 
 void main() {
-  SharedPreferences.setMockInitialValues({});
+  SharedPreferences.setMockInitialValues(<String, Object>{});
   late LoginBloc loginBloc;
   late LoginRepository loginInterface;
 
@@ -55,8 +55,8 @@ void main() {
   blocTest<LoginBloc, LoginState>(
     'emits LoginDisplayState when LoginLoadDisplayEvent is added again',
     build: () => loginBloc,
-    act: (bloc) => bloc.add(LoginLoadDisplayEvent()),
-    expect: () => [
+    act: (LoginBloc bloc) => bloc.add(LoginLoadDisplayEvent()),
+    expect: () => <LoginDisplayState>[
       const LoginDisplayState(
         isUsernameFieldFocused: false,
         usernameValidationMessage: null,
@@ -69,9 +69,9 @@ void main() {
   blocTest<LoginBloc, LoginState>(
     'emits LoginDisplayState with no validation message when LoginUsernameChangedEvent is added',
     build: () => loginBloc,
-    act: (bloc) =>
+    act: (LoginBloc bloc) =>
         bloc.add(const LoginUsernameChangedEvent(_Constants.username)),
-    expect: () => [
+    expect: () => <LoginDisplayState>[
       const LoginDisplayState(
         isUsernameFieldFocused: true,
         usernameValidationMessage: '',
@@ -84,9 +84,9 @@ void main() {
   blocTest<LoginBloc, LoginState>(
     'emits LoginDisplayState with no validation message when LoginPasswordChangedEvent is added',
     build: () => loginBloc,
-    act: (bloc) =>
+    act: (LoginBloc bloc) =>
         bloc.add(const LoginPasswordChangedEvent(_Constants.successPassword)),
-    expect: () => [
+    expect: () => <LoginDisplayState>[
       const LoginDisplayState(
         isUsernameFieldFocused: false,
         usernameValidationMessage: null,
@@ -99,8 +99,8 @@ void main() {
   blocTest<LoginBloc, LoginState>(
     'emits LoginDisplayState when LoginErrorPopupClosedEvent is added',
     build: () => loginBloc,
-    act: (bloc) => bloc.add(LoginErrorPopupClosedEvent()),
-    expect: () => [
+    act: (LoginBloc bloc) => bloc.add(LoginErrorPopupClosedEvent()),
+    expect: () => <LoginDisplayState>[
       const LoginDisplayState(
         isUsernameFieldFocused: false,
         usernameValidationMessage: null,
@@ -113,17 +113,17 @@ void main() {
   blocTest<LoginBloc, LoginState>(
     'emits LoginSucces when LoginPressLoginButtonEvent is added with correct credentials',
     build: () => loginBloc,
-    act: (bloc) => bloc.add(const LoginPressLoginButtonEvent(
+    act: (LoginBloc bloc) => bloc.add(const LoginPressLoginButtonEvent(
         username: _Constants.username, password: _Constants.successPassword)),
-    expect: () => [isA<LoginSuccess>()],
+    expect: () => <TypeMatcher<LoginSuccess>>[isA<LoginSuccess>()],
   );
 
   blocTest<LoginBloc, LoginState>(
     'emits LoginFailure when LoginPressLoginButtonEvent is added with wrong credentials',
     build: () => loginBloc,
-    act: (bloc) => bloc.add(const LoginPressLoginButtonEvent(
+    act: (LoginBloc bloc) => bloc.add(const LoginPressLoginButtonEvent(
         username: _Constants.username, password: _Constants.failPassword)),
-    expect: () => [isA<LoginFailure>()],
+    expect: () => <TypeMatcher<LoginFailure>>[isA<LoginFailure>()],
   );
 
   test('validateUsername returns the correct validation message', () {

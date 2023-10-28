@@ -12,18 +12,18 @@ import 'package:memories_app/util/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _Constants {
-  static const username = 'ayhanc';
-  static const invalidUsername = 'ayhan';
-  static const failPassword = '123457';
-  static const invalidPassword = '12345';
+  static const String username = 'ayhanc';
+  static const String invalidUsername = 'ayhan';
+  static const String failPassword = '123457';
+  static const String invalidPassword = '12345';
 
-  static final responseSuccess = LoginResponseModel(
+  static final LoginResponseModel responseSuccess = LoginResponseModel(
       success: true,
       msg: 'Login success',
       refresh: "mockRefreshToken",
       access: "mockAccessToken");
 
-  static final responseFailure =
+  static final LoginResponseModel responseFailure =
       LoginResponseModel(success: false, msg: 'Invalid username or password');
 }
 
@@ -41,7 +41,7 @@ class MockLoginRepository extends LoginRepository {
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   // ignore: invalid_use_of_visible_for_testing_member
-  SharedPreferences.setMockInitialValues({});
+  SharedPreferences.setMockInitialValues(<String, Object>{});
   late LoginBloc loginBloc;
   late LoginRepository loginInterface;
 
@@ -55,7 +55,7 @@ void main() {
   });
 
   testGoldens('LoginRoute initial golden test', (WidgetTester tester) async {
-    final builder = DeviceBuilder()
+    final DeviceBuilder builder = DeviceBuilder()
       ..overrideDevicesForAllScenarios(devices: TestDevices.devices)
       ..addScenario(
           widget: initializeAppWithLoginRoute(loginBloc),
@@ -66,28 +66,28 @@ void main() {
   });
 
   testGoldens('LoginRoute alert dialog test', (WidgetTester tester) async {
-    final builder = DeviceBuilder()
+    final DeviceBuilder builder = DeviceBuilder()
       ..overrideDevicesForAllScenarios(devices: TestDevices.devices);
 
     builder.addScenario(
       widget: initializeAppWithLoginRoute(loginBloc),
-      onCreate: (scenarioWidgetKey) async {
+      onCreate: (Key scenarioWidgetKey) async {
         loginBloc.add(LoginLoadDisplayEvent());
         await tester.pumpAndSettle();
-        final usernameFinder = find.descendant(
+        final Finder usernameFinder = find.descendant(
             of: find.byKey(scenarioWidgetKey),
             matching: find.byKey(WidgetKeys.usernameFieldKey));
 
         expect(usernameFinder, findsOneWidget);
         await tester.pumpAndSettle();
 
-        final passwordFinder = find.descendant(
+        final Finder passwordFinder = find.descendant(
             of: find.byKey(scenarioWidgetKey),
             matching: find.byKey(WidgetKeys.passwordFieldKey));
         expect(passwordFinder, findsOneWidget);
         await tester.pumpAndSettle();
 
-        final loginButtonFinder = find.descendant(
+        final Finder loginButtonFinder = find.descendant(
             of: find.byKey(scenarioWidgetKey),
             matching: find.byKey(WidgetKeys.loginButtonKey));
 
@@ -113,22 +113,23 @@ void main() {
     await screenMatchesGolden(tester, 'login/login_route_alert_dialog');
   });
 
-  testGoldens('validation messages are displayed correctly', (tester) async {
-    final builder = DeviceBuilder()
+  testGoldens('validation messages are displayed correctly',
+      (WidgetTester tester) async {
+    final DeviceBuilder builder = DeviceBuilder()
       ..overrideDevicesForAllScenarios(devices: TestDevices.devices);
 
     builder.addScenario(
         widget: initializeAppWithLoginRoute(loginBloc),
-        onCreate: (scenarioWidgetKey) async {
+        onCreate: (Key scenarioWidgetKey) async {
           loginBloc.add(LoginLoadDisplayEvent());
           await tester.pumpAndSettle();
-          final usernameFinder = find.descendant(
+          final Finder usernameFinder = find.descendant(
               of: find.byKey(scenarioWidgetKey),
               matching: find.byKey(WidgetKeys.usernameFieldKey));
 
           expect(usernameFinder, findsOneWidget);
 
-          final passwordFinder = find.descendant(
+          final Finder passwordFinder = find.descendant(
               of: find.byKey(scenarioWidgetKey),
               matching: find.byKey(WidgetKeys.passwordFieldKey));
           expect(passwordFinder, findsOneWidget);
@@ -150,7 +151,7 @@ void main() {
 Widget initializeAppWithLoginRoute(LoginBloc loginBloc) {
   return MaterialApp(
     home: BlocProvider<LoginBloc>(
-      create: (context) => loginBloc..add(LoginLoadDisplayEvent()),
+      create: (BuildContext context) => loginBloc..add(LoginLoadDisplayEvent()),
       child: const LoginRoute(),
     ),
   );

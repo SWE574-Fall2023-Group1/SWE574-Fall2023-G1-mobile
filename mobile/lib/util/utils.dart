@@ -46,5 +46,9 @@ class TestDevices {
   static const Device iphone14ProMax =
       Device(name: 'iPhone 14 Pro Max', size: Size(430, 932));
 
-  static const devices = [iphoneSE, iphone14, iphone14ProMax];
+  static const List<Device> devices = <Device>[
+    iphoneSE,
+    iphone14,
+    iphone14ProMax
+  ];
 }
