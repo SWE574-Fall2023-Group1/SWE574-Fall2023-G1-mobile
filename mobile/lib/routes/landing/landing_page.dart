@@ -43,7 +43,10 @@ List<BottomNavigationBarItem> bottomNavItems = <BottomNavigationBarItem>[
 ];
 
 List<Widget> bottomNavScreen = <Widget>[
-  HomeRoute(bloc: HomeBloc()),
+  BlocProvider<HomeBloc>(
+    create: (BuildContext context) => HomeBloc()..add(HomeLoadDisplayEvent()),
+    child: const HomeRoute(),
+  ),
   const Text('Index 1: Profile'),
   const Text('Index 2: Create'),
   const Text('Index 3: Search'),
