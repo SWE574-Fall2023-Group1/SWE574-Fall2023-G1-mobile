@@ -36,7 +36,7 @@ class ShowsDialog {
           elevation: 0,
           insetPadding: const EdgeInsets.symmetric(horizontal: SpaceSizes.x16),
           scrollable: true,
-          actions: [
+          actions: <Widget>[
             TextButton(
                 style: TextButton.styleFrom(
                     side: const BorderSide(width: 1, color: Colors.black),
@@ -52,6 +52,7 @@ class ShowsDialog {
           actionsAlignment: MainAxisAlignment.center,
         );
       },
+      // ignore: always_specify_types
     ).then((value) {
       if (isLoginFail) {
         BlocProvider.of<LoginBloc>(context).add(LoginErrorPopupClosedEvent());

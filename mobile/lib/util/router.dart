@@ -14,32 +14,39 @@ extension AppRouteExtension on AppRoute {
   void navigate(BuildContext context, {Object? arguments}) async {
     switch (this) {
       case AppRoute.login:
-        final loginBloc = LoginBloc(repository: LoginRepositoryImp());
-        const loginRoute = LoginRoute();
+        final LoginBloc loginBloc = LoginBloc(repository: LoginRepositoryImp());
+        const LoginRoute loginRoute = LoginRoute();
 
         Navigator.pushAndRemoveUntil(
             context,
+            // ignore: always_specify_types
             MaterialPageRoute(
-              builder: (context) => BlocProvider(
-                create: (context) => loginBloc..add(LoginLoadDisplayEvent()),
+              // ignore: always_specify_types
+              builder: (BuildContext context) => BlocProvider(
+                create: (BuildContext context) =>
+                    loginBloc..add(LoginLoadDisplayEvent()),
                 child: loginRoute,
               ),
             ),
-            (route) => false);
+            // ignore: always_specify_types
+            (Route route) => false);
       case AppRoute.register:
         Navigator.push(
           context,
+          // ignore: always_specify_types
           MaterialPageRoute(
-            builder: (context) => const RegisterRoute(),
+            builder: (BuildContext context) => const RegisterRoute(),
           ),
         );
       case AppRoute.home:
         Navigator.pushAndRemoveUntil(
             context,
+            // ignore: always_specify_types
             MaterialPageRoute(
-              builder: (context) => const HomeRoute(),
+              builder: (BuildContext context) => const HomeRoute(),
             ),
-            (route) => false);
+            // ignore: always_specify_types
+            (Route route) => false);
     }
   }
 }

@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:memories_app/util/sp_helper.dart';
 
 class _NetworkConstant {
-  static const baseURL = 'http://34.72.72.115:8000/';
+  static const String baseURL = 'http://34.72.72.115:8000/';
 }
 
 class Result {
@@ -21,7 +21,7 @@ class Result {
 
 class NetworkManager {
   final String baseUrl;
-  static const utf8Decoder = Utf8Decoder();
+  static const Utf8Decoder utf8Decoder = Utf8Decoder();
 
   static NetworkManager? _instance;
 
@@ -37,7 +37,7 @@ class NetworkManager {
       throw const SocketException('');
     } else {
       Map<String, String> customHeaders = await _constructHeaders();
-      final response = await http.get(
+      final http.Response response = await http.get(
         Uri.parse('$baseUrl/$endpoint'),
         headers: customHeaders,
       );
@@ -51,8 +51,10 @@ class NetworkManager {
       throw const SocketException('');
     }
     Map<String, String> customHeaders = await _constructHeaders();
-    final response = await http.post(Uri.parse('$baseUrl/$endpoint'),
-        body: jsonEncode(body), headers: customHeaders);
+    final http.Response response = await http.post(
+        Uri.parse('$baseUrl/$endpoint'),
+        body: jsonEncode(body),
+        headers: customHeaders);
 
     return _createResponse(response);
   }
@@ -60,7 +62,7 @@ class NetworkManager {
   Future<Map<String, String>> _constructHeaders() async {
     final String? refreshToken =
         await SPHelper.getString(SPKeys.refreshTokenKey);
-    final Map<String, String> customHeaders = {
+    final Map<String, String> customHeaders = <String, String>{
       'Content-Type': 'application/json',
       if (refreshToken != null) 'Cookie': 'refreshToken=$refreshToken',
     };
@@ -68,20 +70,21 @@ class NetworkManager {
   }
 
   Result _createResponse(http.Response response) {
-    Map<String, dynamic> responseJson = {};
+    Map<String, dynamic> responseJson = <String, dynamic>{};
 
     try {
-      final responseString = utf8Decoder.convert(response.bodyBytes);
+      final String responseString = utf8Decoder.convert(response.bodyBytes);
       responseJson = json.decode(responseString) as Map<String, dynamic>;
     } on Exception {
-      responseJson = {};
+      responseJson = <String, dynamic>{};
     }
 
     return Result(responseJson, response.statusCode);
   }
 
   Future<bool> _isConnectedToInternet() async {
-    final connectivityResult = await Connectivity().checkConnectivity();
+    final ConnectivityResult connectivityResult =
+        await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.none) {
       return false;
     } else {
