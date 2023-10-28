@@ -1,4 +1,4 @@
-name: build_upload_apk
+name: Build and Upload APK
 
 on:
   push:
