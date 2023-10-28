@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:golden_toolkit/golden_toolkit.dart';
 
 class SpaceSizes {
   static const double x4 = 4.0;
@@ -14,19 +15,19 @@ class SpaceSizes {
 }
 
 class WidgetKeys {
-  static const usernameFieldKey = Key('login_username_field');
-  static const passwordFieldKey = Key('login_password_field');
-  static const loginButtonKey = Key('login_button');
-  static const emailFieldKey = Key('register_email_field');
-  static const passwordAgainFieldKey = Key('register_password_again_field');
-  static const registerButtonKey = Key('register_button');
+  static const Key usernameFieldKey = Key('login_username_field');
+  static const Key passwordFieldKey = Key('login_password_field');
+  static const Key loginButtonKey = Key('login_button');
+  static const Key emailFieldKey = Key('register_email_field');
+  static const Key passwordAgainFieldKey = Key('register_password_again_field');
+  static const Key registerButtonKey = Key('register_button');
 }
 
 class AppColors {
-  static const textFieldBorderColor = Color(0xFFE2E2E2);
-  static const textFieldHintColor = Color(0xFF757575);
-  static const buttonColor = Color(0xFF7E49FF);
-  static const disabledButtonTextColor = Color(0xFF757575);
+  static const Color textFieldBorderColor = Color(0xFFE2E2E2);
+  static const Color textFieldHintColor = Color(0xFF757575);
+  static const Color buttonColor = Color(0xFF7E49FF);
+  static const Color disabledButtonTextColor = Color(0xFF757575);
 }
 
 class AppScreenSizeUtils {
@@ -38,4 +39,19 @@ class AppScreenSizeUtils {
 class FontSizes {
   static const double smallSize = 12.0;
   static const double regularSize = 16.0;
+}
+
+class TestDevices {
+  static const Device iphoneSE =
+      Device(name: 'iPhone SE', size: Size(375, 667));
+  static const Device iphone14 =
+      Device(name: 'iPhone 14', size: Size(390, 844));
+  static const Device iphone14ProMax =
+      Device(name: 'iPhone 14 Pro Max', size: Size(430, 932));
+
+  static const List<Device> devices = <Device>[
+    iphoneSE,
+    iphone14,
+    iphone14ProMax
+  ];
 }
