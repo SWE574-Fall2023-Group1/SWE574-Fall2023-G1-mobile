@@ -9,16 +9,16 @@ class PrimaryButton extends StatelessWidget {
   final Color? buttonColor;
 
   const PrimaryButton({
-    Key? key,
-    this.onPressed,
     required this.child,
+    super.key,
+    this.onPressed,
     this.borderRadius,
     this.width,
     this.height = 56.0,
     this.buttonColor,
-  }) : super(key: key);
+  });
 
-  getBorderRadius() {
+  BorderRadiusGeometry getBorderRadius() {
     return borderRadius ?? BorderRadius.circular(0);
   }
 

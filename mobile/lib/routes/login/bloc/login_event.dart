@@ -4,7 +4,7 @@ sealed class LoginEvent extends Equatable {
   const LoginEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => <Object>[];
 }
 
 class LoginLoadDisplayEvent extends LoginEvent {
@@ -18,7 +18,7 @@ class LoginUsernameChangedEvent extends LoginEvent {
   const LoginUsernameChangedEvent(this.username);
 
   @override
-  List<Object> get props => [username];
+  List<Object> get props => <Object>[username];
 }
 
 class LoginPasswordChangedEvent extends LoginEvent {
@@ -27,7 +27,7 @@ class LoginPasswordChangedEvent extends LoginEvent {
   const LoginPasswordChangedEvent(this.password);
 
   @override
-  List<Object> get props => [password];
+  List<Object> get props => <Object>[password];
 }
 
 class LoginPressLoginButtonEvent extends LoginEvent {
@@ -41,7 +41,7 @@ class LoginPressLoginButtonEvent extends LoginEvent {
   String toString() => 'Login button is pressed';
 
   @override
-  List<Object> get props => [username, password];
+  List<Object> get props => <Object>[username, password];
 }
 
 class LoginErrorPopupClosedEvent extends LoginEvent {}

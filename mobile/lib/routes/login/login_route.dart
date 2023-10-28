@@ -17,11 +17,11 @@ class LoginRoute extends StatefulWidget {
 }
 
 class _LoginRouteState extends State<LoginRoute> {
-  final _usernameFormKey = GlobalKey<FormState>();
-  final _passwordFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _usernameFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _passwordFormKey = GlobalKey<FormState>();
 
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   final ScrollController _scrollController = ScrollController();
 
@@ -35,10 +35,10 @@ class _LoginRouteState extends State<LoginRoute> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<LoginBloc, LoginState>(
-      buildWhen: (previousState, state) {
+      buildWhen: (LoginState previousState, LoginState state) {
         return !(state is LoginFailure || state is LoginOffline);
       },
-      builder: (context, state) {
+      builder: (BuildContext context, LoginState state) {
         if (state is LoginInitial) {
           return const CircularProgressIndicator();
         } else if (state is LoginDisplayState) {
@@ -46,7 +46,7 @@ class _LoginRouteState extends State<LoginRoute> {
             child: SafeArea(
               child: SingleChildScrollView(
                 controller: _scrollController,
-                child: Column(children: [
+                child: Column(children: <Widget>[
                   const SizedBox(
                     height: SpaceSizes.x24,
                   ),
@@ -68,7 +68,7 @@ class _LoginRouteState extends State<LoginRoute> {
         }
         return Container();
       },
-      listener: (context, state) {
+      listener: (BuildContext context, LoginState state) {
         if (state is LoginSuccess) {
           AppRoute.home.navigate(context);
         } else if (state is LoginFailure) {
@@ -88,7 +88,7 @@ class _LoginRouteState extends State<LoginRoute> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: SpaceSizes.x16),
       child: Column(
-        children: [
+        children: <Widget>[
           Form(
             key: _usernameFormKey,
             child: TextFormField(
@@ -132,7 +132,7 @@ class _LoginRouteState extends State<LoginRoute> {
                     ? state.usernameValidationMessage
                     : null,
               ),
-              onChanged: (username) {
+              onChanged: (String username) {
                 BlocProvider.of<LoginBloc>(context)
                     .add(LoginUsernameChangedEvent(username));
               },
@@ -182,7 +182,7 @@ class _LoginRouteState extends State<LoginRoute> {
                     ? state.passwordValidationMessage
                     : null,
               ),
-              onChanged: (password) {
+              onChanged: (String password) {
                 BlocProvider.of<LoginBloc>(context)
                     .add(LoginPasswordChangedEvent(password));
               },
@@ -206,7 +206,7 @@ class _LoginRouteState extends State<LoginRoute> {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
+        children: <Widget>[
           const Text(
             'Don’t you have any account yet?',
             style: TextStyle(
@@ -238,7 +238,7 @@ class _LoginRouteState extends State<LoginRoute> {
   }
 
   Widget _buildLoginButton(BuildContext context, LoginDisplayState state) {
-    var isValid = ((state.usernameValidationMessage == '' ||
+    bool isValid = ((state.usernameValidationMessage == '' ||
             state.usernameValidationMessage == null) &&
         _usernameController.text.isNotEmpty &&
         state.passwordValidationMessage == '');

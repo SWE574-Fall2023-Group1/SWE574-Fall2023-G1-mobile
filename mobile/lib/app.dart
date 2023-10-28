@@ -5,7 +5,7 @@ import 'package:memories_app/routes/login/login_route.dart';
 import 'package:memories_app/routes/login/model/login_repository.dart';
 
 class _Constants {
-  static final loginRepository = LoginRepositoryImp();
+  static final LoginRepositoryImp loginRepository = LoginRepositoryImp();
 }
 
 void runApplication() {
@@ -19,8 +19,9 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: BlocProvider<LoginBloc>(
-        create: (context) => LoginBloc(repository: _Constants.loginRepository)
-          ..add(LoginLoadDisplayEvent()),
+        create: (BuildContext context) =>
+            LoginBloc(repository: _Constants.loginRepository)
+              ..add(LoginLoadDisplayEvent()),
         child: const LoginRoute(),
       ),
     );
