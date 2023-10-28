@@ -21,11 +21,14 @@ dependencies:
   json_annotation: ^4.8.1
   build_runner: ^2.3.3
   connectivity_plus: ^5.0.1
+  golden_toolkit: ^0.15.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  integration_test:
+    sdk: flutter
 
 flutter:
   uses-material-design: true
