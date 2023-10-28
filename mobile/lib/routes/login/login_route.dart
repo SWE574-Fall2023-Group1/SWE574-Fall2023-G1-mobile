@@ -70,7 +70,7 @@ class _LoginRouteState extends State<LoginRoute> {
       },
       listener: (BuildContext context, LoginState state) {
         if (state is LoginSuccess) {
-          AppRoute.home.navigate(context);
+          AppRoute.landing.navigate(context);
         } else if (state is LoginFailure) {
           ShowsDialog.showAlertDialog(context, 'Oops!', state.error.toString(),
               isLoginFail: true);
