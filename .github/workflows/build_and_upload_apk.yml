@@ -1,13 +1,14 @@
-name: build_upload_apk
+name: Build and Upload APK
 
 on:
   push:
     branches:
       - main
+      - dev
   pull_request:
     branches:
       - main
-
+      - dev
 
 jobs:
   build_upload_apk:
