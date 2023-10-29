@@ -1,7 +1,7 @@
-import '../../../network/network_manager.dart';
-import '../../../util/api_endpoints.dart';
-import 'register_request_model.dart';
-import 'register_response_model.dart';
+import 'package:memories_app/network/network_manager.dart';
+import 'package:memories_app/util/api_endpoints.dart';
+import 'package:memories_app/routes/register/model/register_request_model.dart';
+import 'package:memories_app/routes/register/model/register_response_model.dart';
 
 abstract class RegisterRepository {
   Future<RegisterResponseModel> register(RegisterRequestModel model);

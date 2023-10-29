@@ -3,9 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
 import 'package:memories_app/util/sp_helper.dart';
 import 'package:equatable/equatable.dart';
-import '../model/register_repository.dart';
-import '../model/register_request_model.dart';
-import '../model/register_response_model.dart';
+import 'package:memories_app/routes/register/model/register_repository.dart';
+import 'package:memories_app/routes/register/model/register_request_model.dart';
+import 'package:memories_app/routes/register/model/register_response_model.dart';
 
 part 'register_event.dart';
 
@@ -64,7 +64,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       return _Constants.emailRequiredMessage;
     }
 
-    final emailRegex =
+    final RegExp emailRegex =
         RegExp(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
     if (!emailRegex.hasMatch(email)) {
       return _Constants.invalidEmailMessage;

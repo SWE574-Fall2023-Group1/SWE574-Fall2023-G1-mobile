@@ -4,7 +4,7 @@ sealed class RegisterState extends Equatable {
   const RegisterState();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => <Object?>[];
 }
 
 class RegisterInitial extends RegisterState {
@@ -33,7 +33,7 @@ class RegisterDisplayState extends RegisterState {
   });
 
   @override
-  List<Object?> get props => [
+  List<Object?> get props => <Object?>[
         isUsernameFieldFocused,
         usernameValidationMessage,
         isEmailFieldFocused,
@@ -52,7 +52,7 @@ class RegisterSuccess extends RegisterState {
   const RegisterSuccess();
 
   @override
-  List<Object?> get props => [];
+  List<Object?> get props => <Object?>[];
 
   @override
   String toString() => 'Register is successful';
@@ -64,7 +64,7 @@ class RegisterFailure extends RegisterState {
   const RegisterFailure({required this.error});
 
   @override
-  List<Object?> get props => [error];
+  List<Object?> get props => <Object?>[error];
 
   @override
   String toString() => 'Register is failed with $error';
@@ -76,7 +76,7 @@ class RegisterOffline extends RegisterState {
   const RegisterOffline({required this.offlineMessage});
 
   @override
-  List<Object?> get props => [offlineMessage];
+  List<Object?> get props => <Object?>[offlineMessage];
 
   @override
   String toString() =>

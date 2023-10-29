@@ -18,5 +18,6 @@ class RegisterResponseModel extends ResponseModel {
   factory RegisterResponseModel.fromJson(Map<String, dynamic> json) =>
       _$RegisterResponseModelFromJson(json);
 
+  @override
   Map<String, dynamic> toJson() => _$RegisterResponseModelToJson(this);
 }

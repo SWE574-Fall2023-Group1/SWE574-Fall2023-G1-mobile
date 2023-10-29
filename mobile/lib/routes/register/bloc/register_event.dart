@@ -4,7 +4,7 @@ sealed class RegisterEvent extends Equatable {
   const RegisterEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => <Object>[];
 }
 
 class RegisterLoadDisplayEvent extends RegisterEvent {
@@ -18,7 +18,7 @@ class RegisterUsernameChangedEvent extends RegisterEvent {
   const RegisterUsernameChangedEvent(this.username);
 
   @override
-  List<Object> get props => [username];
+  List<Object> get props => <Object>[username];
 }
 
 class RegisterEmailChangedEvent extends RegisterEvent {
@@ -27,7 +27,7 @@ class RegisterEmailChangedEvent extends RegisterEvent {
   const RegisterEmailChangedEvent(this.email);
 
   @override
-  List<Object> get props => [email];
+  List<Object> get props => <Object>[email];
 }
 
 class RegisterPasswordChangedEvent extends RegisterEvent {
@@ -36,7 +36,7 @@ class RegisterPasswordChangedEvent extends RegisterEvent {
   const RegisterPasswordChangedEvent(this.password);
 
   @override
-  List<Object> get props => [password];
+  List<Object> get props => <Object>[password];
 }
 
 class RegisterPasswordAgainChangedEvent extends RegisterEvent {
@@ -46,7 +46,7 @@ class RegisterPasswordAgainChangedEvent extends RegisterEvent {
   const RegisterPasswordAgainChangedEvent(this.password, this.passwordAgain);
 
   @override
-  List<Object> get props => [password, passwordAgain];
+  List<Object> get props => <Object>[password, passwordAgain];
 }
 
 class RegisterPressRegisterButtonEvent extends RegisterEvent {
@@ -61,7 +61,7 @@ class RegisterPressRegisterButtonEvent extends RegisterEvent {
   String toString() => 'Register button is pressed';
 
   @override
-  List<Object> get props => [username, email, password];
+  List<Object> get props => <Object>[username, email, password];
 }
 
 class RegisterErrorPopupClosedEvent extends RegisterEvent {}

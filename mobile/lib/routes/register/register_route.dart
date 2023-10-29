@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memories_app/routes/register/bloc/register_bloc.dart';
-import '../../ui/primary_button.dart';
-import '../../ui/shows_dialog.dart';
-import '../../util/router.dart';
-import '../../util/utils.dart';
+import 'package:memories_app/ui/primary_button.dart';
+import 'package:memories_app/ui/shows_dialog.dart';
+import 'package:memories_app/util/router.dart';
+import 'package:memories_app/util/utils.dart';
 
 class RegisterRoute extends StatefulWidget {
   const RegisterRoute({super.key});
@@ -14,15 +14,16 @@ class RegisterRoute extends StatefulWidget {
 }
 
 class _RegisterRouteState extends State<RegisterRoute> {
-  final _usernameFormKey = GlobalKey<FormState>();
-  final _emailFormKey = GlobalKey<FormState>();
-  final _passwordFormKey = GlobalKey<FormState>();
-  final _passwordAgainFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _usernameFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _emailFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _passwordFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _passwordAgainFormKey = GlobalKey<FormState>();
 
-  final _usernameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final _passwordAgainController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _passwordAgainController =
+      TextEditingController();
 
   @override
   void dispose() {
@@ -36,16 +37,16 @@ class _RegisterRouteState extends State<RegisterRoute> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<RegisterBloc, RegisterState>(
-      buildWhen: (previousState, state) {
+      buildWhen: (RegisterState previousState, RegisterState state) {
         return !(state is RegisterFailure || state is RegisterOffline);
       },
-      builder: (context, state) {
+      builder: (BuildContext context, RegisterState state) {
         if (state is RegisterInitial) {
           return const CircularProgressIndicator();
         } else if (state is RegisterDisplayState) {
           return Material(
             child: SafeArea(
-              child: Column(children: [
+              child: Column(children: <Widget>[
                 AppBar(title: const Text("Register"), centerTitle: true),
                 const SizedBox(height: SpaceSizes.x32),
                 _buildRegisterFormsSection(context, state),
@@ -57,7 +58,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
         }
         return Container();
       },
-      listener: (context, state) {
+      listener: (BuildContext context, RegisterState state) {
         if (state is RegisterSuccess) {
           AppRoute.login.navigate(context);
         } else if (state is RegisterFailure) {
@@ -77,7 +78,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: SpaceSizes.x16),
       child: Column(
-        children: [
+        children: <Widget>[
           Form(
             key: _usernameFormKey,
             child: TextFormField(
@@ -113,7 +114,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
                 focusedErrorBorder: null,
                 errorText: state.usernameValidationMessage,
               ),
-              onChanged: (username) {
+              onChanged: (String username) {
                 BlocProvider.of<RegisterBloc>(context)
                     .add(RegisterUsernameChangedEvent(username));
               },
@@ -155,7 +156,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
                 focusedErrorBorder: null,
                 errorText: state.emailValidationMessage,
               ),
-              onChanged: (email) {
+              onChanged: (String email) {
                 BlocProvider.of<RegisterBloc>(context)
                     .add(RegisterEmailChangedEvent(email));
               },
@@ -197,7 +198,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
                 focusedErrorBorder: null,
                 errorText: state.passwordValidationMessage,
               ),
-              onChanged: (password) {
+              onChanged: (String password) {
                 BlocProvider.of<RegisterBloc>(context)
                     .add(RegisterPasswordChangedEvent(password));
               },
@@ -240,7 +241,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
                 focusedErrorBorder: null,
                 errorText: state.passwordAgainValidationMessage,
               ),
-              onChanged: (passwordAgain) {
+              onChanged: (String passwordAgain) {
                 BlocProvider.of<RegisterBloc>(context).add(
                     RegisterPasswordAgainChangedEvent(
                         _passwordController.text, passwordAgain));
@@ -254,7 +255,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
 
   Widget _buildRegisterButton(
       BuildContext context, RegisterDisplayState state) {
-    var isValid = (state.usernameValidationMessage == null &&
+    bool isValid = (state.usernameValidationMessage == null &&
         _usernameController.text.isNotEmpty &&
         _emailController.text.isNotEmpty &&
         state.passwordValidationMessage == null &&
