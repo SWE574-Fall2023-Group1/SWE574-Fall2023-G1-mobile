@@ -18,6 +18,9 @@ class WidgetKeys {
   static const Key usernameFieldKey = Key('login_username_field');
   static const Key passwordFieldKey = Key('login_password_field');
   static const Key loginButtonKey = Key('login_button');
+  static const Key emailFieldKey = Key('register_email_field');
+  static const Key passwordAgainFieldKey = Key('register_password_again_field');
+  static const Key registerButtonKey = Key('register_button');
 }
 
 class AppColors {
