@@ -59,7 +59,7 @@ class _RegisterRouteState extends State<RegisterRoute> {
       },
       listener: (context, state) {
         if (state is RegisterSuccess) {
-          AppRoute.home.navigate(context);
+          AppRoute.login.navigate(context);
         } else if (state is RegisterFailure) {
           ShowsDialog.showAlertDialog(context, 'Oops!', state.error.toString(),
               isRegisterFail: true);
@@ -241,8 +241,9 @@ class _RegisterRouteState extends State<RegisterRoute> {
                 errorText: state.passwordAgainValidationMessage,
               ),
               onChanged: (passwordAgain) {
-                BlocProvider.of<RegisterBloc>(context)
-                    .add(RegisterPasswordAgainChangedEvent(_passwordController.text, passwordAgain));
+                BlocProvider.of<RegisterBloc>(context).add(
+                    RegisterPasswordAgainChangedEvent(
+                        _passwordController.text, passwordAgain));
               },
             ),
           ),
