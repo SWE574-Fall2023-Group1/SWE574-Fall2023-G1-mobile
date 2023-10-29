@@ -49,10 +49,12 @@ class RegisterDisplayState extends RegisterState {
 }
 
 class RegisterSuccess extends RegisterState {
-  const RegisterSuccess();
+  final String? successMessage;
+
+  const RegisterSuccess({required this.successMessage});
 
   @override
-  List<Object?> get props => <Object?>[];
+  List<Object?> get props => <Object?>[successMessage];
 
   @override
   String toString() => 'Register is successful';
@@ -81,4 +83,14 @@ class RegisterOffline extends RegisterState {
   @override
   String toString() =>
       'Register service is offline with message: $offlineMessage';
+}
+
+class RegisterNavigateToLoginState extends RegisterState {
+  const RegisterNavigateToLoginState();
+
+  @override
+  List<Object?> get props => <Object?>[];
+
+  @override
+  String toString() => 'Navigating to login';
 }

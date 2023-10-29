@@ -5,14 +5,14 @@ part 'register_response_model.g.dart';
 
 @JsonSerializable()
 class RegisterResponseModel extends ResponseModel {
-  final String? access;
-  final String? refresh;
+  final String? email;
+  final String? username;
 
   RegisterResponseModel({
     required bool? success,
     required String? msg,
-    this.access,
-    this.refresh,
+    this.email,
+    this.username,
   }) : super(success, msg);
 
   factory RegisterResponseModel.fromJson(Map<String, dynamic> json) =>

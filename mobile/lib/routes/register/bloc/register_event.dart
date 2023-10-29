@@ -53,15 +53,21 @@ class RegisterPressRegisterButtonEvent extends RegisterEvent {
   final String username;
   final String email;
   final String password;
+  final String passwordAgain;
 
   const RegisterPressRegisterButtonEvent(
-      {required this.username, required this.email, required this.password});
+      {required this.username,
+      required this.email,
+      required this.password,
+      required this.passwordAgain});
 
   @override
   String toString() => 'Register button is pressed';
 
   @override
-  List<Object> get props => <Object>[username, email, password];
+  List<Object> get props => <Object>[username, email, password, passwordAgain];
 }
 
 class RegisterErrorPopupClosedEvent extends RegisterEvent {}
+
+class RegisterSuccessPopupClosedEvent extends RegisterEvent {}

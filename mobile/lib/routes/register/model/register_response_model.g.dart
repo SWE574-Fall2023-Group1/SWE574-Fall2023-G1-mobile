@@ -11,8 +11,8 @@ RegisterResponseModel _$RegisterResponseModelFromJson(
     RegisterResponseModel(
       success: json['success'] as bool?,
       msg: json['msg'] as String?,
-      access: json['access'] as String?,
-      refresh: json['refresh'] as String?,
+      email: json['email'] as String?,
+      username: json['username'] as String?,
     );
 
 Map<String, dynamic> _$RegisterResponseModelToJson(
@@ -20,6 +20,6 @@ Map<String, dynamic> _$RegisterResponseModelToJson(
     <String, dynamic>{
       'success': instance.success,
       'msg': instance.msg,
-      'access': instance.access,
-      'refresh': instance.refresh,
+      'email': instance.email,
+      'username': instance.username,
     };

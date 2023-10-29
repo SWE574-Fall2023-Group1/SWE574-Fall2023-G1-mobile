@@ -1,14 +1,12 @@
 import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
-import 'package:memories_app/util/sp_helper.dart';
 import 'package:equatable/equatable.dart';
 import 'package:memories_app/routes/register/model/register_repository.dart';
 import 'package:memories_app/routes/register/model/register_request_model.dart';
 import 'package:memories_app/routes/register/model/register_response_model.dart';
 
 part 'register_event.dart';
-
 part 'register_state.dart';
 
 class _Constants {
@@ -38,6 +36,7 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     on<RegisterPasswordAgainChangedEvent>(_onPasswordAgainChangedEvent);
     on<RegisterPressRegisterButtonEvent>(_onPressRegisterButtonEvent);
     on<RegisterErrorPopupClosedEvent>(_onErrorPopupClosedEvent);
+    on<RegisterSuccessPopupClosedEvent>(_onSuccessPopupClosedEvent);
   }
 
   bool _isUsernameFieldFocused = false;
@@ -137,23 +136,16 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     emit(_displayState());
   }
 
-  Future<void> _saveRefreshToken(String refreshToken) async {
-    await SPHelper.setString(SPKeys.refreshTokenKey, refreshToken);
-  }
-
-  Future<void> _saveRegisterInfo() async {
-    await SPHelper.setBool(SPKeys.isLoggedIn, true);
-  }
-
   FutureOr<void> _onPressRegisterButtonEvent(
       RegisterPressRegisterButtonEvent event,
       Emitter<RegisterState> emit) async {
     RegisterResponseModel? response;
 
     RegisterRequestModel request = RegisterRequestModel(
-      username: event.username,
-      password: event.password,
-    );
+        username: event.username,
+        email: event.email,
+        password: event.password,
+        passwordAgain: event.password);
 
     try {
       response = await _repository.register(request);
@@ -164,11 +156,9 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     }
 
     if (response != null) {
-      if (response.success == true && response.refresh != null) {
+      if (response.success == true && response.msg != null) {
         /// INFO: save refresh token locally
-        await _saveRefreshToken(response.refresh!);
-        await _saveRegisterInfo();
-        emit(const RegisterSuccess());
+        emit(RegisterSuccess(successMessage: response.msg));
       } else {
         emit(RegisterFailure(error: response.msg.toString()));
       }
@@ -178,5 +168,10 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   void _onErrorPopupClosedEvent(
       RegisterErrorPopupClosedEvent event, Emitter<RegisterState> emit) {
     emit(_displayState());
+  }
+
+  void _onSuccessPopupClosedEvent(
+      RegisterSuccessPopupClosedEvent event, Emitter<RegisterState> emit) {
+    emit(const RegisterNavigateToLoginState());
   }
 }

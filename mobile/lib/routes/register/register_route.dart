@@ -38,7 +38,10 @@ class _RegisterRouteState extends State<RegisterRoute> {
   Widget build(BuildContext context) {
     return BlocConsumer<RegisterBloc, RegisterState>(
       buildWhen: (RegisterState previousState, RegisterState state) {
-        return !(state is RegisterFailure || state is RegisterOffline);
+        return !(state is RegisterSuccess ||
+            state is RegisterFailure ||
+            state is RegisterOffline ||
+            state is RegisterNavigateToLoginState);
       },
       builder: (BuildContext context, RegisterState state) {
         if (state is RegisterInitial) {
@@ -60,7 +63,9 @@ class _RegisterRouteState extends State<RegisterRoute> {
       },
       listener: (BuildContext context, RegisterState state) {
         if (state is RegisterSuccess) {
-          AppRoute.login.navigate(context);
+          ShowsDialog.showAlertDialog(
+              context, "Success!", state.successMessage.toString(),
+              isRegisterSuccess: true);
         } else if (state is RegisterFailure) {
           ShowsDialog.showAlertDialog(context, 'Oops!', state.error.toString(),
               isRegisterFail: true);
@@ -68,6 +73,8 @@ class _RegisterRouteState extends State<RegisterRoute> {
           ShowsDialog.showAlertDialog(
               context, 'Oops!', state.offlineMessage.toString(),
               isRegisterFail: true);
+        } else if (state is RegisterNavigateToLoginState) {
+          Navigator.of(context).pop();
         }
       },
     );
@@ -273,7 +280,8 @@ class _RegisterRouteState extends State<RegisterRoute> {
                     RegisterPressRegisterButtonEvent(
                         username: _usernameController.text,
                         email: _emailController.text,
-                        password: _passwordController.text));
+                        password: _passwordController.text,
+                        passwordAgain: _passwordAgainController.text));
               }
             : null,
         borderRadius: BorderRadius.circular(SpaceSizes.x12),
