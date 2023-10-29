@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memories_app/routes/home/bloc/home_bloc.dart';
 import 'package:memories_app/routes/home/model/post_response_model.dart';
 
+import '../../util/router.dart';
+
 class HomeRoute extends StatefulWidget {
   const HomeRoute({super.key});
 
@@ -183,11 +185,21 @@ class _HomeRouteState extends State<HomeRoute>
             home: Scaffold(
               appBar: AppBar(
                 backgroundColor: Colors.white,
-                centerTitle: true,
+                leading: IconButton(
+                  icon: const Icon(
+                    Icons.power_settings_new,
+                    color: Colors.black87, // Set the color to dark grey
+                  ),
+                  // You can use any other icon you prefer
+                  onPressed: () {
+                    handleLogout(context);
+                  },
+                ),
                 title: Image.asset(
                   'assets/login/logo.png',
                   height: 140,
                 ),
+                centerTitle: true,
               ),
               body: const PostList(),
             ),
@@ -200,4 +212,10 @@ class _HomeRouteState extends State<HomeRoute>
       listener: (BuildContext context, HomeState state) {},
     );
   }
+}
+
+void handleLogout(BuildContext context) {
+  // Add your logout logic here
+  // For example, you can clear user session and navigate to the login screen.
+  AppRoute.login.navigate(context);
 }
