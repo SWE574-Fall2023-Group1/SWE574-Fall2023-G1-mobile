@@ -43,26 +43,24 @@ class _LoginRouteState extends State<LoginRoute> {
           return const CircularProgressIndicator();
         } else if (state is LoginDisplayState) {
           return Material(
-            child: SafeArea(
-              child: SingleChildScrollView(
-                controller: _scrollController,
-                child: Column(children: <Widget>[
-                  const SizedBox(
-                    height: SpaceSizes.x24,
-                  ),
-                  const SizedBox(height: SpaceSizes.x16),
-                  const LogoWidget(),
-                  const SizedBox(height: SpaceSizes.x16),
-                  _buildLoginFormsSection(context, state),
-                  const SizedBox(height: SpaceSizes.x16),
-                  _buildRegisterSection(context, state),
-                  const SizedBox(height: SpaceSizes.x16),
-                  _buildLoginButton(context, state),
-                  const SizedBox(
-                    height: SpaceSizes.x120,
-                  )
-                ]),
-              ),
+            child: SingleChildScrollView(
+              controller: _scrollController,
+              child: Column(children: <Widget>[
+                const SizedBox(
+                  height: SpaceSizes.x24,
+                ),
+                const SizedBox(height: SpaceSizes.x16),
+                const LogoWidget(),
+                const SizedBox(height: SpaceSizes.x16),
+                _buildLoginFormsSection(context, state),
+                const SizedBox(height: SpaceSizes.x16),
+                _buildRegisterSection(context, state),
+                const SizedBox(height: SpaceSizes.x16),
+                _buildLoginButton(context, state),
+                const SizedBox(
+                  height: SpaceSizes.x120,
+                )
+              ]),
             ),
           );
         }
