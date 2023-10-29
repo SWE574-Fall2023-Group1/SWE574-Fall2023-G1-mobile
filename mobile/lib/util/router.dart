@@ -5,7 +5,10 @@ import 'package:memories_app/routes/landing/landing_page.dart';
 import 'package:memories_app/routes/login/bloc/login_bloc.dart';
 import 'package:memories_app/routes/login/login_route.dart';
 import 'package:memories_app/routes/login/model/login_repository.dart';
+import 'package:memories_app/routes/register/bloc/register_bloc.dart';
 import 'package:memories_app/routes/register/register_route.dart';
+
+import 'package:memories_app/routes/register/model/register_repository.dart';
 
 // TODO: Edit this file as needed
 
@@ -33,12 +36,17 @@ extension AppRouteExtension on AppRoute {
             (Route route) => false);
       case AppRoute.register:
         Navigator.push(
-          context,
-          // ignore: always_specify_types
-          MaterialPageRoute(
-            builder: (BuildContext context) => const RegisterRoute(),
-          ),
-        );
+            context,
+            // ignore: always_specify_types
+            MaterialPageRoute(
+              // ignore: always_specify_types
+              builder: (BuildContext context) => BlocProvider(
+                create: (BuildContext context) =>
+                    RegisterBloc(repository: RegisterRepositoryImp())
+                      ..add(RegisterLoadDisplayEvent()),
+                child: const RegisterRoute(),
+              ),
+            ));
       case AppRoute.landing:
         final LandingBloc landingBloc = LandingBloc();
 
