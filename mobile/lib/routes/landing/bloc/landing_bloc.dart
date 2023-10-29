@@ -5,12 +5,18 @@ part 'landing_event.dart';
 part 'landing_state.dart';
 
 class LandingBloc extends Bloc<LandingEvent, LandingState> {
-  LandingBloc() : super(const LandingInitial(tabIndex: 0)) {
-    on<LandingTabChangeEvent>(_onLandingTabChangeEvent);
+  LandingBloc() : super(const LandingInitial()) {
+    on<LandingLoadEvent>(_onLandingLoadEvent);
+    on<LandingOnPageChangedEvent>(_onLandingOnPageChangedEvent);
+  }
+  void _onLandingOnPageChangedEvent(
+      LandingOnPageChangedEvent event, Emitter<LandingState> emit) async {
+    emit(LandingDisplayState(tabIndex: event.tabIndex));
+    emit(LandingJumpToPageState(tabIndex: event.tabIndex));
   }
 
-  void _onLandingTabChangeEvent(
-      LandingTabChangeEvent event, Emitter<LandingState> emit) async {
-    emit(LandingInitial(tabIndex: event.tabIndex));
+  void _onLandingLoadEvent(
+      LandingLoadEvent event, Emitter<LandingState> emit) async {
+    emit(LandingDisplayState(tabIndex: event.tabIndex));
   }
 }
