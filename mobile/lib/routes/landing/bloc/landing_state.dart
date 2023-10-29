@@ -1,11 +1,21 @@
 part of 'landing_bloc.dart';
 
 sealed class LandingState {
-  final int tabIndex;
-
-  const LandingState({required this.tabIndex});
+  const LandingState();
 }
 
 class LandingInitial extends LandingState {
-  const LandingInitial({required super.tabIndex});
+  const LandingInitial();
+}
+
+class LandingDisplayState extends LandingState {
+  final int tabIndex;
+
+  const LandingDisplayState({required this.tabIndex});
+}
+
+class LandingJumpToPageState extends LandingState {
+  final int tabIndex;
+
+  const LandingJumpToPageState({required this.tabIndex});
 }

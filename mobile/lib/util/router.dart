@@ -47,7 +47,8 @@ extension AppRouteExtension on AppRoute {
             // ignore: always_specify_types
             MaterialPageRoute(
               builder: (BuildContext context) => BlocProvider<LandingBloc>(
-                create: (BuildContext context) => landingBloc,
+                create: (BuildContext context) =>
+                    landingBloc..add(LandingLoadEvent(tabIndex: 0)),
                 child: const LandingPage(),
               ),
             ),
