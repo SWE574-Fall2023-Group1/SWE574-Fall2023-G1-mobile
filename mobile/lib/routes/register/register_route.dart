@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memories_app/routes/register/bloc/register_bloc.dart';
 import 'package:memories_app/ui/primary_button.dart';
 import 'package:memories_app/ui/shows_dialog.dart';
-import 'package:memories_app/util/router.dart';
 import 'package:memories_app/util/utils.dart';
 
 class RegisterRoute extends StatefulWidget {
