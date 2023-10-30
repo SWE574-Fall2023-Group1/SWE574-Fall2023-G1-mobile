@@ -1,11 +1,11 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memories_app/routes/home/bloc/home_bloc.dart';
-import 'package:memories_app/routes/home/model/post_response_model.dart';
-
-import '../../util/router.dart';
+import 'package:memories_app/routes/home/model/home_repository.dart';
+import 'package:memories_app/routes/home/model/request/all_stories_request_model.dart';
+import 'package:memories_app/routes/home/model/response/stories_response_model.dart';
+import 'package:memories_app/util/router.dart';
+import 'package:memories_app/routes/home/model/story_model.dart';
 
 class HomeRoute extends StatefulWidget {
   const HomeRoute({super.key});
@@ -19,11 +19,12 @@ class PostList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<PostModel>>(
+    return FutureBuilder<List<StoryModel>>(
       future: loadPosts(context),
-      builder: (BuildContext context, AsyncSnapshot<List<PostModel>> snapshot) {
+      builder:
+          (BuildContext context, AsyncSnapshot<List<StoryModel>> snapshot) {
         if (snapshot.hasData) {
-          List<PostModel> posts = snapshot.data!;
+          List<StoryModel> posts = snapshot.data!;
           return ListView.builder(
             itemCount: posts.length,
             itemBuilder: (BuildContext context, int index) {
@@ -40,22 +41,19 @@ class PostList extends StatelessWidget {
   }
 }
 
-Future<List<PostModel>> loadPosts(BuildContext context) async {
-  List<dynamic> jsonList = jsonDecode(await DefaultAssetBundle.of(context)
-      .loadString('assets/home/mock_up.json'));
+Future<List<StoryModel>> loadPosts(BuildContext context) async {
+  AllStoriesRequestModel requestModel =
+      AllStoriesRequestModel(page: 1, size: 10);
 
-  return jsonList.map((json) {
-    return PostModel(
-      username: json['username'],
-      title: json['title'],
-      date: json['date'],
-      location: json['location'],
-    );
-  }).toList();
+  StoriesResponseModel? responseModel;
+
+  responseModel = await HomeRepositoryImp().getAllStories(requestModel);
+
+  return responseModel.stories;
 }
 
 class PostCard extends StatelessWidget {
-  final PostModel post;
+  final StoryModel post;
 
   const PostCard({required this.post, super.key});
 
@@ -73,7 +71,7 @@ class PostCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'By ${post.username}',
+              'By ${post.author_username}',
               style: const TextStyle(
                 color: Color(0xFFAFB4B7),
                 fontSize: 14,
@@ -107,7 +105,7 @@ class PostCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  post.date,
+                  post.date ?? "",
                   style: const TextStyle(
                     color: Color(0xFFAFB4B7),
                     fontSize: 14,
@@ -128,7 +126,7 @@ class PostCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  post.location,
+                  post.location_ids[0].name,
                   style: const TextStyle(
                     color: Color(0xFFAFB4B7),
                     fontSize: 14,
