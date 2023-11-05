@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:memories_app/routes/landing/landing_page.dart';
 import 'package:memories_app/routes/login/bloc/login_bloc.dart';
 import 'package:memories_app/routes/login/login_route.dart';
 import 'package:memories_app/routes/login/model/login_repository.dart';
@@ -18,12 +19,15 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: BlocProvider<LoginBloc>(
-        create: (BuildContext context) =>
-            LoginBloc(repository: _Constants.loginRepository)
-              ..add(LoginLoadDisplayEvent()),
-        child: const LoginRoute(),
-      ),
-    );
+        home: BlocProvider<LoginBloc>(
+          create: (BuildContext context) =>
+              LoginBloc(repository: _Constants.loginRepository)
+                ..add(LoginLoadDisplayEvent()),
+          child: const LoginRoute(),
+        ),
+        routes: <String, WidgetBuilder>{
+          LoginRoute.routeName: (BuildContext context) => const LoginRoute(),
+          LandingPage.routeName: (BuildContext context) => const LandingPage(),
+        });
   }
 }

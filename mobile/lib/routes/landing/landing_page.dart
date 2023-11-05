@@ -7,6 +7,7 @@ import 'package:memories_app/util/utils.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
+  static const String routeName = '/landing';
 
   @override
   State<LandingPage> createState() => _LandingPageState();
