@@ -47,14 +47,32 @@ class _RegisterRouteState extends State<RegisterRoute> {
           return const CircularProgressIndicator();
         } else if (state is RegisterDisplayState) {
           return Material(
-            child: SafeArea(
-              child: Column(children: <Widget>[
-                AppBar(title: const Text("Register"), centerTitle: true),
-                const SizedBox(height: SpaceSizes.x32),
-                _buildRegisterFormsSection(context, state),
-                const Spacer(),
-                _buildRegisterButton(context, state),
-              ]),
+            child: Scaffold(
+              appBar: AppBar(
+                title: const Text(
+                  "Register",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: FontSizes.regularSize,
+                      fontWeight: FontWeight.w700),
+                ),
+                backgroundColor: Colors.white,
+                elevation: 0,
+                centerTitle: true,
+                leading: IconButton(
+                  icon: Image.asset("assets/register/chevron-left.png"),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ),
+              body: Container(
+                color: Colors.white,
+                child: Column(children: <Widget>[
+                  const SizedBox(height: SpaceSizes.x32),
+                  _buildRegisterFormsSection(context, state),
+                  const Spacer(),
+                  _buildRegisterButton(context, state),
+                ]),
+              ),
             ),
           );
         }

@@ -14,6 +14,53 @@ class HomeRoute extends StatefulWidget {
   State<HomeRoute> createState() => _HomeRouteState();
 }
 
+class _HomeRouteState extends State<HomeRoute>
+    with AutomaticKeepAliveClientMixin<HomeRoute> {
+  @override
+  bool get wantKeepAlive => true;
+
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return BlocConsumer<HomeBloc, HomeState>(
+      builder: (BuildContext context, HomeState state) {
+        Widget container;
+        if (state is HomeInitial) {
+          container = const CircularProgressIndicator();
+        } else if (state is HomeDisplayState) {
+          container = MaterialApp(
+            home: Scaffold(
+              appBar: AppBar(
+                backgroundColor: Colors.white,
+                leading: IconButton(
+                  icon: const Icon(
+                    Icons.power_settings_new,
+                    color: Colors.black87, // Set the color to dark grey
+                  ),
+                  // You can use any other icon you prefer
+                  onPressed: () {
+                    handleLogout(context);
+                  },
+                ),
+                title: Image.asset(
+                  'assets/login/logo.png',
+                  height: 140,
+                ),
+                centerTitle: true,
+              ),
+              body: const PostList(),
+            ),
+          );
+        } else {
+          container = const CircularProgressIndicator();
+        }
+        return container;
+      },
+      listener: (BuildContext context, HomeState state) {},
+    );
+  }
+}
+
 class PostList extends StatelessWidget {
   const PostList({super.key});
 
@@ -161,53 +208,6 @@ class PostCard extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class _HomeRouteState extends State<HomeRoute>
-    with AutomaticKeepAliveClientMixin<HomeRoute> {
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context);
-    return BlocConsumer<HomeBloc, HomeState>(
-      builder: (BuildContext context, HomeState state) {
-        Widget container;
-        if (state is HomeInitial) {
-          container = const CircularProgressIndicator();
-        } else if (state is HomeDisplayState) {
-          container = MaterialApp(
-            home: Scaffold(
-              appBar: AppBar(
-                backgroundColor: Colors.white,
-                leading: IconButton(
-                  icon: const Icon(
-                    Icons.power_settings_new,
-                    color: Colors.black87, // Set the color to dark grey
-                  ),
-                  // You can use any other icon you prefer
-                  onPressed: () {
-                    handleLogout(context);
-                  },
-                ),
-                title: Image.asset(
-                  'assets/login/logo.png',
-                  height: 140,
-                ),
-                centerTitle: true,
-              ),
-              body: const PostList(),
-            ),
-          );
-        } else {
-          container = const CircularProgressIndicator();
-        }
-        return container;
-      },
-      listener: (BuildContext context, HomeState state) {},
     );
   }
 }
