@@ -11,6 +11,7 @@ import "package:memories_app/util/utils.dart";
 
 class LoginRoute extends StatefulWidget {
   const LoginRoute({super.key});
+  static const String routeName = '/login';
 
   @override
   State<LoginRoute> createState() => _LoginRouteState();

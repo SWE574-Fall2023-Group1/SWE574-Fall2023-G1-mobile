@@ -1,4 +1,4 @@
-import 'package:memories_app/app.dart';
+import 'package:memories_app/routes/app/app.dart';
 
 void main() {
   runApplication();
