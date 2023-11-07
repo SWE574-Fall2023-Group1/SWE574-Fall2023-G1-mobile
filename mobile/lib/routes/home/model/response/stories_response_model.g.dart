@@ -10,7 +10,7 @@ StoriesResponseModel _$StoriesResponseModelFromJson(
         Map<String, dynamic> json) =>
     StoriesResponseModel(
       stories: (json['stories'] as List<dynamic>)
-          .map((e) => StoryModel.fromJson(e as Map<String, dynamic>))
+          .map((dynamic e) => StoryModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       hasNext: json['hasNext'] as bool?,
       hasPrev: json['hasPrev'] as bool?,

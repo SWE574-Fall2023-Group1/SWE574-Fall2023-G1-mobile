@@ -6,44 +6,55 @@ part 'story_model.g.dart';
 @JsonSerializable()
 class StoryModel {
   int id;
-  int author;
-  String author_username;
-  String title;
-  String content;
-  String story_tags;
-  List<LocationModel> location_ids;
-  String date_type;
-  String? season_name;
+  int? author;
+  @JsonKey(name: "author_username")
+  String? authorUsername;
+  String? title;
+  String? content;
+  @JsonKey(name: "story_tags")
+  String? storyTags;
+  @JsonKey(name: "location_ids")
+  List<LocationModel>? locationIds;
+  @JsonKey(name: "date_type")
+  String? dateType;
+  @JsonKey(name: "season_name")
+  String? seasonName;
   int? year;
-  int? start_year;
-  int? end_year;
+  @JsonKey(name: "start_year")
+  int? startYear;
+  @JsonKey(name: "end_year")
+  int? endYear;
   String? date;
-  DateTime creation_date;
-  String? start_date;
-  String? end_date;
+  @JsonKey(name: "creation_date")
+  DateTime? creationDate;
+  @JsonKey(name: "startDate")
+  String? startDate;
+  @JsonKey(name: "end_date")
+  String? endDate;
   int? decade;
-  bool include_time;
-  List<int> likes;
+  @JsonKey(name: "includeTime")
+  bool includeTime;
+  List<int>? likes;
 
   StoryModel({
     required this.id,
     required this.author,
-    required this.author_username,
+    required this.authorUsername,
     required this.title,
     required this.content,
-    required this.story_tags,
-    required this.location_ids,
-    required this.date_type,
-    required this.season_name,
+    required this.storyTags,
+    required this.locationIds,
+    required this.dateType,
+    required this.seasonName,
     required this.year,
-    required this.start_year,
-    required this.end_year,
+    required this.startYear,
+    required this.endYear,
     required this.date,
-    required this.creation_date,
-    required this.start_date,
-    required this.end_date,
+    required this.creationDate,
+    required this.startDate,
+    required this.endDate,
     required this.decade,
-    required this.include_time,
+    required this.includeTime,
     required this.likes,
   });
 

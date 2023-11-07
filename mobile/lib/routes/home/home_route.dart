@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memories_app/routes/home/bloc/home_bloc.dart';
 import 'package:memories_app/routes/home/model/home_repository.dart';
-import 'package:memories_app/routes/home/model/request/all_stories_request_model.dart';
+import 'package:memories_app/routes/home/model/request/user_stories_request_model.dart';
 import 'package:memories_app/routes/home/model/response/stories_response_model.dart';
 import 'package:memories_app/util/router.dart';
 import 'package:memories_app/routes/home/model/story_model.dart';
@@ -70,7 +70,7 @@ class PostList extends StatelessWidget {
       future: loadPosts(context),
       builder:
           (BuildContext context, AsyncSnapshot<List<StoryModel>> snapshot) {
-        if (snapshot.hasData) {
+        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
           List<StoryModel> posts = snapshot.data!;
           return ListView.builder(
             itemCount: posts.length,
@@ -78,6 +78,10 @@ class PostList extends StatelessWidget {
               return PostCard(post: posts[index]);
             },
             padding: const EdgeInsets.all(8),
+          );
+        } else if (snapshot.hasData && snapshot.data!.isEmpty) {
+          return const Center(
+            child: Text("There no posts from the users you are following"),
           );
         } else if (snapshot.hasError) {
           return const Center(child: Text('Error loading posts'));
@@ -89,14 +93,14 @@ class PostList extends StatelessWidget {
 }
 
 Future<List<StoryModel>> loadPosts(BuildContext context) async {
-  AllStoriesRequestModel requestModel =
-      AllStoriesRequestModel(page: 1, size: 10);
+  UserStoriesRequestModel requestModel =
+      UserStoriesRequestModel(page: 1, size: 10);
 
   StoriesResponseModel? responseModel;
 
-  responseModel = await HomeRepositoryImp().getAllStories(requestModel);
+  responseModel = await HomeRepositoryImp().getUserStories(requestModel);
 
-  return responseModel.stories;
+  return responseModel.stories ?? <StoryModel>[];
 }
 
 class PostCard extends StatelessWidget {
@@ -118,7 +122,7 @@ class PostCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'By ${post.author_username}',
+              'By ${post.authorUsername}',
               style: const TextStyle(
                 color: Color(0xFFAFB4B7),
                 fontSize: 14,
@@ -131,7 +135,7 @@ class PostCard extends StatelessWidget {
             Row(
               children: <Widget>[
                 Text(
-                  post.title,
+                  post.title ?? "",
                   style: const TextStyle(
                     color: Color(0xFF5F6565),
                     fontSize: 18,
@@ -152,7 +156,7 @@ class PostCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  post.date ?? "",
+                  post.date ?? '',
                   style: const TextStyle(
                     color: Color(0xFFAFB4B7),
                     fontSize: 14,
@@ -173,7 +177,7 @@ class PostCard extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  post.location_ids[0].name,
+                  post.locationIds?[0].name ?? '',
                   style: const TextStyle(
                     color: Color(0xFFAFB4B7),
                     fontSize: 14,

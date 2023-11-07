@@ -5,7 +5,7 @@ part 'stories_response_model.g.dart';
 
 @JsonSerializable()
 class StoriesResponseModel {
-  List<StoryModel> stories;
+  List<StoryModel>? stories;
   bool? hasNext;
   bool? hasPrev;
   dynamic nextPage;
