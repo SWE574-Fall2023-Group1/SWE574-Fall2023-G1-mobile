@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memories_app/routes/home/bloc/home_bloc.dart';
-import 'package:memories_app/routes/home/model/home_repository.dart';
-import 'package:memories_app/routes/home/model/request/user_stories_request_model.dart';
-import 'package:memories_app/routes/home/model/response/stories_response_model.dart';
 import 'package:memories_app/util/router.dart';
 import 'package:memories_app/routes/home/model/story_model.dart';
+import 'package:memories_app/util/utils.dart';
 
 class HomeRoute extends StatefulWidget {
   const HomeRoute({super.key});
@@ -26,35 +24,47 @@ class _HomeRouteState extends State<HomeRoute>
       builder: (BuildContext context, HomeState state) {
         Widget container;
         if (state is HomeInitial) {
-          container = const CircularProgressIndicator();
+          container = const Center(child: CircularProgressIndicator());
         } else if (state is HomeDisplayState) {
-          container = MaterialApp(
-            home: Scaffold(
-              appBar: AppBar(
-                backgroundColor: Colors.white,
-                leading: IconButton(
-                  icon: const Icon(
-                    Icons.power_settings_new,
-                    color: Colors.black87, // Set the color to dark grey
-                  ),
-                  // You can use any other icon you prefer
-                  onPressed: () {
-                    handleLogout(context);
-                  },
-                ),
-                title: Image.asset(
-                  'assets/login/logo.png',
-                  height: 140,
-                ),
-                centerTitle: true,
-              ),
-              body: const PostList(),
-            ),
+          container = state.stories.isNotEmpty
+              ? _buildStoryList(state.stories)
+              : const Center(
+                  child:
+                      Text("There no stories from the users you are following"),
+                );
+        } else if (state is HomeFailure) {
+          container = Center(
+            child: Text("Error: ${state.error.toString()}"),
+          );
+        } else if (state is HomeOffline) {
+          container = Center(
+            child: Text(state.offlineMessage.toString()),
           );
         } else {
-          container = const CircularProgressIndicator();
+          container = const Center(child: CircularProgressIndicator());
         }
-        return container;
+        return Material(
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              leading: IconButton(
+                icon: const Icon(
+                  Icons.power_settings_new,
+                  color: Colors.black87,
+                ),
+                onPressed: () {
+                  onPressLogout(context);
+                },
+              ),
+              title: Image.asset(
+                'assets/login/logo.png',
+                height: 140,
+              ),
+              centerTitle: true,
+            ),
+            body: container,
+          ),
+        );
       },
       listener: (BuildContext context, HomeState state) {
         if (state is HomeNavigateToLoginState) {
@@ -63,58 +73,19 @@ class _HomeRouteState extends State<HomeRoute>
       },
     );
   }
-}
 
-class PostList extends StatelessWidget {
-  const PostList({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<StoryModel>>(
-      future: loadPosts(context),
-      builder:
-          (BuildContext context, AsyncSnapshot<List<StoryModel>> snapshot) {
-        if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-          List<StoryModel> posts = snapshot.data!;
-          return ListView.builder(
-            itemCount: posts.length,
-            itemBuilder: (BuildContext context, int index) {
-              return PostCard(post: posts[index]);
-            },
-            padding: const EdgeInsets.all(8),
-          );
-        } else if (snapshot.hasData && snapshot.data!.isEmpty) {
-          return const Center(
-            child: Text("There no posts from the users you are following"),
-          );
-        } else if (snapshot.hasError) {
-          return const Center(child: Text('Error loading posts'));
-        }
-        return const Center(child: CircularProgressIndicator());
+  Widget _buildStoryList(List<StoryModel> stories) {
+    return ListView.builder(
+      itemCount: stories.length,
+      itemBuilder: (BuildContext context, int index) {
+        return _buildStoryCard(stories[index]);
       },
+      padding: const EdgeInsets.all(8),
     );
   }
 }
 
-Future<List<StoryModel>> loadPosts(BuildContext context) async {
-  UserStoriesRequestModel requestModel =
-      UserStoriesRequestModel(page: 1, size: 10);
-
-  StoriesResponseModel? responseModel;
-
-  responseModel = await HomeRepositoryImp().getUserStories(requestModel);
-
-  return responseModel.stories ?? <StoryModel>[];
-}
-
-class PostCard extends StatelessWidget {
-  final StoryModel post;
-
-  const PostCard({required this.post, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
+Widget _buildStoryCard(StoryModel story) => Card(
       elevation: 4,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
@@ -126,7 +97,7 @@ class PostCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'By ${post.authorUsername}',
+              'By ${story.authorUsername}',
               style: const TextStyle(
                 color: Color(0xFFAFB4B7),
                 fontSize: 14,
@@ -138,14 +109,16 @@ class PostCard extends StatelessWidget {
             const SizedBox(height: 16),
             Row(
               children: <Widget>[
-                Text(
-                  post.title ?? "",
-                  style: const TextStyle(
-                    color: Color(0xFF5F6565),
-                    fontSize: 18,
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w600,
-                    height: 0,
+                Expanded(
+                  child: Text(
+                    story.title ?? "",
+                    style: const TextStyle(
+                      color: Color(0xFF5F6565),
+                      fontSize: 18,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w600,
+                      height: 0,
+                    ),
                   ),
                 ),
               ],
@@ -159,14 +132,16 @@ class PostCard extends StatelessWidget {
                   width: 20,
                 ),
                 const SizedBox(width: 4),
-                Text(
-                  post.date ?? '',
-                  style: const TextStyle(
-                    color: Color(0xFFAFB4B7),
-                    fontSize: 14,
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w500,
-                    height: 0,
+                Expanded(
+                  child: Text(
+                    story.date ?? '',
+                    style: const TextStyle(
+                      color: Color(0xFFAFB4B7),
+                      fontSize: 14,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w500,
+                      height: 0,
+                    ),
                   ),
                 ),
               ],
@@ -180,17 +155,19 @@ class PostCard extends StatelessWidget {
                   width: 20,
                 ),
                 const SizedBox(width: 4),
-                Text(
-                  post.locationIds?[0].name ?? '',
-                  style: const TextStyle(
-                    color: Color(0xFFAFB4B7),
-                    fontSize: 14,
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w500,
-                    height: 0,
+                Expanded(
+                  child: Text(
+                    story.locationIds?[0].name ?? '',
+                    style: const TextStyle(
+                      color: Color(0xFFAFB4B7),
+                      fontSize: 14,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w500,
+                      height: 0,
+                    ),
                   ),
                 ),
-                const Spacer(),
+                const SizedBox(width: SpaceSizes.x16),
                 Row(
                   children: <Widget>[
                     const Text(
@@ -217,9 +194,7 @@ class PostCard extends StatelessWidget {
         ),
       ),
     );
-  }
-}
 
-void handleLogout(BuildContext context) {
+void onPressLogout(BuildContext context) {
   BlocProvider.of<HomeBloc>(context).add(HomeEventPressLogout());
 }
