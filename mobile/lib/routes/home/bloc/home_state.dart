@@ -20,3 +20,13 @@ class HomeDisplayState extends HomeState {
   @override
   String toString() => 'Displaying home state';
 }
+
+class HomeNavigateToLoginState extends HomeState {
+  const HomeNavigateToLoginState();
+
+  @override
+  List<Object?> get props => <Object?>[];
+
+  @override
+  String toString() => 'Navigating to login page';
+}

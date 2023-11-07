@@ -56,7 +56,11 @@ class _HomeRouteState extends State<HomeRoute>
         }
         return container;
       },
-      listener: (BuildContext context, HomeState state) {},
+      listener: (BuildContext context, HomeState state) {
+        if (state is HomeNavigateToLoginState) {
+          AppRoute.login.navigate(context);
+        }
+      },
     );
   }
 }
@@ -217,7 +221,5 @@ class PostCard extends StatelessWidget {
 }
 
 void handleLogout(BuildContext context) {
-  // Add your logout logic here
-  // For example, you can clear user session and navigate to the login screen.
-  AppRoute.login.navigate(context);
+  BlocProvider.of<HomeBloc>(context).add(HomeEventPressLogout());
 }
