@@ -30,4 +30,9 @@ class SPHelper {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.remove(key);
   }
+
+  static Future<void> clear() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    await preferences.clear();
+  }
 }
