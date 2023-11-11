@@ -16,7 +16,7 @@ class HomeRepositoryImp extends HomeRepository {
   @override
   Future<StoriesResponseModel> getUserStories(
       UserStoriesRequestModel request) async {
-    final Result result = await _networkManager.get(ApiEndpoints.userStories);
+    final Result result = await _networkManager.get(ApiEndpoints.allStories);
     return StoriesResponseModel.fromJson(result.json);
   }
 }

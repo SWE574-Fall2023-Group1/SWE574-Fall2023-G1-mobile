@@ -17,31 +17,49 @@ class _HomeRouteState extends State<HomeRoute>
   @override
   bool get wantKeepAlive => true;
 
+  final ScrollController _scrollController = ScrollController();
+  @override
+  void initState() {
+    _scrollController.addListener(_scrollListener);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return BlocConsumer<HomeBloc, HomeState>(
       builder: (BuildContext context, HomeState state) {
-        Widget container;
+        Widget column;
         if (state is HomeInitial) {
-          container = const Center(child: CircularProgressIndicator());
+          column = const Center(child: CircularProgressIndicator());
         } else if (state is HomeDisplayState) {
-          container = state.stories.isNotEmpty
-              ? _buildStoryList(state.stories)
+          column = state.stories.isNotEmpty
+              ? RefreshIndicator(
+                  onRefresh: _refreshStories,
+                  child: Column(children: <Widget>[
+                    Expanded(child: _buildStoryList(state.stories)),
+                    if (state.showLoadingAnimation) ...<Widget>[
+                      const SizedBox(
+                        height: SpaceSizes.x16,
+                      ),
+                      const CircularProgressIndicator(),
+                    ]
+                  ]),
+                )
               : const Center(
                   child:
                       Text("There no stories from the users you are following"),
                 );
         } else if (state is HomeFailure) {
-          container = Center(
+          column = Center(
             child: Text("Error: ${state.error.toString()}"),
           );
         } else if (state is HomeOffline) {
-          container = Center(
+          column = Center(
             child: Text(state.offlineMessage.toString()),
           );
         } else {
-          container = const Center(child: CircularProgressIndicator());
+          column = const Center(child: CircularProgressIndicator());
         }
         return Material(
           child: Scaffold(
@@ -62,7 +80,7 @@ class _HomeRouteState extends State<HomeRoute>
               ),
               centerTitle: true,
             ),
-            body: container,
+            body: column,
           ),
         );
       },
@@ -76,12 +94,24 @@ class _HomeRouteState extends State<HomeRoute>
 
   Widget _buildStoryList(List<StoryModel> stories) {
     return ListView.builder(
+      controller: _scrollController,
       itemCount: stories.length,
       itemBuilder: (BuildContext context, int index) {
         return _buildStoryCard(stories[index]);
       },
       padding: const EdgeInsets.all(8),
     );
+  }
+
+  Future<void> _scrollListener() async {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      context.read<HomeBloc>().add(HomeEventLoadMoreStory());
+    }
+  }
+
+  Future<void> _refreshStories() async {
+    context.read<HomeBloc>().add(HomeEventRefreshStories());
   }
 }
 
@@ -134,7 +164,7 @@ Widget _buildStoryCard(StoryModel story) => Card(
                 const SizedBox(width: 4),
                 Expanded(
                   child: Text(
-                    story.date ?? '',
+                    story.dateText ?? '',
                     style: const TextStyle(
                       color: Color(0xFFAFB4B7),
                       fontSize: 14,
@@ -157,7 +187,7 @@ Widget _buildStoryCard(StoryModel story) => Card(
                 const SizedBox(width: 4),
                 Expanded(
                   child: Text(
-                    story.locationIds?[0].name ?? '',
+                    Uri.decodeComponent(story.locationIds?[0].name ?? ''),
                     style: const TextStyle(
                       color: Color(0xFFAFB4B7),
                       fontSize: 14,

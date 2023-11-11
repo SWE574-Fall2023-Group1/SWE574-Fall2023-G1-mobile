@@ -35,6 +35,7 @@ class StoryModel {
   @JsonKey(name: "includeTime")
   bool includeTime;
   List<int>? likes;
+  String? dateText;
 
   StoryModel({
     required this.id,
@@ -56,6 +57,7 @@ class StoryModel {
     required this.decade,
     required this.includeTime,
     required this.likes,
+    this.dateText,
   });
 
   factory StoryModel.fromJson(Map<String, dynamic> json) =>

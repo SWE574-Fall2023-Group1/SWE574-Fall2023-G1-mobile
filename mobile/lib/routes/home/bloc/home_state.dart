@@ -13,10 +13,12 @@ class HomeInitial extends HomeState {
 
 class HomeDisplayState extends HomeState {
   final List<StoryModel> stories;
-  const HomeDisplayState({required this.stories});
+  final bool showLoadingAnimation;
+  const HomeDisplayState(
+      {required this.stories, required this.showLoadingAnimation});
 
   @override
-  List<Object?> get props => <Object?>[stories];
+  List<Object?> get props => <Object?>[stories, showLoadingAnimation];
 
   @override
   String toString() => 'Displaying home state';
