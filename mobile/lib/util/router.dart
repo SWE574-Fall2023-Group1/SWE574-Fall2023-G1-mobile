@@ -7,12 +7,13 @@ import 'package:memories_app/routes/login/login_route.dart';
 import 'package:memories_app/routes/login/model/login_repository.dart';
 import 'package:memories_app/routes/register/bloc/register_bloc.dart';
 import 'package:memories_app/routes/register/register_route.dart';
-
 import 'package:memories_app/routes/register/model/register_repository.dart';
+import 'package:memories_app/routes/story_detail/bloc/story_detail_bloc.dart';
+import 'package:memories_app/routes/story_detail/story_detail_route.dart';
 
 // TODO: Edit this file as needed
 
-enum AppRoute { login, register, landing }
+enum AppRoute { login, register, landing, storyDetail }
 
 extension AppRouteExtension on AppRoute {
   void navigate(BuildContext context, {Object? arguments}) async {
@@ -62,6 +63,19 @@ extension AppRouteExtension on AppRoute {
             ),
             // ignore: always_specify_types
             (Route route) => false);
+      case AppRoute.storyDetail:
+        Navigator.push(
+            context,
+            // ignore: always_specify_types
+            MaterialPageRoute(
+              // ignore: always_specify_types
+              builder: (BuildContext context) => BlocProvider<StoryDetailBloc>(
+                create: (BuildContext context) => StoryDetailBloc(),
+                child: StoryDetailRoute(
+                  storyId: int.parse(arguments.toString()),
+                ),
+              ),
+            ));
     }
   }
 }

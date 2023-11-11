@@ -10,14 +10,14 @@ LocationModel _$LocationModelFromJson(Map<String, dynamic> json) =>
     LocationModel(
       id: json['id'] as int,
       name: json['name'] as String,
-      latitude: json['latitude'] as String,
-      longitude: json['longitude'] as String,
+      msg: json['msg'] as String,
+      success: json['success'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$LocationModelToJson(LocationModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'latitude': instance.latitude,
-      'longitude': instance.longitude,
+      'success': instance.success,
+      'msg': instance.msg,
     };

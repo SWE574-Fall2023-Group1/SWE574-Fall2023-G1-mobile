@@ -18,6 +18,7 @@ class _HomeRouteState extends State<HomeRoute>
   bool get wantKeepAlive => true;
 
   final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     _scrollController.addListener(_scrollListener);
@@ -97,7 +98,13 @@ class _HomeRouteState extends State<HomeRoute>
       controller: _scrollController,
       itemCount: stories.length,
       itemBuilder: (BuildContext context, int index) {
-        return _buildStoryCard(stories[index]);
+        return GestureDetector(
+          onTap: () {
+            AppRoute.storyDetail
+                .navigate(context, arguments: stories[index].id);
+          },
+          child: _buildStoryCard(stories[index]),
+        );
       },
       padding: const EdgeInsets.all(8),
     );
