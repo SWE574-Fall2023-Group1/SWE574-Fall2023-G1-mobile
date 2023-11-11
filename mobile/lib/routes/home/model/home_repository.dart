@@ -1,10 +1,10 @@
 import 'package:memories_app/network/network_manager.dart';
-import 'package:memories_app/routes/home/model/request/user_stories_request_model.dart';
 import 'package:memories_app/routes/home/model/response/stories_response_model.dart';
 import 'package:memories_app/util/api_endpoints.dart';
 
 abstract class HomeRepository {
-  Future<StoriesResponseModel> getUserStories(UserStoriesRequestModel request);
+  Future<StoriesResponseModel> getUserStories(
+      {required int page, required int size});
 }
 
 class HomeRepositoryImp extends HomeRepository {
@@ -15,8 +15,9 @@ class HomeRepositoryImp extends HomeRepository {
 
   @override
   Future<StoriesResponseModel> getUserStories(
-      UserStoriesRequestModel request) async {
-    final Result result = await _networkManager.get(ApiEndpoints.userStories);
+      {required int page, required int size}) async {
+    final Result result =
+        await _networkManager.get(ApiEndpoints.buildUserStoriesUrl(page, size));
     return StoriesResponseModel.fromJson(result.json);
   }
 }
