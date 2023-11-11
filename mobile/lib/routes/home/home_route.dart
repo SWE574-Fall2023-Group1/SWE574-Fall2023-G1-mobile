@@ -100,8 +100,7 @@ class _HomeRouteState extends State<HomeRoute>
       itemBuilder: (BuildContext context, int index) {
         return GestureDetector(
           onTap: () {
-            AppRoute.storyDetail
-                .navigate(context, arguments: stories[index].id);
+            AppRoute.storyDetail.navigate(context, arguments: stories[index]);
           },
           child: _buildStoryCard(stories[index]),
         );

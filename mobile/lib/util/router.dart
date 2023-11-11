@@ -10,6 +10,7 @@ import 'package:memories_app/routes/register/register_route.dart';
 import 'package:memories_app/routes/register/model/register_repository.dart';
 import 'package:memories_app/routes/story_detail/bloc/story_detail_bloc.dart';
 import 'package:memories_app/routes/story_detail/story_detail_route.dart';
+import 'package:memories_app/routes/home/model/story_model.dart';
 
 // TODO: Edit this file as needed
 
@@ -72,7 +73,7 @@ extension AppRouteExtension on AppRoute {
               builder: (BuildContext context) => BlocProvider<StoryDetailBloc>(
                 create: (BuildContext context) => StoryDetailBloc(),
                 child: StoryDetailRoute(
-                  storyId: int.parse(arguments.toString()),
+                  story: arguments as StoryModel,
                 ),
               ),
             ));
