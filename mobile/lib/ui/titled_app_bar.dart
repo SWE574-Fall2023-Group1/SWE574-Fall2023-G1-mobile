@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:memories_app/util/Styles.dart';
+import 'package:memories_app/util/styles.dart';
 
 class TitledAppBar {
   static AppBar createAppBar({required String title}) {

@@ -23,6 +23,7 @@ dependencies:
   connectivity_plus: ^5.0.1
   golden_toolkit: ^0.15.0
   flutter_html: ^3.0.0-beta.2
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:
