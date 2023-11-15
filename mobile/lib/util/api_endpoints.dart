@@ -13,4 +13,12 @@ class ApiEndpoints {
   static String buildStoryGetUrl(int id) {
     return "user/storyGet/$id";
   }
+
+  static String getCommentsByStoryId(int id) {
+    return "user/commentsByStory/$id";
+  }
+
+  static String getAvatarById(int id) {
+    return "user/profilePhoto/$id";
+  }
 }
