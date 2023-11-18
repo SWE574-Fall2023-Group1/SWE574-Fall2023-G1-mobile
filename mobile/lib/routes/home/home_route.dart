@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memories_app/routes/home/bloc/home_bloc.dart';
+import 'package:memories_app/routes/map_test.dart';
 import 'package:memories_app/util/router.dart';
 import 'package:memories_app/routes/home/model/story_model.dart';
 import 'package:memories_app/util/utils.dart';
@@ -46,9 +47,17 @@ class _HomeRouteState extends State<HomeRoute>
                     ]
                   ]),
                 )
-              : const Center(
-                  child:
+              : Center(
+                  child: Column(
+                    children: [
+                      FloatingActionButton(onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => MapTest(),
+                        ));
+                      }),
                       Text("There no stories from the users you are following"),
+                    ],
+                  ),
                 );
         } else if (state is HomeFailure) {
           column = Center(
