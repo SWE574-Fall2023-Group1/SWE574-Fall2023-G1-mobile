@@ -14,7 +14,7 @@ class FlutterMapZoomButtons extends StatelessWidget {
   final IconData zoomInIcon;
   final IconData zoomOutIcon;
 
-  static const _fitBoundsPadding = EdgeInsets.all(12);
+  static const EdgeInsets _fitBoundsPadding = EdgeInsets.all(12);
 
   const FlutterMapZoomButtons({
     super.key,
@@ -33,7 +33,7 @@ class FlutterMapZoomButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final camera = MapCamera.of(context);
+    final MapCamera camera = MapCamera.of(context);
 
     return Align(
       alignment: alignment,
@@ -48,11 +48,11 @@ class FlutterMapZoomButtons extends StatelessWidget {
               mini: mini,
               backgroundColor: zoomInColor ?? Theme.of(context).primaryColor,
               onPressed: () {
-                final paddedMapCamera = CameraFit.bounds(
+                final MapCamera paddedMapCamera = CameraFit.bounds(
                   bounds: camera.visibleBounds,
                   padding: _fitBoundsPadding,
                 ).fit(camera);
-                var zoom = paddedMapCamera.zoom + 1;
+                double zoom = paddedMapCamera.zoom + 1;
                 if (zoom > maxZoom) {
                   zoom = maxZoom;
                 }
@@ -69,11 +69,11 @@ class FlutterMapZoomButtons extends StatelessWidget {
               mini: mini,
               backgroundColor: zoomOutColor ?? Theme.of(context).primaryColor,
               onPressed: () {
-                final paddedMapCamera = CameraFit.bounds(
+                final MapCamera paddedMapCamera = CameraFit.bounds(
                   bounds: camera.visibleBounds,
                   padding: _fitBoundsPadding,
                 ).fit(camera);
-                var zoom = paddedMapCamera.zoom - 1;
+                double zoom = paddedMapCamera.zoom - 1;
                 if (zoom < minZoom) {
                   zoom = minZoom;
                 }
