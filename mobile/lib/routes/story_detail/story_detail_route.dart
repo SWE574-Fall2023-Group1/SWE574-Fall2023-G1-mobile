@@ -12,6 +12,7 @@ import 'package:memories_app/routes/story_detail/bloc/story_detail_state.dart';
 import 'package:memories_app/routes/story_detail/model/story_detail_repository.dart';
 import 'package:memories_app/ui/date_text_view.dart';
 import 'package:memories_app/ui/titled_app_bar.dart';
+import 'package:memories_app/util/sp_helper.dart';
 
 class StoryDetailRoute extends StatefulWidget {
   final StoryModel story;
@@ -131,9 +132,9 @@ class ShowPostDetail extends StatelessWidget {
                   ),
                 ),
                 LikesContainer(
-                    storyId: story.id,
-                    initialLikesCount: story.likes?.length ?? 0,
-                    initiallyLiked: false) // TODO: replace with real value
+                  storyId: story.id,
+                  initialLikes: story.likes ?? <int>[],
+                )
               ],
             ),
             const SizedBox(height: 6),
@@ -237,14 +238,12 @@ class StoryDateContainer extends StatelessWidget {
 }
 
 class LikesContainer extends StatefulWidget {
-  final int initialLikesCount;
-  final bool initiallyLiked;
   final int storyId;
+  final List<int> initialLikes;
 
   const LikesContainer({
     required this.storyId,
-    required this.initialLikesCount,
-    required this.initiallyLiked,
+    required this.initialLikes,
     super.key,
   });
 
@@ -259,8 +258,8 @@ class _LikesContainerState extends State<LikesContainer> {
   @override
   void initState() {
     super.initState();
-    likesCount = widget.initialLikesCount;
-    isHeartFilled = widget.initiallyLiked;
+    likesCount = widget.initialLikes.length;
+    _isInitiallyLiked();
   }
 
   void _toggleHeartFill() {
@@ -269,8 +268,16 @@ class _LikesContainerState extends State<LikesContainer> {
     });
   }
 
+  Future<void> _isInitiallyLiked() async {
+    int? currentUserId = await SPHelper.getInt(SPKeys.currentUserId);
+    setState(() {
+      isHeartFilled = widget.initialLikes.contains(currentUserId);
+    });
+  }
+
   Future<void> _postLike() async {
     await StoryDetailRepositoryImp().likeStoryById(id: widget.storyId);
+    // TODO: like counts are updated in the backend but not in list of fetched stories.
   }
 
   @override

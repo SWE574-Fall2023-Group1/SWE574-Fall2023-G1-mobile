@@ -5,9 +5,11 @@ import 'package:equatable/equatable.dart';
 import 'package:memories_app/routes/login/model/login_repository.dart';
 import 'package:memories_app/routes/login/model/login_request_model.dart';
 import 'package:memories_app/routes/login/model/login_response_model.dart';
+import 'package:memories_app/routes/login/model/user_details_response_model.dart';
 import 'package:memories_app/util/sp_helper.dart';
 
 part 'login_event.dart';
+
 part 'login_state.dart';
 
 class _Constants {
@@ -90,13 +92,16 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     await SPHelper.setString(SPKeys.refreshTokenKey, refreshToken);
   }
 
-  Future<void> _saveLoginInfo() async {
+  Future<void> _saveLoginInfo(
+      UserDetailsResponseModel userDetailsResponseModel) async {
     await SPHelper.setBool(SPKeys.isLoggedIn, true);
+    await SPHelper.setInt(SPKeys.currentUserId, userDetailsResponseModel.id);
   }
 
   FutureOr<void> _onPressLoginButtonEvent(
       LoginPressLoginButtonEvent event, Emitter<LoginState> emit) async {
-    LoginResponseModel? response;
+    LoginResponseModel? loginResponseModel;
+    UserDetailsResponseModel? userDetailsResponseModel;
 
     LoginRequestModel request = LoginRequestModel(
       username: event.username,
@@ -104,21 +109,23 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     );
 
     try {
-      response = await _repository.login(request);
+      loginResponseModel = await _repository.login(request);
     } on SocketException {
       emit(const LoginOffline(offlineMessage: _Constants.offlineMessage));
     } catch (error) {
       emit(LoginFailure(error: error.toString()));
     }
 
-    if (response != null) {
-      if (response.success == true && response.refresh != null) {
+    if (loginResponseModel != null) {
+      if (loginResponseModel.success == true &&
+          loginResponseModel.refresh != null) {
         /// INFO: save refresh token locally
-        await _saveRefreshToken(response.refresh!);
-        await _saveLoginInfo();
+        await _saveRefreshToken(loginResponseModel.refresh!);
+        userDetailsResponseModel = await _repository.getUserDetails();
+        await _saveLoginInfo(userDetailsResponseModel);
         emit(const LoginSuccess());
       } else {
-        emit(LoginFailure(error: response.msg.toString()));
+        emit(LoginFailure(error: loginResponseModel.msg.toString()));
       }
     }
   }

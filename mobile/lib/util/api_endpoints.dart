@@ -1,6 +1,7 @@
 class ApiEndpoints {
   static const String login = "user/login";
   static const String register = "user/register";
+  static const String getUserDetails = "user/userDetails";
 
   static String buildAllStoriesUrl(int page, int size) {
     return "user/allStories?page=$page&size=$size";
