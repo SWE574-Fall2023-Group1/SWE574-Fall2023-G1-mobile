@@ -130,7 +130,7 @@ class ShowPostDetail extends StatelessWidget {
                     ],
                   ),
                 ),
-                LikesContainer(likesCount: story.likes?.length)
+                LikesContainer(initialLikesCount: story.likes?.length ?? 0)
               ],
             ),
             const SizedBox(height: 6),
@@ -233,20 +233,38 @@ class StoryDateContainer extends StatelessWidget {
   }
 }
 
-class LikesContainer extends StatelessWidget {
-  final int? likesCount;
+class LikesContainer extends StatefulWidget {
+  final int initialLikesCount;
 
-  const LikesContainer({required this.likesCount, super.key});
+  const LikesContainer({
+    required this.initialLikesCount,
+    super.key,
+  });
+
+  @override
+  State<LikesContainer> createState() => _LikesContainerState();
+}
+
+class _LikesContainerState extends State<LikesContainer> {
+  late int likesCount;
+  bool isHeartFilled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    likesCount = widget.initialLikesCount;
+  }
+
+  void _toggleHeartFill() {
+    setState(() {
+      isHeartFilled = !isHeartFilled;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
-        const Icon(
-          Icons.favorite_border,
-          color: Colors.black,
-        ),
-        const SizedBox(width: 8),
         Container(
           padding: const EdgeInsets.all(12),
           decoration: const BoxDecoration(
@@ -254,7 +272,7 @@ class LikesContainer extends StatelessWidget {
             color: Color(0xFFD9D9D9),
           ),
           child: Text(
-            likesCount?.toString() ?? "0",
+            likesCount.toString(),
             style: const TextStyle(
               color: Colors.black,
               fontSize: 14,
@@ -263,6 +281,26 @@ class LikesContainer extends StatelessWidget {
               height: 0,
               letterSpacing: 1.75,
             ),
+          ),
+        ),
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              likesCount++;
+            });
+          },
+          onTapDown: (_) {
+            _toggleHeartFill();
+          },
+          onTapUp: (_) {
+            _toggleHeartFill();
+          },
+          onTapCancel: () {
+            _toggleHeartFill();
+          },
+          child: Icon(
+            isHeartFilled ? Icons.favorite : Icons.favorite_border,
+            color: isHeartFilled ? Colors.red : Colors.black,
           ),
         ),
       ],

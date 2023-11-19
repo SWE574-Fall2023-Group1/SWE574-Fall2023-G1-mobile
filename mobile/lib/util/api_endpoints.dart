@@ -21,4 +21,8 @@ class ApiEndpoints {
   static String getAvatarById(int id) {
     return "user/profilePhoto/$id";
   }
+
+  static String likeStory(int id) {
+    return "user/like/$id";
+  }
 }
