@@ -130,7 +130,10 @@ class ShowPostDetail extends StatelessWidget {
                     ],
                   ),
                 ),
-                LikesContainer(initialLikesCount: story.likes?.length ?? 0)
+                LikesContainer(
+                    storyId: story.id,
+                    initialLikesCount: story.likes?.length ?? 0,
+                    initiallyLiked: false) // TODO: replace with real value
               ],
             ),
             const SizedBox(height: 6),
@@ -235,9 +238,13 @@ class StoryDateContainer extends StatelessWidget {
 
 class LikesContainer extends StatefulWidget {
   final int initialLikesCount;
+  final bool initiallyLiked;
+  final int storyId;
 
   const LikesContainer({
+    required this.storyId,
     required this.initialLikesCount,
+    required this.initiallyLiked,
     super.key,
   });
 
@@ -253,12 +260,17 @@ class _LikesContainerState extends State<LikesContainer> {
   void initState() {
     super.initState();
     likesCount = widget.initialLikesCount;
+    isHeartFilled = widget.initiallyLiked;
   }
 
   void _toggleHeartFill() {
     setState(() {
       isHeartFilled = !isHeartFilled;
     });
+  }
+
+  Future<void> _postLike() async {
+    await StoryDetailRepositoryImp().likeStoryById(id: widget.storyId);
   }
 
   @override
@@ -278,7 +290,6 @@ class _LikesContainerState extends State<LikesContainer> {
               fontSize: 14,
               fontFamily: 'Inter',
               fontWeight: FontWeight.w700,
-              height: 0,
               letterSpacing: 1.75,
             ),
           ),
@@ -286,7 +297,13 @@ class _LikesContainerState extends State<LikesContainer> {
         GestureDetector(
           onTap: () {
             setState(() {
-              likesCount++;
+              if (isHeartFilled) {
+                likesCount--;
+              } else {
+                likesCount++;
+              }
+              _toggleHeartFill();
+              _postLike();
             });
           },
           onTapDown: (_) {

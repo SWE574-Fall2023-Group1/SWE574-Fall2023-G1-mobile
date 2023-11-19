@@ -15,7 +15,8 @@ class LoginRepositoryImp extends LoginRepository {
 
   @override
   Future<LoginResponseModel> login(LoginRequestModel model) async {
-    final Result result = await _networkManager.post(ApiEndpoints.login, model);
+    final Result result =
+        await _networkManager.post(ApiEndpoints.login, body: model);
     return LoginResponseModel.fromJson(result.json);
   }
 }
