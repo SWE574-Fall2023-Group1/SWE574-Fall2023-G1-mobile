@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:memories_app/routes/location_map.dart';
+import 'package:memories_app/routes/map/location_map.dart';
 import 'package:memories_app/util/router.dart';
 import 'package:memories_app/util/utils.dart';
 

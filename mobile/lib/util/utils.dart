@@ -55,3 +55,7 @@ class TestDevices {
     iphone14ProMax
   ];
 }
+
+class AppConstants {
+  static const apiKey = "AIzaSyCwMxxa__lqDW7drk5rXgyjDAVKA1t7LOY";
+}

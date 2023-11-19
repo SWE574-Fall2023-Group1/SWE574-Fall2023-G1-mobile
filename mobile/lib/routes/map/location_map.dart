@@ -1,8 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:memories_app/routes/zoom_buttons.dart';
+import 'package:memories_app/network/network_manager.dart';
+import 'package:memories_app/routes/map/location_list_tile.dart';
+import 'package:memories_app/routes/map/model/place_autocomplete_response.dart';
+import 'package:memories_app/routes/map/model/place_details_response.dart';
+import 'package:memories_app/routes/map/zoom_buttons.dart';
 import 'package:memories_app/util/utils.dart';
 
 class LocationMap extends StatefulWidget {
@@ -26,6 +32,10 @@ class _LocationMapState extends State<LocationMap> {
   List<LatLng> _currentPolylinePoints = <LatLng>[];
   String _selectedMode = 'Point';
 
+  List<Prediction> _placePredictions = <Prediction>[];
+  final TextEditingController _controller = TextEditingController();
+  final MapController _mapController = MapController();
+
   @override
   void initState() {
     super.initState();
@@ -34,6 +44,47 @@ class _LocationMapState extends State<LocationMap> {
     _markersForPoint = <Marker>[];
     _polygons = <Polygon>[];
     _completedPolylines = <Polyline>[]; // Initialize the new list
+  }
+
+  void placeAutocomplete(String query) async {
+    Uri uri = Uri.https(
+        "maps.googleapis.com",
+        "maps/api/place/autocomplete/json",
+        {"input": query, "key": AppConstants.apiKey});
+    String? response = await NetworkManager.fetchMapUrl(uri);
+    if (response != null) {
+      PlaceResponse result = PlaceResponse.fromJson(json.decode(response));
+      setState(() {
+        _placePredictions = result.predictions;
+      });
+    }
+  }
+
+  void placeDetailsMarking(String placeId) async {
+    Uri uri = Uri.https("maps.googleapis.com", "maps/api/place/details/json", {
+      "place_id": placeId,
+      "fields": ["geometry"],
+      "key": AppConstants.apiKey
+    });
+    String? response = await NetworkManager.fetchMapUrl(uri);
+    if (response != null) {
+      PlaceDetailsResponse placeDetails =
+          PlaceDetailsResponse.fromJson(json.decode(response));
+
+      final LatLng point = LatLng(
+        placeDetails.result.geometry.location.lat,
+        placeDetails.result.geometry.location.lng,
+      );
+
+      _addMarkerForPointSelection(point);
+
+      setState(() {
+        _controller.clear();
+        _placePredictions.clear();
+      });
+      FocusManager.instance.primaryFocus?.unfocus();
+      _mapController.move(point, _mapController.camera.zoom + 5);
+    }
   }
 
   void _addMarkerForPolygons(LatLng point) {
@@ -151,8 +202,14 @@ class _LocationMapState extends State<LocationMap> {
       double centroidY = sumY / _currentPolygonPoints.length;
 
       // Reverse geocode to get the address from the centroid coordinates
-      String address = await _reverseGeocode(centroidX, centroidY);
+      String address = "...";
 
+      String reverseGeocodeResult = await _reverseGeocode(centroidX, centroidY);
+      if (reverseGeocodeResult != "not found") {
+        address = 'Area around $reverseGeocodeResult';
+      } else {
+        address = "Cannot do reverse geocoding";
+      }
       // Create the Polygon with the address as the label
       setState(() {
         _polygons.add(
@@ -202,6 +259,87 @@ class _LocationMapState extends State<LocationMap> {
   Widget _buildMapAndAdressList(BuildContext context) {
     return Column(
       children: <Widget>[
+        Form(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+                horizontal: SpaceSizes.x4, vertical: SpaceSizes.x8),
+            child: TextFormField(
+              onChanged: (String value) {
+                placeAutocomplete(value);
+              },
+              controller: _controller,
+              textInputAction: TextInputAction.search,
+              decoration: InputDecoration(
+                border: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.grey),
+                ),
+                filled: true,
+                hintText: "Search your location",
+                prefixIcon: const Padding(
+                  padding: EdgeInsets.symmetric(vertical: SpaceSizes.x4),
+                  child: Icon(
+                    Icons.location_pin,
+                    color: Colors.black,
+                  ),
+                ),
+                suffixIcon: (_controller.text.isNotEmpty)
+                    ? GestureDetector(
+                        onTap: () {
+                          _controller.clear();
+                          setState(() {
+                            _placePredictions.clear();
+                          });
+                        },
+                        child: const Icon(
+                          Icons.cancel_rounded,
+                          color: AppColors.disabledButtonTextColor,
+                        ),
+                      )
+                    : null,
+              ),
+            ),
+          ),
+        ),
+        const Divider(
+          height: 4,
+          thickness: 2,
+        ),
+        Padding(
+          padding: const EdgeInsets.all(SpaceSizes.x8),
+          child: ElevatedButton.icon(
+            onPressed: () {},
+            icon: Image.asset(
+              "assets/navigation.png",
+              height: 16,
+            ),
+            label: const Text("Use my Current Location"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.buttonColor,
+              elevation: 0,
+              minimumSize: const Size.fromHeight(50), // NEW
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+              ),
+            ),
+          ),
+        ),
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: _placePredictions.length,
+          itemBuilder: (BuildContext context, int index) => LocationListTile(
+              location: _placePredictions[index].description,
+              press: () {
+                placeDetailsMarking(_placePredictions[index].placeId);
+              }),
+        ),
+        if (_placePredictions.isNotEmpty)
+          const SizedBox(
+            height: SpaceSizes.x16,
+          ),
         SizedBox(
           height: MediaQuery.of(context).size.height * 0.5,
           child: Stack(
@@ -467,39 +605,48 @@ class _LocationMapState extends State<LocationMap> {
   FlutterMap _buildMap() {
     return FlutterMap(
       options: MapOptions(
-        onTap: (TapPosition tapPosition, LatLng point) {
-          if (_selectedMode == "Polygon") {
-            if (_currentPolygonPoints.isEmpty) {
-              // Start a new polygon
+          onTap: (TapPosition tapPosition, LatLng point) {
+            if (_selectedMode == "Polygon") {
+              if (_currentPolygonPoints.isEmpty) {
+                // Start a new polygon
+                setState(() {
+                  _startNewPolygon(point);
+                });
+              } else {
+                // Continue adding points to the current polygon
+                setState(() {
+                  _addPointToPolygon(point);
+                });
+              }
+            } else if (_selectedMode == "Point") {
               setState(() {
-                _startNewPolygon(point);
+                _addMarkerForPointSelection(point);
               });
-            } else {
-              // Continue adding points to the current polygon
-              setState(() {
-                _addPointToPolygon(point);
-              });
+            } else if (_selectedMode == "Polyline") {
+              if (_currentPolylinePoints.isEmpty) {
+                setState(() {
+                  _startNewPolyline(point);
+                });
+              } else {
+                setState(() {
+                  _addPointToPolyline(point);
+                });
+              }
             }
-          } else if (_selectedMode == "Point") {
-            setState(() {
-              _addMarkerForPointSelection(point);
-            });
-          } else if (_selectedMode == "Polyline") {
-            if (_currentPolylinePoints.isEmpty) {
-              setState(() {
-                _startNewPolyline(point);
-              });
-            } else {
-              setState(() {
-                _addPointToPolyline(point);
-              });
-            }
-          }
-        },
-        initialCenter: const LatLng(51.5, -0.09),
-        initialZoom: 5,
-      ),
-      mapController: MapController(),
+          },
+          initialCenter: _markersForPoint.isNotEmpty
+              ? _markersForPoint.last.point
+              : _markersForPolygon.isNotEmpty
+                  ? _markersForPolygon.last.point
+                  : _markersForPolyline.isNotEmpty
+                      ? _markersForPolyline.last.point
+                      : const LatLng(51.5, -0.09),
+          initialZoom: _markersForPolygon.isNotEmpty ||
+                  _markersForPoint.isNotEmpty ||
+                  _markersForPolyline.isNotEmpty
+              ? 8
+              : 5),
+      mapController: _mapController,
       children: <Widget>[
         TileLayer(
           urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -524,8 +671,9 @@ class _LocationMapState extends State<LocationMap> {
   }
 
   Future<String> _reverseGeocode(double latitude, double longitude) async {
-    List<Placemark> placemarks =
-        await placemarkFromCoordinates(latitude, longitude);
+    List<Placemark> placemarks = await placemarkFromCoordinates(
+        latitude, longitude,
+        localeIdentifier: "en");
 
     if (placemarks.isNotEmpty) {
       Placemark placemark = placemarks[0];
