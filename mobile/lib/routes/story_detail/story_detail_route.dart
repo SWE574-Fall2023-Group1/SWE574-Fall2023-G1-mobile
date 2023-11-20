@@ -9,8 +9,8 @@ import 'package:memories_app/routes/story_detail/wigdets/comments_container.dart
 import 'package:memories_app/routes/story_detail/wigdets/likes_container.dart';
 import 'package:memories_app/routes/story_detail/wigdets/location_names_container.dart';
 import 'package:memories_app/routes/story_detail/wigdets/story_date_container.dart';
+import 'package:memories_app/routes/story_detail/wigdets/story_detail_app_bar.dart';
 import 'package:memories_app/ui/date_text_view.dart';
-import 'package:memories_app/ui/titled_app_bar.dart';
 
 bool shouldRefreshStories = false;
 
@@ -46,7 +46,7 @@ class _StoryDetailRouteState extends State<StoryDetailRoute> {
           Widget container;
           container = MaterialApp(
             home: Scaffold(
-              appBar: TitledAppBar.createAppBar(title: "Story Detail"),
+              appBar: StoryDetailAppBar.build(context),
               body: ShowPostDetail(story: widget.story),
             ),
           );
