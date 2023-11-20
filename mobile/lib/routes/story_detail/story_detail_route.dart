@@ -14,6 +14,8 @@ import 'package:memories_app/ui/date_text_view.dart';
 import 'package:memories_app/ui/titled_app_bar.dart';
 import 'package:memories_app/util/sp_helper.dart';
 
+bool shouldRefreshStories = false;
+
 class StoryDetailRoute extends StatefulWidget {
   final StoryModel story;
 
@@ -32,20 +34,28 @@ Future<StoryModel> loadStoryById(BuildContext context, int storyId) async {
 }
 
 class _StoryDetailRouteState extends State<StoryDetailRoute> {
+  Future<bool> _onWillPop() async {
+    Navigator.pop(context, shouldRefreshStories);
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<StoryDetailBloc, StoryDetailState>(
-      builder: (BuildContext context, StoryDetailState state) {
-        Widget container;
-        container = MaterialApp(
-          home: Scaffold(
-            appBar: TitledAppBar.createAppBar(title: "Story Detail"),
-            body: ShowPostDetail(story: widget.story),
-          ),
-        );
-        return container;
-      },
-      listener: (BuildContext context, StoryDetailState state) {},
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: BlocConsumer<StoryDetailBloc, StoryDetailState>(
+        builder: (BuildContext context, StoryDetailState state) {
+          Widget container;
+          container = MaterialApp(
+            home: Scaffold(
+              appBar: TitledAppBar.createAppBar(title: "Story Detail"),
+              body: ShowPostDetail(story: widget.story),
+            ),
+          );
+          return container;
+        },
+        listener: (BuildContext context, StoryDetailState state) {},
+      ),
     );
   }
 }
@@ -277,7 +287,7 @@ class _LikesContainerState extends State<LikesContainer> {
 
   Future<void> _postLike() async {
     await StoryDetailRepositoryImp().likeStoryById(id: widget.storyId);
-    // TODO: like counts are updated in the backend but not in list of fetched stories.
+    shouldRefreshStories = true;
   }
 
   @override

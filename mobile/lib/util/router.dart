@@ -69,7 +69,6 @@ extension AppRouteExtension on AppRoute {
             context,
             // ignore: always_specify_types
             MaterialPageRoute(
-              // ignore: always_specify_types
               builder: (BuildContext context) => BlocProvider<StoryDetailBloc>(
                 create: (BuildContext context) => StoryDetailBloc(),
                 child: StoryDetailRoute(
