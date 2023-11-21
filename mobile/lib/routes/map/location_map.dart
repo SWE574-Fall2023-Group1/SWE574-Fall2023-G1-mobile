@@ -28,6 +28,10 @@ class _LocationMapState extends State<LocationMap> {
   late List<Marker> _markersForPoint;
   late List<Polygon> _polygons;
   late List<Polyline> _completedPolylines;
+  List<CircleMarker> _circleMarkers = [];
+  late ValueNotifier<double> _radiusNotifier;
+
+  double _currentRadius = 50;
 
   List<Polyline> _polylinesForPolygon = <Polyline>[];
   List<Polyline> _currentPolylinesForPolylineSelection = <Polyline>[];
@@ -46,7 +50,8 @@ class _LocationMapState extends State<LocationMap> {
     _markersForPolyline = <Marker>[];
     _markersForPoint = <Marker>[];
     _polygons = <Polygon>[];
-    _completedPolylines = <Polyline>[]; // Initialize the new list
+    _completedPolylines = <Polyline>[];
+    _radiusNotifier = ValueNotifier<double>(_currentRadius);
   }
 
   void placeAutocomplete(String query) async {
@@ -254,6 +259,30 @@ class _LocationMapState extends State<LocationMap> {
     }
   }
 
+  void _addCircleMarker(LatLng point) {
+    setState(() {
+      _circleMarkers.add(
+        CircleMarker(
+          point: point,
+          color: Colors.red.withOpacity(0.5),
+          radius: _currentRadius,
+        ),
+      );
+    });
+  }
+
+  void _updateCircleRadius() {
+    CircleMarker lastCircle = _circleMarkers.last;
+    _circleMarkers.removeLast(); // Remove the existing circle
+    _circleMarkers.add(
+      CircleMarker(
+        point: lastCircle.point,
+        color: Colors.red.withOpacity(0.5),
+        radius: _radiusNotifier.value, // Use the updated radius
+      ),
+    );
+  }
+
   Future<bool> _handleLocationPermission() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -396,17 +425,43 @@ class _LocationMapState extends State<LocationMap> {
               _buildMap(),
               if (_currentPolylinePoints.length > 1)
                 Positioned(
-                  right: 16,
+                  right: SpaceSizes.x16,
                   child: ElevatedButton(
                     child: const Text("Done"),
                     onPressed: () {
                       _completePolyline();
                     },
                   ),
-                )
+                ),
+              if (_selectedMode == "Circle" && _circleMarkers.isNotEmpty)
+                Positioned.fill(
+                  top:
+                      MediaQuery.of(context).size.height * 0.5 - SpaceSizes.x60,
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: SizedBox(
+                      width: 100,
+                      child: ValueListenableBuilder<double>(
+                        valueListenable: _radiusNotifier,
+                        builder: (context, value, child) {
+                          return Slider(
+                            value: value,
+                            min: 1.0,
+                            max: 100.0,
+                            onChanged: (double newValue) {
+                              _radiusNotifier.value = newValue;
+                              _updateCircleRadius();
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
+
         // Add selection buttons
         _buildPointSelectionModeButtons(),
         const SizedBox(
@@ -415,6 +470,7 @@ class _LocationMapState extends State<LocationMap> {
         if (_markersForPoint.isNotEmpty) ..._buildMarkerAdresses,
         if (_polygons.isNotEmpty) ..._buildPolygonAdresses,
         if (_completedPolylines.isNotEmpty) ..._buildPolylineAdresses,
+        if (_circleMarkers.isNotEmpty) ..._buildCircleAdresses,
         const SizedBox(height: SpaceSizes.x16),
       ],
     );
@@ -487,6 +543,66 @@ class _LocationMapState extends State<LocationMap> {
             ],
           ),
         ),
+    ];
+  }
+
+  List<Widget> get _buildCircleAdresses {
+    return <Widget>[
+      const Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            "Circle:",
+            style: TextStyle(fontWeight: FontWeight.w700),
+          )),
+      const SizedBox(
+        height: SpaceSizes.x8,
+      ),
+      for (CircleMarker circleMarker in _circleMarkers)
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: FutureBuilder<String>(
+                      future: _reverseGeocode(circleMarker.point.latitude,
+                          circleMarker.point.longitude),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<String> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Text(
+                              "..."); // Show loading indicator while fetching the address.
+                        } else if (snapshot.hasError) {
+                          return Text("Error: ${snapshot.error}");
+                        } else {
+                          return Text(snapshot.data != null
+                              ? "Circle area around ${snapshot.data}"
+                              : "Address not found");
+                        }
+                      },
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _circleMarkers.remove(circleMarker);
+                      });
+                    },
+                    child: const Icon(
+                      Icons.close,
+                      color: Colors.red,
+                      size: 15,
+                    ),
+                  )
+                ],
+              ),
+              const Divider(),
+            ],
+          ),
+        )
     ];
   }
 
@@ -647,6 +763,20 @@ class _LocationMapState extends State<LocationMap> {
                     _selectedMode == "Polyline" ? Colors.white : Colors.blue),
           ),
         ),
+        OutlinedButton(
+          onPressed: () {
+            setState(() {
+              _selectedMode = 'Circle';
+            });
+          },
+          style: _selectedMode == 'Circle'
+              ? ElevatedButton.styleFrom(backgroundColor: Colors.blue)
+              : null,
+          child: Text('Circle',
+              style: TextStyle(
+                  color:
+                      _selectedMode == "Circle" ? Colors.white : Colors.blue)),
+        ),
       ],
     );
   }
@@ -681,6 +811,10 @@ class _LocationMapState extends State<LocationMap> {
                   _addPointToPolyline(point);
                 });
               }
+            } else if (_selectedMode == "Circle") {
+              setState(() {
+                _addCircleMarker(point);
+              });
             }
           },
           initialCenter: _markersForPoint.isNotEmpty
@@ -689,10 +823,13 @@ class _LocationMapState extends State<LocationMap> {
                   ? _markersForPolygon.last.point
                   : _markersForPolyline.isNotEmpty
                       ? _markersForPolyline.last.point
-                      : const LatLng(51.5, -0.09),
+                      : _circleMarkers.isNotEmpty
+                          ? _circleMarkers.last.point
+                          : const LatLng(51.5, -0.09),
           initialZoom: _markersForPolygon.isNotEmpty ||
                   _markersForPoint.isNotEmpty ||
-                  _markersForPolyline.isNotEmpty
+                  _markersForPolyline.isNotEmpty ||
+                  _circleMarkers.isNotEmpty
               ? 8
               : 5),
       mapController: _mapController,
@@ -715,6 +852,7 @@ class _LocationMapState extends State<LocationMap> {
         MarkerLayer(markers: _markersForPolyline),
         PolylineLayer(polylines: _currentPolylinesForPolylineSelection),
         PolylineLayer(polylines: _completedPolylines),
+        CircleLayer(circles: _circleMarkers),
       ],
     );
   }
