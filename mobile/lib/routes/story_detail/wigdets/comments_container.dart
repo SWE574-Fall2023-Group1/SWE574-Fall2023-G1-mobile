@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:memories_app/routes/home/model/comment_model.dart';
-import 'package:memories_app/routes/home/model/request/comment_request_model.dart';
+import 'package:memories_app/routes/story_detail/model/comment_model.dart';
 import 'package:memories_app/routes/home/model/response/comments_response_model.dart';
+import 'package:memories_app/routes/story_detail/model/request/comment_request_model.dart';
 import 'package:memories_app/routes/story_detail/model/story_detail_repository.dart';
 import 'package:memories_app/routes/story_detail/story_detail_route.dart';
 import 'package:memories_app/routes/story_detail/wigdets/avatar_container.dart';

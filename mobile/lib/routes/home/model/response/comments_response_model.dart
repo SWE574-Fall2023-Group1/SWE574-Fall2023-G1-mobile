@@ -1,4 +1,4 @@
-import 'package:memories_app/routes/home/model/comment_model.dart';
+import 'package:memories_app/routes/story_detail/model/comment_model.dart';
 
 class CommentResponseModel {
   final List<CommentModel> comments;

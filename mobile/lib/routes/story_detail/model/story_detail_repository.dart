@@ -1,10 +1,10 @@
 import 'package:memories_app/network/network_manager.dart';
-import 'package:memories_app/routes/home/model/comment_model.dart';
-import 'package:memories_app/routes/home/model/request/comment_request_model.dart';
+import 'package:memories_app/routes/story_detail/model/comment_model.dart';
 import 'package:memories_app/routes/home/model/response/avatar_response_model.dart';
 import 'package:memories_app/routes/home/model/response/comments_response_model.dart';
 import 'package:memories_app/routes/home/model/response/like_response_model.dart';
 import 'package:memories_app/routes/home/model/story_model.dart';
+import 'package:memories_app/routes/story_detail/model/request/comment_request_model.dart';
 import 'package:memories_app/util/api_endpoints.dart';
 
 abstract class StoryDetailRepository {
