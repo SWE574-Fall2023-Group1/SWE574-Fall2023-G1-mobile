@@ -20,7 +20,7 @@ class StoryDetailRoute extends StatefulWidget {
   const StoryDetailRoute({required this.story, super.key});
 
   @override
-  _StoryDetailRouteState createState() => _StoryDetailRouteState();
+  StoryDetailRouteState createState() => StoryDetailRouteState();
 }
 
 Future<StoryModel> loadStoryById(BuildContext context, int storyId) async {
@@ -31,7 +31,7 @@ Future<StoryModel> loadStoryById(BuildContext context, int storyId) async {
   return responseModel;
 }
 
-class _StoryDetailRouteState extends State<StoryDetailRoute> {
+class StoryDetailRouteState extends State<StoryDetailRoute> {
   Future<bool> _onWillPop() async {
     Navigator.pop(context, shouldRefreshStories);
     return true;
@@ -150,7 +150,7 @@ class ShowPostDetail extends StatelessWidget {
               color: Colors.black,
               thickness: 1,
             ),
-            LoadComments(story: story),
+            LoadComments(storyId: story.id),
           ],
         ),
       ),

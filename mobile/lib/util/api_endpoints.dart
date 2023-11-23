@@ -16,7 +16,7 @@ class ApiEndpoints {
   }
 
   static String getCommentsByStoryId(int id) {
-    return "user/commentsByStory/$id";
+    return "user/commentsByStory/$id?size=100";
   }
 
   static String getAvatarById(int id) {

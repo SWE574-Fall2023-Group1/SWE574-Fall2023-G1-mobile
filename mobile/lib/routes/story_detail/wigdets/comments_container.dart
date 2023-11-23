@@ -3,68 +3,53 @@ import 'package:intl/intl.dart';
 import 'package:memories_app/routes/home/model/comment_model.dart';
 import 'package:memories_app/routes/home/model/request/comment_request_model.dart';
 import 'package:memories_app/routes/home/model/response/comments_response_model.dart';
-import 'package:memories_app/routes/home/model/story_model.dart';
 import 'package:memories_app/routes/story_detail/model/story_detail_repository.dart';
 import 'package:memories_app/routes/story_detail/story_detail_route.dart';
 import 'package:memories_app/routes/story_detail/wigdets/avatar_container.dart';
 import 'package:memories_app/util/sp_helper.dart';
 
 class LoadComments extends StatefulWidget {
-  final StoryModel story;
+  final int storyId;
 
-  const LoadComments({required this.story, super.key});
+  const LoadComments({required this.storyId, super.key});
 
   @override
-  _LoadCommentsState createState() => _LoadCommentsState(storyModel: story);
+  LoadCommentsState createState() => LoadCommentsState();
 }
 
-class _LoadCommentsState extends State<LoadComments> {
-  final StoryModel storyModel;
-  late Future<List<CommentModel>> _futureComments;
+class LoadCommentsState extends State<LoadComments> {
+  late Future<List<CommentModel>> comments;
 
-  _LoadCommentsState({required this.storyModel});
+  LoadCommentsState();
 
   @override
   void initState() {
     super.initState();
-    _futureComments = loadComments();
+    comments = loadComments();
   }
 
   Future<List<CommentModel>> loadComments() async {
     CommentResponseModel? responseModel;
     responseModel =
-        await StoryDetailRepositoryImp().getComments(id: widget.story.id);
+        await StoryDetailRepositoryImp().getComments(id: widget.storyId);
     return responseModel.comments;
   }
 
   void _addNewComment(CommentModel newComment) {
     setState(() {
-      _futureComments = _futureComments.then((List<CommentModel> comments) =>
-          Future.value(<CommentModel>[...comments, newComment]));
+      comments = comments.then((List<CommentModel> comments) =>
+          Future<List<CommentModel>>.value(
+              <CommentModel>[...comments, newComment]));
     });
+    shouldRefreshStories = true;
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<CommentModel>>(
-      future: _futureComments,
+      future: comments,
       builder:
           (BuildContext context, AsyncSnapshot<List<CommentModel>> snapshot) {
-        /* if (snapshot.hasData) {
-          List<CommentModel> comments = snapshot.data!;
-          return Column(children: <Widget>[
-            // ... existing code ...
-            ElevatedButton(
-              onPressed: () {
-                // Assuming you have a function to create a new comment
-                CommentModel newComment = createNewComment();
-                _addNewComment(newComment);
-              },
-              child: const Text('Add Comment'),
-            ),
-          ]);
-        }
-        */
         if (snapshot.hasData) {
           List<CommentModel> comments = snapshot.data!;
           return Column(children: <Widget>[
@@ -87,7 +72,7 @@ class _LoadCommentsState extends State<LoadComments> {
               }).toList(),
             ),
             PostCommentWidget(
-              story: widget.story,
+              storyId: widget.storyId,
               onCommentSubmitted: (CommentModel newComment) {
                 _addNewComment(newComment);
               },
@@ -174,17 +159,17 @@ class CommentWidget extends StatelessWidget {
 }
 
 class PostCommentWidget extends StatefulWidget {
-  final StoryModel story;
+  final int storyId;
   final Function(CommentModel) onCommentSubmitted;
 
   const PostCommentWidget(
-      {required this.story, required this.onCommentSubmitted, super.key});
+      {required this.storyId, required this.onCommentSubmitted, super.key});
 
   @override
-  _PostCommentWidgetState createState() => _PostCommentWidgetState();
+  PostCommentWidgetState createState() => PostCommentWidgetState();
 }
 
-class _PostCommentWidgetState extends State<PostCommentWidget> {
+class PostCommentWidgetState extends State<PostCommentWidget> {
   final TextEditingController _controller = TextEditingController();
 
   @override
@@ -209,16 +194,16 @@ class _PostCommentWidgetState extends State<PostCommentWidget> {
             onPressed: () async {
               CommentModel newComment =
                   await StoryDetailRepositoryImp().postComment(
-                id: widget.story.id,
+                id: widget.storyId,
                 requestModel: CommentRequestModel(
                   commentAuthorId:
                       await SPHelper.getInt(SPKeys.currentUserId) as int,
-                  storyId: widget.story.id,
+                  storyId: widget.storyId,
                   text: _controller.text,
                 ),
               );
+              _controller.clear();
               widget.onCommentSubmitted(newComment);
-              shouldRefreshStories = true;
             },
           ),
         ),
