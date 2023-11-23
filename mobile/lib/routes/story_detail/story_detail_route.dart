@@ -150,7 +150,7 @@ class ShowPostDetail extends StatelessWidget {
               color: Colors.black,
               thickness: 1,
             ),
-            LoadComments(storyId: story.id),
+            LoadComments(story: story),
           ],
         ),
       ),

@@ -1,4 +1,6 @@
 import 'package:memories_app/network/network_manager.dart';
+import 'package:memories_app/routes/home/model/comment_model.dart';
+import 'package:memories_app/routes/home/model/request/comment_request_model.dart';
 import 'package:memories_app/routes/home/model/response/avatar_response_model.dart';
 import 'package:memories_app/routes/home/model/response/comments_response_model.dart';
 import 'package:memories_app/routes/home/model/response/like_response_model.dart';
@@ -13,6 +15,9 @@ abstract class StoryDetailRepository {
   Future<AvatarResponseModel> getAvatarUrlById({required int id});
 
   Future<LikeResponseModel> likeStoryById({required int id});
+
+  Future<CommentModel> postComment(
+      {required int id, required CommentRequestModel requestModel});
 }
 
 class StoryDetailRepositoryImp extends StoryDetailRepository {
@@ -47,5 +52,13 @@ class StoryDetailRepositoryImp extends StoryDetailRepository {
     final Result result =
         await _networkManager.post(ApiEndpoints.likeStory(id));
     return LikeResponseModel.fromJson(result.json);
+  }
+
+  @override
+  Future<CommentModel> postComment(
+      {required int id, required CommentRequestModel requestModel}) async {
+    final Result result = await _networkManager
+        .post(ApiEndpoints.postComment(id), body: requestModel);
+    return CommentModel.fromJson(result.json);
   }
 }

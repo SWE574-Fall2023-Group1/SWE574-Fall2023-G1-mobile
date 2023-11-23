@@ -26,4 +26,8 @@ class ApiEndpoints {
   static String likeStory(int id) {
     return "user/like/$id";
   }
+
+  static String postComment(int id) {
+    return "user/comment/$id";
+  }
 }
