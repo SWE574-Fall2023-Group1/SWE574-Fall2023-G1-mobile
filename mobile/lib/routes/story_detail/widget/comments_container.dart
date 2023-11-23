@@ -5,7 +5,7 @@ import 'package:memories_app/routes/home/model/response/comments_response_model.
 import 'package:memories_app/routes/story_detail/model/request/comment_request_model.dart';
 import 'package:memories_app/routes/story_detail/model/story_detail_repository.dart';
 import 'package:memories_app/routes/story_detail/story_detail_route.dart';
-import 'package:memories_app/routes/story_detail/wigdets/avatar_container.dart';
+import 'package:memories_app/routes/story_detail/widget/avatar_container.dart';
 import 'package:memories_app/util/sp_helper.dart';
 
 class LoadComments extends StatefulWidget {

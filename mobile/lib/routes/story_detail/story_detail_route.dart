@@ -5,11 +5,11 @@ import 'package:memories_app/routes/home/model/story_model.dart';
 import 'package:memories_app/routes/story_detail/bloc/story_detail_bloc.dart';
 import 'package:memories_app/routes/story_detail/bloc/story_detail_state.dart';
 import 'package:memories_app/routes/story_detail/model/story_detail_repository.dart';
-import 'package:memories_app/routes/story_detail/wigdets/comments_container.dart';
-import 'package:memories_app/routes/story_detail/wigdets/likes_container.dart';
-import 'package:memories_app/routes/story_detail/wigdets/location_names_container.dart';
-import 'package:memories_app/routes/story_detail/wigdets/story_date_container.dart';
-import 'package:memories_app/routes/story_detail/wigdets/story_detail_app_bar.dart';
+import 'package:memories_app/routes/story_detail/widget/comments_container.dart';
+import 'package:memories_app/routes/story_detail/widget/likes_container.dart';
+import 'package:memories_app/routes/story_detail/widget/location_names_container.dart';
+import 'package:memories_app/routes/story_detail/widget/story_date_container.dart';
+import 'package:memories_app/routes/story_detail/widget/story_detail_app_bar.dart';
 import 'package:memories_app/ui/date_text_view.dart';
 
 bool shouldRefreshStories = false;
