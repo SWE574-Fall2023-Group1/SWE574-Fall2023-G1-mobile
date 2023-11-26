@@ -1,3 +1,5 @@
+// ignore_for_file: always_specify_types
+
 class Prediction {
   String description;
   List<MatchedSubstring> matchedSubstrings;

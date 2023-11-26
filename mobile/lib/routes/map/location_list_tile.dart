@@ -12,10 +12,10 @@ class LocationListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
-      children: [
+      children: <Widget>[
         ListTile(
           onTap: press,
-          leading: Icon(Icons.location_pin),
+          leading: const Icon(Icons.location_pin),
           title: Text(
             location,
             maxLines: 2,

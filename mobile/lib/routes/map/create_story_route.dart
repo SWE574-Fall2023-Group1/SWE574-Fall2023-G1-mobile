@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, always_specify_types
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -16,7 +16,6 @@ import 'package:memories_app/routes/map/zoom_buttons.dart';
 import 'package:memories_app/util/router.dart';
 import 'package:memories_app/util/utils.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:textfield_tags/textfield_tags.dart';
 
 class CreateStoryRoute extends StatefulWidget {
   const CreateStoryRoute({super.key});
@@ -32,10 +31,10 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   late List<Marker> _markersForPoint;
   late List<Polygon> _polygons;
   late List<Polyline> _completedPolylines;
-  List<CircleMarker> _circleMarkers = [];
+  final List<CircleMarker> _circleMarkers = <CircleMarker>[];
   late ValueNotifier<double> _radiusNotifier;
 
-  double _currentRadius = 50;
+  final double _currentRadius = 50;
 
   List<Polyline> _polylinesForPolygon = <Polyline>[];
   List<Polyline> _currentPolylinesForPolylineSelection = <Polyline>[];
@@ -46,8 +45,8 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   List<Prediction> _placePredictions = <Prediction>[];
   final TextEditingController _controller = TextEditingController();
   final MapController _mapController = MapController();
-  QuillController _quillController = QuillController.basic();
-  List<String> tags = [];
+  final QuillController _quillController = QuillController.basic();
+  List<String> tags = <String>[];
 
   @override
   void initState() {
@@ -66,7 +65,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
     Uri uri = Uri.https(
         "maps.googleapis.com",
         "maps/api/place/autocomplete/json",
-        {"input": query, "key": AppConstants.apiKey});
+        <String, dynamic>{"input": query, "key": AppConstants.apiKey});
     String? response = await NetworkManager.fetchMapUrl(uri);
     if (response != null) {
       PlaceResponse result = PlaceResponse.fromJson(json.decode(response));
@@ -77,9 +76,10 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   }
 
   void placeDetailsMarking(String placeId) async {
-    Uri uri = Uri.https("maps.googleapis.com", "maps/api/place/details/json", {
+    Uri uri = Uri.https(
+        "maps.googleapis.com", "maps/api/place/details/json", <String, dynamic>{
       "place_id": placeId,
-      "fields": ["geometry"],
+      "fields": <String>["geometry"],
       "key": AppConstants.apiKey
     });
     String? response = await NetworkManager.fetchMapUrl(uri);
@@ -321,9 +321,11 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   }
 
   Future<void> _getCurrentPosition() async {
-    final hasPermission = await _handleLocationPermission();
+    final bool hasPermission = await _handleLocationPermission();
 
-    if (!hasPermission) return;
+    if (!hasPermission) {
+      return;
+    }
     await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
         .then((Position position) {
       LatLng point = LatLng(position.latitude, position.longitude);
@@ -345,7 +347,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   Widget _buildPage(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Create Story"),
+        title: const Text("Create Story"),
         leading: GestureDetector(
             onTap: () {
               AppRoute.landing.navigate(context);
@@ -354,32 +356,32 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 8.0),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
+            children: <Widget>[
+              const SizedBox(
                 height: SpaceSizes.x16,
               ),
               TextFormField(
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(SpaceSizes.x8),
-                    borderSide:
-                        BorderSide(color: AppColors.disabledButtonTextColor),
+                    borderSide: const BorderSide(
+                        color: AppColors.disabledButtonTextColor),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(SpaceSizes.x8),
-                    borderSide:
-                        BorderSide(color: AppColors.disabledButtonTextColor),
+                    borderSide: const BorderSide(
+                        color: AppColors.disabledButtonTextColor),
                   ),
                   labelText: "Title",
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: SpaceSizes.x16,
               ),
-              Text(
+              const Text(
                 "Content:",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
@@ -398,16 +400,16 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
                     sharedConfigurations: const QuillSharedConfigurations(),
                   ),
                   child: Column(
-                    children: [
+                    children: <Widget>[
                       QuillToolbar(
                         configurations: QuillToolbarConfigurations(
                           embedButtons: FlutterQuillEmbeds.toolbarButtons(
                             imageButtonOptions:
-                                QuillToolbarImageButtonOptions(),
+                                const QuillToolbarImageButtonOptions(),
                           ),
                         ),
                       ),
-                      Divider(),
+                      const Divider(),
                       Expanded(
                         child: QuillEditor.basic(
                           configurations: QuillEditorConfigurations(
@@ -420,7 +422,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: SpaceSizes.x16,
               ),
               TagsField(tags: tags),
@@ -434,7 +436,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
 
   Widget _buildMapAndAdresses(BuildContext context) {
     return Column(
-      children: [
+      children: <Widget>[
         Form(
           child: Padding(
             padding: const EdgeInsets.symmetric(
@@ -541,7 +543,8 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
                       width: 100,
                       child: ValueListenableBuilder<double>(
                         valueListenable: _radiusNotifier,
-                        builder: (context, value, child) {
+                        builder: (BuildContext context, double value,
+                            Widget? child) {
                           return Slider(
                             value: value,
                             min: 1.0,
@@ -659,10 +662,10 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
         Align(
           alignment: Alignment.centerLeft,
           child: Column(
-            children: [
+            children: <Widget>[
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
+                children: <Widget>[
                   Expanded(
                     child: FutureBuilder<String>(
                       future: _reverseGeocode(circleMarker.point.latitude,

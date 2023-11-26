@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -95,7 +97,7 @@ class NetworkManager {
   static Future<String?> fetchMapUrl(Uri uri,
       {Map<String, String>? headers}) async {
     try {
-      final response = await http.get(uri, headers: headers);
+      final http.Response response = await http.get(uri, headers: headers);
       if (response.statusCode == 200) {
         return response.body;
       }
