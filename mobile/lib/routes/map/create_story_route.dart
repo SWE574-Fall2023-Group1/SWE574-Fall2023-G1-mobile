@@ -12,16 +12,17 @@ import 'package:memories_app/routes/map/location_list_tile.dart';
 import 'package:memories_app/routes/map/model/place_autocomplete_response.dart';
 import 'package:memories_app/routes/map/model/place_details_response.dart';
 import 'package:memories_app/routes/map/zoom_buttons.dart';
+import 'package:memories_app/util/router.dart';
 import 'package:memories_app/util/utils.dart';
 
-class LocationMap extends StatefulWidget {
-  const LocationMap({super.key});
+class CreateStoryRoute extends StatefulWidget {
+  const CreateStoryRoute({super.key});
 
   @override
-  State<LocationMap> createState() => _LocationMapState();
+  State<CreateStoryRoute> createState() => _CreateStoryRouteState();
 }
 
-class _LocationMapState extends State<LocationMap> {
+class _CreateStoryRouteState extends State<CreateStoryRoute> {
   // polygon variables
   late List<Marker> _markersForPolygon;
   late List<Marker> _markersForPolyline;
@@ -53,6 +54,8 @@ class _LocationMapState extends State<LocationMap> {
     _completedPolylines = <Polyline>[];
     _radiusNotifier = ValueNotifier<double>(_currentRadius);
   }
+
+  // Method to get the current state of LocationMap
 
   void placeAutocomplete(String query) async {
     Uri uri = Uri.https(
@@ -331,12 +334,35 @@ class _LocationMapState extends State<LocationMap> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildMapAndAdressList(context);
+    return _buildPage(context);
   }
 
-  Widget _buildMapAndAdressList(BuildContext context) {
+  Widget _buildPage(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Create Story"),
+        leading: GestureDetector(
+            onTap: () {
+              AppRoute.landing.navigate(context);
+            },
+            child: const Icon(Icons.close)),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          child: Column(
+            children: [
+              _buildMapAndAdresses(context),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMapAndAdresses(BuildContext context) {
     return Column(
-      children: <Widget>[
+      children: [
         Form(
           child: Padding(
             padding: const EdgeInsets.symmetric(
@@ -825,7 +851,7 @@ class _LocationMapState extends State<LocationMap> {
                       ? _markersForPolyline.last.point
                       : _circleMarkers.isNotEmpty
                           ? _circleMarkers.last.point
-                          : const LatLng(51.5, -0.09),
+                          : const LatLng(41.05, 29.03),
           initialZoom: _markersForPolygon.isNotEmpty ||
                   _markersForPoint.isNotEmpty ||
                   _markersForPolyline.isNotEmpty ||
