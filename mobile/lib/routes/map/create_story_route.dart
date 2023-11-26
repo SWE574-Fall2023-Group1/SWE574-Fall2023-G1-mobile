@@ -1,9 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -11,9 +11,12 @@ import 'package:memories_app/network/network_manager.dart';
 import 'package:memories_app/routes/map/location_list_tile.dart';
 import 'package:memories_app/routes/map/model/place_autocomplete_response.dart';
 import 'package:memories_app/routes/map/model/place_details_response.dart';
+import 'package:memories_app/routes/map/tags_field.dart';
 import 'package:memories_app/routes/map/zoom_buttons.dart';
 import 'package:memories_app/util/router.dart';
 import 'package:memories_app/util/utils.dart';
+import 'package:flutter_quill/flutter_quill.dart';
+import 'package:textfield_tags/textfield_tags.dart';
 
 class CreateStoryRoute extends StatefulWidget {
   const CreateStoryRoute({super.key});
@@ -43,6 +46,8 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   List<Prediction> _placePredictions = <Prediction>[];
   final TextEditingController _controller = TextEditingController();
   final MapController _mapController = MapController();
+  QuillController _quillController = QuillController.basic();
+  List<String> tags = [];
 
   @override
   void initState() {
@@ -349,9 +354,76 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+          padding: EdgeInsets.symmetric(horizontal: 8.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(
+                height: SpaceSizes.x16,
+              ),
+              TextFormField(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(SpaceSizes.x8),
+                    borderSide:
+                        BorderSide(color: AppColors.disabledButtonTextColor),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(SpaceSizes.x8),
+                    borderSide:
+                        BorderSide(color: AppColors.disabledButtonTextColor),
+                  ),
+                  labelText: "Title",
+                ),
+              ),
+              SizedBox(
+                height: SpaceSizes.x16,
+              ),
+              Text(
+                "Content:",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              Container(
+                height: MediaQuery.of(context).size.height * 0.75,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: AppColors
+                        .disabledButtonTextColor, // Set your border color here
+                    width: 1.0, // Set your border width here
+                  ),
+                ),
+                child: QuillProvider(
+                  configurations: QuillConfigurations(
+                    controller: _quillController,
+                    sharedConfigurations: const QuillSharedConfigurations(),
+                  ),
+                  child: Column(
+                    children: [
+                      QuillToolbar(
+                        configurations: QuillToolbarConfigurations(
+                          embedButtons: FlutterQuillEmbeds.toolbarButtons(
+                            imageButtonOptions:
+                                QuillToolbarImageButtonOptions(),
+                          ),
+                        ),
+                      ),
+                      Divider(),
+                      Expanded(
+                        child: QuillEditor.basic(
+                          configurations: QuillEditorConfigurations(
+                            padding: const EdgeInsets.all(16),
+                            embedBuilders: FlutterQuillEmbeds.editorBuilders(),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: SpaceSizes.x16,
+              ),
+              TagsField(tags: tags),
               _buildMapAndAdresses(context),
             ],
           ),
