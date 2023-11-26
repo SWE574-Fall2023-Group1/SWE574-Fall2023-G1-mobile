@@ -8,6 +8,7 @@ import 'package:memories_app/routes/login/login_route.dart';
 import 'package:memories_app/routes/login/model/login_repository.dart';
 import 'package:memories_app/routes/login/model/login_request_model.dart';
 import 'package:memories_app/routes/login/model/login_response_model.dart';
+import 'package:memories_app/routes/login/model/user_details_response_model.dart';
 import 'package:memories_app/util/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -35,6 +36,17 @@ class MockLoginRepository extends LoginRepository {
     } else {
       return _Constants.responseFailure;
     }
+  }
+
+  @override
+  Future<UserDetailsResponseModel> getUserDetails() {
+    return Future<UserDetailsResponseModel>.value(
+      UserDetailsResponseModel(
+        id: 1,
+        username: "John Doe",
+        email: "john.doe@example.com",
+      ),
+    );
   }
 }
 
