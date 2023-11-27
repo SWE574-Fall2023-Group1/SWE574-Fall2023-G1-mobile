@@ -143,7 +143,7 @@ class CommentWidget extends StatelessWidget {
           ),
           const SizedBox(height: 5),
           Text(
-            DateFormat('MM/dd/yyyy, hh:mm:ss a').format(comment.date),
+            DateFormat('HH:mm:ss, dd.MM.yyyy').format(comment.date.toLocal()),
             style: const TextStyle(
               color: Colors.black,
               fontSize: 12,
