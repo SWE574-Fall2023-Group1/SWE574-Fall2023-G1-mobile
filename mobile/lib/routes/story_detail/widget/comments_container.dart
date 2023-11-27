@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:memories_app/routes/story_detail/model/comment_model.dart';
 import 'package:memories_app/routes/home/model/response/comments_response_model.dart';
 import 'package:memories_app/routes/story_detail/model/request/comment_request_model.dart';
@@ -7,6 +6,7 @@ import 'package:memories_app/routes/story_detail/model/story_detail_repository.d
 import 'package:memories_app/routes/story_detail/story_detail_route.dart';
 import 'package:memories_app/routes/story_detail/widget/avatar_container.dart';
 import 'package:memories_app/util/sp_helper.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class LoadComments extends StatefulWidget {
   final int storyId;
@@ -63,9 +63,6 @@ class LoadCommentsState extends State<LoadComments> {
                 fontWeight: FontWeight.w700,
               ),
             ),
-            const SizedBox(
-              height: 10,
-            ),
             Column(
               children: comments.map((CommentModel comment) {
                 return CommentWidget(comment: comment);
@@ -94,9 +91,17 @@ class CommentWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(10),
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.grey[200],
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Colors.grey.shade300,
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -105,51 +110,42 @@ class CommentWidget extends StatelessWidget {
             children: <Widget>[
               LoadAvatar(id: comment.commentAuthorId),
               const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    comment.commentAuthor,
-                    style: const TextStyle(
-                      color: Color(0xFF007AFF),
-                      fontSize: 12,
-                      fontFamily: 'Inter',
-                      fontWeight: FontWeight.w700,
-                      height: 0,
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Container(
-                    decoration: const BoxDecoration(color: Colors.white),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Text(
-                        comment.text,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 12,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w700,
-                          height: 0,
-                        ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      comment.commentAuthor,
+                      style: const TextStyle(
+                        color: Color(0xFF007AFF),
+                        fontSize: 14,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 4),
+                    Text(
+                      comment.text,
+                      style: const TextStyle(
+                        color: Colors.black87,
+                        fontSize: 12,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 5),
+          const SizedBox(height: 8),
           Text(
-            DateFormat('HH:mm:ss, dd.MM.yyyy').format(comment.date.toLocal()),
+            timeago.format(comment.date.toLocal()),
             style: const TextStyle(
-              color: Colors.black,
-              fontSize: 12,
+              color: Colors.grey,
+              fontSize: 10,
               fontFamily: 'Inter',
-              fontWeight: FontWeight.w700,
-              height: 0,
+              fontWeight: FontWeight.w400,
             ),
           ),
         ],
@@ -177,20 +173,35 @@ class PostCommentWidgetState extends State<PostCommentWidget> {
     return Column(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
           child: TextField(
             controller: _controller,
             keyboardType: TextInputType.multiline,
-            decoration: const InputDecoration(
+            maxLines: null,
+            decoration: InputDecoration(
               hintText: 'Add a comment...',
-              border: OutlineInputBorder(),
+              fillColor: Colors.grey[200],
+              filled: true,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             ),
           ),
         ),
         Padding(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: ElevatedButton(
-            child: const Text('Submit'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF007AFF),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
             onPressed: () async {
               CommentModel newComment =
                   await StoryDetailRepositoryImp().postComment(
@@ -205,6 +216,14 @@ class PostCommentWidgetState extends State<PostCommentWidget> {
               _controller.clear();
               widget.onCommentSubmitted(newComment);
             },
+            child: const Text(
+              'Submit',
+              style: TextStyle(
+                fontSize: 14,
+                fontFamily: 'Inter',
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
         ),
       ],
