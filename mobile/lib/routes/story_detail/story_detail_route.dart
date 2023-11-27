@@ -117,7 +117,7 @@ class ShowPostDetail extends StatelessWidget {
             Row(
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 50),
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
                   child: StoryDateContainer(story: story),
                 )
               ],
@@ -128,9 +128,10 @@ class ShowPostDetail extends StatelessWidget {
               thickness: 1,
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 50),
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -139,9 +140,12 @@ class ShowPostDetail extends StatelessWidget {
                     ],
                   ),
                 ),
-                LikesContainer(
-                  storyId: story.id,
-                  initialLikes: story.likes ?? <int>[],
+                Padding(
+                  padding: const EdgeInsets.only(right: 30),
+                  child: LikesContainer(
+                    storyId: story.id,
+                    initialLikes: story.likes ?? <int>[],
+                  ),
                 )
               ],
             ),
