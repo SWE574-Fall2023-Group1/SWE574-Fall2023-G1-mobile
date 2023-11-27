@@ -16,7 +16,7 @@ class RegisterRepositoryImp extends RegisterRepository {
   @override
   Future<RegisterResponseModel> register(RegisterRequestModel model) async {
     final Result result =
-        await _networkManager.post(ApiEndpoints.register, model);
+        await _networkManager.post(ApiEndpoints.register, body: model);
     return RegisterResponseModel.fromJson(result.json);
   }
 }

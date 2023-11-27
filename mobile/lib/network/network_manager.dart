@@ -46,7 +46,7 @@ class NetworkManager {
     }
   }
 
-  Future<dynamic> post(String endpoint, Object body) async {
+  Future<dynamic> post(String endpoint, {Object? body}) async {
     if (!await _isConnectedToInternet()) {
       throw const SocketException('');
     }
