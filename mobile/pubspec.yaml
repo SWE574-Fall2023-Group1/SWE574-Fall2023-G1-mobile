@@ -30,6 +30,7 @@ dependencies:
   textfield_tags: ^1.4.2
   intl: ^0.18.1
   quill_html_editor: ^2.2.7
+  flutter_image_compress: ^2.1.0
 
 
 dev_dependencies:
