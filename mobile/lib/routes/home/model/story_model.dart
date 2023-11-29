@@ -1,5 +1,6 @@
 import 'package:memories_app/routes/home/model/location_model.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:memories_app/routes/story_detail/model/tag_model.dart';
 
 part 'story_model.g.dart';
 
@@ -12,7 +13,7 @@ class StoryModel {
   String? title;
   String? content;
   @JsonKey(name: "story_tags")
-  String? storyTags;
+  String? storyTags; // TagModel? storyTags;
   @JsonKey(name: "location_ids")
   List<LocationModel>? locationIds;
   @JsonKey(name: "date_type")
