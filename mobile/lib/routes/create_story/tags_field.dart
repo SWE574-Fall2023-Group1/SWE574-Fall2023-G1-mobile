@@ -45,7 +45,7 @@ class TagsField extends StatelessWidget {
           tagPadding: const EdgeInsets.all(6.0)),
       textFieldStyler: TextFieldStyler(
           //styling tag text field
-          helperText: "",
+          helperText: '',
           hintText: "Enter tags",
           textFieldBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(SpaceSizes.x8),

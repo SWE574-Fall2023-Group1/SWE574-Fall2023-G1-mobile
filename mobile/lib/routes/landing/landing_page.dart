@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memories_app/routes/home/bloc/home_bloc.dart';
 import 'package:memories_app/routes/home/home_route.dart';
 import 'package:memories_app/routes/landing/bloc/landing_bloc.dart';
-import 'package:memories_app/routes/map/create_story_route.dart';
+import 'package:memories_app/routes/create_story/create_story_route.dart';
 import 'package:memories_app/util/utils.dart';
 
 class LandingPage extends StatefulWidget {
