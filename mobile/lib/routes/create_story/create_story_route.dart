@@ -11,9 +11,10 @@ import 'package:latlong2/latlong.dart';
 import 'package:memories_app/network/network_manager.dart';
 import 'package:memories_app/routes/create_story/bloc/create_story_bloc.dart';
 import 'package:memories_app/routes/create_story/location_list_tile.dart';
+import 'package:memories_app/routes/create_story/model/create_story_model.dart';
 import 'package:memories_app/routes/create_story/model/place_autocomplete_response.dart';
 import 'package:memories_app/routes/create_story/model/place_details_response.dart';
-import 'package:memories_app/routes/create_story/tags_field.dart';
+import 'package:memories_app/routes/create_story/model/tag.dart';
 import 'package:memories_app/routes/create_story/zoom_buttons.dart';
 import 'package:memories_app/ui/shows_dialog.dart';
 import 'package:memories_app/util/router.dart';
@@ -21,6 +22,7 @@ import 'package:memories_app/util/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:quill_html_editor/quill_html_editor.dart';
 import 'dart:typed_data';
+import 'package:http/http.dart' as http;
 
 class CreateStoryRoute extends StatefulWidget {
   const CreateStoryRoute({super.key});
@@ -53,6 +55,8 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
 
   final QuillEditorController _editorController = QuillEditorController();
 
+  final TextEditingController _titleController = TextEditingController();
+
   List<String> tags = <String>[];
 
   String selectedDateType = '';
@@ -67,6 +71,16 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
 
   String _selectedDecade = '';
   String content = "";
+
+  final TextEditingController _searchTagsController = TextEditingController();
+  final List<Tag> _tagsSearchResults = [];
+
+  late Tag _semanticTagSelected;
+
+  final List<StoryTag> _storyTags = [];
+
+  final TextEditingController _tagsLabelController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -87,6 +101,9 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
     _endYearController.dispose();
     _datePickerController.dispose();
     _endDatePickerController.dispose();
+    _titleController.dispose();
+    _searchTagsController.dispose();
+    _tagsLabelController.dispose();
     super.dispose();
   }
 
@@ -121,19 +138,27 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
                   const SizedBox(
                     height: SpaceSizes.x8,
                   ),
-                  const Divider(),
-                  const SizedBox(
-                    height: SpaceSizes.x8,
-                  ),
 
+                  const Divider(),
                   _buildRichText(context),
                   const SizedBox(
                     height: SpaceSizes.x8,
                   ),
                   const Divider(),
-                  TagsField(tags: tags),
-                  const Divider(),
 
+                  _searchTags(),
+                  const SizedBox(
+                    height: SpaceSizes.x4,
+                  ),
+                  if (_tagsSearchResults.isNotEmpty) _buildSearchTagsResult(),
+                  const Divider(),
+                  _buildTagsLabelInput(),
+                  _buildAddTagButton(),
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  _buildTagsBoxes(),
+                  const Divider(),
                   _buildDateTypeDropdown(),
                   const SizedBox(height: SpaceSizes.x16),
                   // Additional input fields based on date type
@@ -156,6 +181,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
                             content = contentTemp;
                             debugPrint(content);
                           });
+                          _onPressCreate(context);
                         },
                         child: const Text("Create Story")),
                   ),
@@ -176,6 +202,196 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
         }
       },
     );
+  }
+
+  Wrap _buildTagsBoxes() {
+    return Wrap(
+      children: [
+        for (int i = 0; i < _storyTags.length; i++)
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0, bottom: 8.0),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                border: Border.all(),
+                borderRadius: BorderRadius.circular(12),
+                color: AppColors.buttonColor,
+              ),
+              child: Row(
+                mainAxisSize:
+                    MainAxisSize.min, // Ensure the Row takes minimum space
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      _storyTags[i].label,
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _storyTags.remove(_storyTags[i]);
+                        });
+                      },
+                      child: const Icon(
+                        Icons.close,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  TextButton _buildAddTagButton() {
+    return TextButton(
+      child: const Text("Add Tag"),
+      onPressed: () {
+        setState(() {
+          _storyTags.add(StoryTag(
+              name: _tagsLabelController.text,
+              label: _semanticTagSelected.label,
+              wikidataId: _semanticTagSelected.id,
+              description: _semanticTagSelected.description));
+          _tagsLabelController.text = "";
+          _searchTagsController.text = "";
+        });
+      },
+    );
+  }
+
+  TextFormField _buildTagsLabelInput() {
+    return TextFormField(
+      controller: _tagsLabelController,
+      decoration: const InputDecoration(
+          border: OutlineInputBorder(),
+          labelText: "Enter the label you want to give the tag"),
+    );
+  }
+
+  Container _buildSearchTagsResult() {
+    return Container(
+      height: 150,
+      decoration: const BoxDecoration(
+          border: BorderDirectional(
+              top: BorderSide.none,
+              end: BorderSide(),
+              start: BorderSide(),
+              bottom: BorderSide())),
+      child: Scrollbar(
+        child: SingleChildScrollView(
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (int i = 0; i < _tagsSearchResults.length; i++)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Column(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              tags.add(_tagsSearchResults[i].label);
+                              _semanticTagSelected = _tagsSearchResults[i];
+                              _searchTagsController.text =
+                                  _tagsSearchResults[i].label;
+                              _tagsSearchResults.clear();
+                            });
+                          },
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 4.0),
+                                child: Text(
+                                  _tagsSearchResults[i].label,
+                                  textAlign: TextAlign.start,
+                                  style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              Text(
+                                _tagsSearchResults[i].description,
+                                textAlign: TextAlign.start,
+                              ),
+                              const Divider(),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+              ]),
+        ),
+      ),
+    );
+  }
+
+  TextField _searchTags() {
+    return TextField(
+      controller: _searchTagsController,
+      onChanged: (value) {
+        if (value.isNotEmpty) {
+          setState(() {
+            _searchWikiData(value);
+          });
+        } else {
+          setState(() {
+            _tagsSearchResults.clear();
+          });
+        }
+      },
+      decoration: InputDecoration(
+        labelText: 'Search Semantic Tags',
+        border: const OutlineInputBorder(),
+        suffixIcon: IconButton(
+          icon: const Icon(Icons.search),
+          onPressed: () {
+            String query = _searchTagsController.text;
+            if (query.isNotEmpty) {
+              setState(() {
+                _searchWikiData(query);
+              });
+            } else {
+              setState(() {
+                _tagsSearchResults.clear();
+              });
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  void _onPressCreate(BuildContext context) {
+    BlocProvider.of<CreateStoryBloc>(context).add(CreateStoryCreateStoryEvent(
+      title: _titleController.text,
+      content: content,
+      storyTags: _storyTags,
+      dateType: selectedDateType,
+      circleMarkers: _circleMarkers,
+      date: _datePickerController.text,
+      decade: _selectedDecade,
+      endDate: _endDatePickerController.text,
+      endYear: _endYearController.text,
+      includeTime: _includeTime,
+      markersForPoint: _markersForPoint,
+      polyLines: _completedPolylines,
+      polygons: _polygons,
+      seasonName: selectedSeason,
+      startDate: _datePickerController.text,
+      startYear: _yearController.text,
+      year: _yearController.text,
+    ));
   }
 
   Widget _buildDecadeDropdown() {
@@ -516,6 +732,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
 
   Widget _buildTitleField() {
     return TextFormField(
+      controller: _titleController,
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(SpaceSizes.x8),
@@ -1443,5 +1660,30 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
     }).catchError((e) {
       debugPrint(e);
     });
+  }
+
+  Future<void> _searchWikiData(String query) async {
+    final response = await http.get(
+      Uri.parse('${NetworkConstant.baseURL}/user/wikidataSearch?query=$query'),
+    );
+
+    if (response.statusCode == 200) {
+      // Parse the response as a list of tags
+      List<dynamic> tagsJson = json.decode(response.body)['tags'];
+
+      // Convert the list of tags to a List<Tag>
+      List<Tag> results = tagsJson
+          .map((tagJson) => Tag(
+                id: tagJson['id'],
+                label: tagJson['label'],
+                description: tagJson['description'],
+              ))
+          .toList();
+
+      setState(() {
+        _tagsSearchResults.clear();
+        _tagsSearchResults.addAll(results);
+      });
+    } else {}
   }
 }

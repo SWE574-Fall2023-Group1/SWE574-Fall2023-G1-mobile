@@ -6,7 +6,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:http/http.dart' as http;
 import 'package:memories_app/util/sp_helper.dart';
 
-class _NetworkConstant {
+class NetworkConstant {
   static const String baseURL = 'http://34.72.72.115:8000/';
 }
 
@@ -27,7 +27,7 @@ class NetworkManager {
 
   static NetworkManager? _instance;
 
-  factory NetworkManager({String baseUrl = _NetworkConstant.baseURL}) {
+  factory NetworkManager({String baseUrl = NetworkConstant.baseURL}) {
     _instance ??= NetworkManager._internal(baseUrl: baseUrl);
     return _instance!;
   }

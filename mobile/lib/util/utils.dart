@@ -57,5 +57,5 @@ class TestDevices {
 }
 
 class AppConstants {
-  static const apiKey = "AIzaSyCwMxxa__lqDW7drk5rXgyjDAVKA1t7LOY";
+  static const String apiKey = "AIzaSyCwMxxa__lqDW7drk5rXgyjDAVKA1t7LOY";
 }

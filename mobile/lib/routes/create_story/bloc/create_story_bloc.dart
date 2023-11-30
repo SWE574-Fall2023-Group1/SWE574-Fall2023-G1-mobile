@@ -2,6 +2,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memories_app/routes/create_story/create_story_repository.dart';
+import 'package:memories_app/routes/create_story/model/create_story_model.dart';
 
 part 'create_story_event.dart';
 part 'create_story_state.dart';

@@ -7,7 +7,7 @@ sealed class CreateStoryEvent extends Equatable {
 class CreateStoryCreateStoryEvent extends CreateStoryEvent {
   final String title;
   final String content;
-  final String storyTags;
+  final List<StoryTag> storyTags;
   final String dateType;
   final List<Marker>? markersForPoint;
   final List<Polygon>? polygons;

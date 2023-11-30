@@ -1,7 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-// ignore_for_file: always_specify_types
-
 part of 'create_story_model.dart';
 
 // **************************************************************************
@@ -12,55 +10,71 @@ CreateStoryModel _$CreateStoryModelFromJson(Map<String, dynamic> json) =>
     CreateStoryModel(
       title: json['title'] as String,
       content: json['content'] as String,
-      storyTags: json['storyTags'] as String,
-      locationIds: (json['locationIds'] as List<dynamic>)
+      storyTags: (json['story_tags'] as List<dynamic>?)
+          ?.map((e) => StoryTag.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      locationIds: (json['location_ids'] as List<dynamic>)
           .map((e) => LocationId.fromJson(e as Map<String, dynamic>))
           .toList(),
-      dateType: json['dateType'] as String,
-      seasonName: json['seasonName'] as String?,
-      startYear: json['startYear'] as String?,
-      endYear: json['endYear'] as String?,
+      dateType: json['date_type'] as String,
+      seasonName: json['season_name'] as String?,
+      startYear: json['start_year'] as String?,
+      endYear: json['end_year'] as String?,
       year: json['year'] as String?,
       date: json['date'] as String?,
-      startDate: json['startDate'] as String?,
-      endDate: json['endDate'] as String?,
+      startDate: json['start_date'] as String?,
+      endDate: json['end_date'] as String?,
       decade: json['decade'] as String?,
-      includeTime: json['includeTime'] as bool? ?? false,
+      includeTime: json['include_time'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$CreateStoryModelToJson(CreateStoryModel instance) =>
     <String, dynamic>{
       'title': instance.title,
       'content': instance.content,
-      'storyTags': instance.storyTags,
-      'locationIds': instance.locationIds,
-      'dateType': instance.dateType,
-      'seasonName': instance.seasonName,
-      'startYear': instance.startYear,
-      'endYear': instance.endYear,
+      'story_tags': instance.storyTags,
+      'location_ids': instance.locationIds,
+      'date_type': instance.dateType,
+      'season_name': instance.seasonName,
+      'start_year': instance.startYear,
+      'end_year': instance.endYear,
       'year': instance.year,
       'date': instance.date,
-      'startDate': instance.startDate,
-      'endDate': instance.endDate,
+      'start_date': instance.startDate,
+      'end_date': instance.endDate,
       'decade': instance.decade,
-      'includeTime': instance.includeTime,
+      'include_time': instance.includeTime,
+    };
+
+StoryTag _$StoryTagsFromJson(Map<String, dynamic> json) => StoryTag(
+      name: json['name'] as String,
+      label: json['label'] as String,
+      wikidataId: json['wikidata_id'] as String,
+      description: json['description'] as String,
+    );
+
+Map<String, dynamic> _$StoryTagsToJson(StoryTag instance) => <String, dynamic>{
+      'name': instance.name,
+      'label': instance.label,
+      'wikidata_id': instance.wikidataId,
+      'description': instance.description,
     };
 
 LocationId _$LocationIdFromJson(Map<String, dynamic> json) => LocationId(
       name: json['name'] as String,
       point: json['point'] == null
           ? null
-          : Point.fromJson(json['point'] as Map<String, dynamic>),
+          : PointLocation.fromJson(json['point'] as Map<String, dynamic>),
       circle: json['circle'] == null
           ? null
-          : Point.fromJson(json['circle'] as Map<String, dynamic>),
+          : PointLocation.fromJson(json['circle'] as Map<String, dynamic>),
       radius: (json['radius'] as num?)?.toDouble(),
       polygon: json['polygon'] == null
           ? null
-          : Polygon.fromJson(json['polygon'] as Map<String, dynamic>),
+          : PolygonLocation.fromJson(json['polygon'] as Map<String, dynamic>),
       line: json['line'] == null
           ? null
-          : LineString.fromJson(json['line'] as Map<String, dynamic>),
+          : LineStringLocation.fromJson(json['line'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$LocationIdToJson(LocationId instance) =>
@@ -73,19 +87,19 @@ Map<String, dynamic> _$LocationIdToJson(LocationId instance) =>
       'line': instance.line,
     };
 
-Point _$PointFromJson(Map<String, dynamic> json) => Point(
+PointLocation _$PointFromJson(Map<String, dynamic> json) => PointLocation(
       coordinates: (json['coordinates'] as List<dynamic>)
           .map((e) => (e as num).toDouble())
           .toList(),
       type: json['type'] as String? ?? "Point",
     );
 
-Map<String, dynamic> _$PointToJson(Point instance) => <String, dynamic>{
+Map<String, dynamic> _$PointToJson(PointLocation instance) => <String, dynamic>{
       'type': instance.type,
       'coordinates': instance.coordinates,
     };
 
-Polygon _$PolygonFromJson(Map<String, dynamic> json) => Polygon(
+PolygonLocation _$PolygonFromJson(Map<String, dynamic> json) => PolygonLocation(
       coordinates: (json['coordinates'] as List<dynamic>)
           .map((e) => (e as List<dynamic>)
               .map((e) => (e as List<dynamic>)
@@ -96,12 +110,14 @@ Polygon _$PolygonFromJson(Map<String, dynamic> json) => Polygon(
       type: json['type'] as String? ?? "Polygon",
     );
 
-Map<String, dynamic> _$PolygonToJson(Polygon instance) => <String, dynamic>{
+Map<String, dynamic> _$PolygonToJson(PolygonLocation instance) =>
+    <String, dynamic>{
       'type': instance.type,
       'coordinates': instance.coordinates,
     };
 
-LineString _$LineStringFromJson(Map<String, dynamic> json) => LineString(
+LineStringLocation _$LineStringFromJson(Map<String, dynamic> json) =>
+    LineStringLocation(
       coordinates: (json['coordinates'] as List<dynamic>)
           .map((e) =>
               (e as List<dynamic>).map((e) => (e as num).toDouble()).toList())
@@ -109,7 +125,7 @@ LineString _$LineStringFromJson(Map<String, dynamic> json) => LineString(
       type: json['type'] as String? ?? "LineString",
     );
 
-Map<String, dynamic> _$LineStringToJson(LineString instance) =>
+Map<String, dynamic> _$LineStringToJson(LineStringLocation instance) =>
     <String, dynamic>{
       'type': instance.type,
       'coordinates': instance.coordinates,

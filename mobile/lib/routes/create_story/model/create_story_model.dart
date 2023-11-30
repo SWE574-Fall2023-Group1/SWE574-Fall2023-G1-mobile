@@ -8,18 +8,26 @@ part 'create_story_model.g.dart';
 class CreateStoryModel {
   final String title;
   final String content;
-  final String storyTags;
+  @JsonKey(name: 'story_tags')
+  final List<StoryTag>? storyTags;
+  @JsonKey(name: 'location_ids')
   final List<LocationId> locationIds;
-
+  @JsonKey(name: 'date_type')
   final String dateType;
+  @JsonKey(name: 'season_name')
   final String? seasonName;
+  @JsonKey(name: 'start_year')
   final String? startYear;
+  @JsonKey(name: 'end_year')
   final String? endYear;
   final String? year;
   final String? date;
+  @JsonKey(name: 'start_date')
   final String? startDate;
+  @JsonKey(name: 'end_date')
   final String? endDate;
   final String? decade;
+  @JsonKey(name: 'include_time')
   bool includeTime;
 
   CreateStoryModel({
@@ -46,13 +54,33 @@ class CreateStoryModel {
 }
 
 @JsonSerializable()
+class StoryTag {
+  final String name;
+  final String label;
+  @JsonKey(name: 'wikidata_id')
+  final String wikidataId;
+  final String description;
+
+  StoryTag(
+      {required this.name,
+      required this.label,
+      required this.wikidataId,
+      required this.description});
+
+  factory StoryTag.fromJson(Map<String, dynamic> json) =>
+      _$StoryTagsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$StoryTagsToJson(this);
+}
+
+@JsonSerializable()
 class LocationId {
-  String name;
-  Point? point;
-  Point? circle;
-  double? radius;
-  Polygon? polygon;
-  LineString? line;
+  final String name;
+  final PointLocation? point;
+  final PointLocation? circle;
+  final double? radius;
+  final PolygonLocation? polygon;
+  final LineStringLocation? line;
 
   LocationId({
     required this.name,
@@ -70,47 +98,48 @@ class LocationId {
 }
 
 @JsonSerializable()
-class Point {
+class PointLocation {
   final String? type;
-  List<double> coordinates;
+  final List<double> coordinates;
 
-  Point({
+  PointLocation({
     required this.coordinates,
     this.type = "Point",
   });
 
-  factory Point.fromJson(Map<String, dynamic> json) => _$PointFromJson(json);
+  factory PointLocation.fromJson(Map<String, dynamic> json) =>
+      _$PointFromJson(json);
 
   Map<String, dynamic> toJson() => _$PointToJson(this);
 }
 
 @JsonSerializable()
-class Polygon {
+class PolygonLocation {
   final String? type;
   final List<List<List<double>>> coordinates;
 
-  Polygon({
+  PolygonLocation({
     required this.coordinates,
     this.type = "Polygon",
   });
 
-  factory Polygon.fromJson(Map<String, dynamic> json) =>
+  factory PolygonLocation.fromJson(Map<String, dynamic> json) =>
       _$PolygonFromJson(json);
 
   Map<String, dynamic> toJson() => _$PolygonToJson(this);
 }
 
 @JsonSerializable()
-class LineString {
+class LineStringLocation {
   final String? type;
-  List<List<double>> coordinates;
+  final List<List<double>> coordinates;
 
-  LineString({
+  LineStringLocation({
     required this.coordinates,
     this.type = "LineString",
   });
 
-  factory LineString.fromJson(Map<String, dynamic> json) =>
+  factory LineStringLocation.fromJson(Map<String, dynamic> json) =>
       _$LineStringFromJson(json);
 
   Map<String, dynamic> toJson() => _$LineStringToJson(this);
