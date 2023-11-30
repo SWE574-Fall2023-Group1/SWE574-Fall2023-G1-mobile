@@ -2,23 +2,25 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:memories_app/network/network_manager.dart';
+import 'package:memories_app/routes/create_story/bloc/create_story_bloc.dart';
 import 'package:memories_app/routes/create_story/location_list_tile.dart';
 import 'package:memories_app/routes/create_story/model/place_autocomplete_response.dart';
 import 'package:memories_app/routes/create_story/model/place_details_response.dart';
 import 'package:memories_app/routes/create_story/tags_field.dart';
 import 'package:memories_app/routes/create_story/zoom_buttons.dart';
+import 'package:memories_app/ui/shows_dialog.dart';
 import 'package:memories_app/util/router.dart';
 import 'package:memories_app/util/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:quill_html_editor/quill_html_editor.dart';
 import 'dart:typed_data';
-import 'dart:convert';
 
 class CreateStoryRoute extends StatefulWidget {
   const CreateStoryRoute({super.key});
@@ -94,74 +96,85 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   }
 
   Widget _buildPage(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Create Story"),
-        leading: GestureDetector(
-            onTap: () {
-              AppRoute.landing.navigate(context);
-            },
-            child: const Icon(Icons.close)),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              const SizedBox(
-                height: SpaceSizes.x16,
-              ),
-
-              _buildTitleField(),
-              const SizedBox(
-                height: SpaceSizes.x8,
-              ),
-              const Divider(),
-              const SizedBox(
-                height: SpaceSizes.x8,
-              ),
-
-              _buildRichText(context),
-              const SizedBox(
-                height: SpaceSizes.x8,
-              ),
-              const Divider(),
-              TagsField(tags: tags),
-              const Divider(),
-
-              _buildDateTypeDropdown(),
-              const SizedBox(height: SpaceSizes.x16),
-              // Additional input fields based on date type
-              if (selectedDateType == 'Year' ||
-                  selectedDateType == 'Interval Year')
-                _buildYearSelection(),
-              if (selectedDateType == 'Normal Date' ||
-                  selectedDateType == 'Interval Date')
-                _buildDateSelection(),
-              if (selectedDateType == 'Decade') _buildDecadeDropdown(),
-              const Divider(),
-              _buildMapAndAdresses(context),
-              const Divider(),
-              Center(
-                child: OutlinedButton(
-                    onPressed: () async {
-                      var contentTemp = await _compressImagesInHtml(
-                          await _editorController.getText());
-                      setState(() {
-                        content = contentTemp;
-                        debugPrint(content);
-                      });
-                    },
-                    child: const Text("Create Story")),
-              ),
-              const SizedBox(
-                height: SpaceSizes.x16,
-              )
-            ],
+    return BlocConsumer<CreateStoryBloc, CreateStoryState>(
+      builder: (BuildContext context, CreateStoryState state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text("Create Story"),
+            leading: GestureDetector(
+                onTap: () {
+                  AppRoute.landing.navigate(context);
+                },
+                child: const Icon(Icons.close)),
           ),
-        ),
-      ),
+          body: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  const SizedBox(
+                    height: SpaceSizes.x16,
+                  ),
+
+                  _buildTitleField(),
+                  const SizedBox(
+                    height: SpaceSizes.x8,
+                  ),
+                  const Divider(),
+                  const SizedBox(
+                    height: SpaceSizes.x8,
+                  ),
+
+                  _buildRichText(context),
+                  const SizedBox(
+                    height: SpaceSizes.x8,
+                  ),
+                  const Divider(),
+                  TagsField(tags: tags),
+                  const Divider(),
+
+                  _buildDateTypeDropdown(),
+                  const SizedBox(height: SpaceSizes.x16),
+                  // Additional input fields based on date type
+                  if (selectedDateType == 'Year' ||
+                      selectedDateType == 'Interval Year')
+                    _buildYearSelection(),
+                  if (selectedDateType == 'Normal Date' ||
+                      selectedDateType == 'Interval Date')
+                    _buildDateSelection(),
+                  if (selectedDateType == 'Decade') _buildDecadeDropdown(),
+                  const Divider(),
+                  _buildMapAndAdresses(context),
+                  const Divider(),
+                  Center(
+                    child: OutlinedButton(
+                        onPressed: () async {
+                          var contentTemp = await _compressImagesInHtml(
+                              await _editorController.getText());
+                          setState(() {
+                            content = contentTemp;
+                            debugPrint(content);
+                          });
+                        },
+                        child: const Text("Create Story")),
+                  ),
+                  const SizedBox(
+                    height: SpaceSizes.x16,
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+      listener: (BuildContext context, CreateStoryState state) {
+        if (state is CreateStorySuccess) {
+        } else if (state is CreateStoryFailure) {
+          ShowsDialog.showAlertDialog(context, 'Oops!', state.error.toString(),
+              isCreateStoryFail: true);
+        }
+      },
     );
   }
 
@@ -364,6 +377,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
         Expanded(
           child: TextFormField(
             controller: _yearController,
+            keyboardType: TextInputType.number,
             decoration: InputDecoration(
               hintText: selectedDateType == 'Year' ? "Year" : "Start Year",
               border: OutlineInputBorder(
@@ -377,6 +391,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
           Expanded(
             child: TextFormField(
               controller: _endYearController,
+              keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 hintText: "End Year",
                 border: OutlineInputBorder(

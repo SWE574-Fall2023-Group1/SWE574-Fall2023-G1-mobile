@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:memories_app/routes/create_story/bloc/create_story_bloc.dart';
+import 'package:memories_app/routes/create_story/create_story_repository.dart';
 import 'package:memories_app/routes/home/bloc/home_bloc.dart';
 import 'package:memories_app/routes/home/home_route.dart';
 import 'package:memories_app/routes/landing/bloc/landing_bloc.dart';
@@ -63,7 +65,11 @@ class _LandingPageState extends State<LandingPage> {
           if (state.tabIndex == 2) {
             // ignore: always_specify_types
             Navigator.of(context).push(MaterialPageRoute(
-              builder: (BuildContext context) => const CreateStoryRoute(),
+              builder: (BuildContext context) => BlocProvider<CreateStoryBloc>(
+                create: (BuildContext context) =>
+                    CreateStoryBloc(repository: CreateStoryRepositoryImp()),
+                child: const CreateStoryRoute(),
+              ),
             ));
           } else {
             _pageController.jumpToPage(state.tabIndex);

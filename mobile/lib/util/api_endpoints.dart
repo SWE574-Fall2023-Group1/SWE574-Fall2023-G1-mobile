@@ -9,4 +9,6 @@ class ApiEndpoints {
   static String buildUserStoriesUrl(int page, int size) {
     return "user/userStories?page=$page&size=$size";
   }
+
+  static const String createStory = "user/createStory";
 }
