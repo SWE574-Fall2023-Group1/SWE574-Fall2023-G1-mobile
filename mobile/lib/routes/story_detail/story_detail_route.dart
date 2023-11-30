@@ -5,12 +5,12 @@ import 'package:memories_app/routes/home/model/story_model.dart';
 import 'package:memories_app/routes/story_detail/bloc/story_detail_bloc.dart';
 import 'package:memories_app/routes/story_detail/bloc/story_detail_state.dart';
 import 'package:memories_app/routes/story_detail/model/story_detail_repository.dart';
-import 'package:memories_app/routes/story_detail/model/tag_model.dart';
 import 'package:memories_app/routes/story_detail/widget/comments_container.dart';
 import 'package:memories_app/routes/story_detail/widget/likes_container.dart';
 import 'package:memories_app/routes/story_detail/widget/location_names_container.dart';
 import 'package:memories_app/routes/story_detail/widget/story_date_container.dart';
 import 'package:memories_app/routes/story_detail/widget/story_detail_app_bar.dart';
+import 'package:memories_app/routes/story_detail/widget/story_tag_chips.dart';
 import 'package:memories_app/ui/date_text_view.dart';
 
 bool shouldRefreshStories = false;
@@ -137,8 +137,7 @@ class ShowPostDetail extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       DateText.build(text: "Tags:"),
-                      DateText.build(text: story.storyTags ?? "N/A"),
-                      // TagsChips(storyTags: story.storyTags!)
+                      StoryTagChips(tagModels: story.storyTags)
                     ],
                   ),
                 ),
@@ -160,22 +159,6 @@ class ShowPostDetail extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class TagsChips extends StatelessWidget {
-  final List<TagModel> tagModels;
-
-  const TagsChips({required this.tagModels, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    List<String> tags = tagModels.map((TagModel model) => model.label).toList();
-
-    return Wrap(
-      spacing: 8.0,
-      children: tags.map((String tag) => Chip(label: Text(tag))).toList(),
     );
   }
 }

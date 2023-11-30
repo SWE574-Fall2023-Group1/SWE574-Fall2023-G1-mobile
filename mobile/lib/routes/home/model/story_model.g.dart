@@ -12,7 +12,9 @@ StoryModel _$StoryModelFromJson(Map<String, dynamic> json) => StoryModel(
       authorUsername: json['author_username'] as String,
       title: json['title'] as String,
       content: json['content'] as String,
-      storyTags: json['story_tags'] as String,
+      storyTags: (json['story_tags'] as List<dynamic>)
+          .map((dynamic e) => TagModel.fromJson(e as Map<String, dynamic>))
+          .toList(),
       locationIds: (json['location_ids'] as List<dynamic>)
           .map((dynamic e) => LocationModel.fromJson(e as Map<String, dynamic>))
           .toList(),

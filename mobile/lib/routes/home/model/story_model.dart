@@ -13,7 +13,7 @@ class StoryModel {
   String? title;
   String? content;
   @JsonKey(name: "story_tags")
-  String? storyTags; // TagModel? storyTags;
+  List<TagModel>? storyTags;
   @JsonKey(name: "location_ids")
   List<LocationModel>? locationIds;
   @JsonKey(name: "date_type")
