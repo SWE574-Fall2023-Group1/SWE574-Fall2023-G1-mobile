@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memories_app/routes/home/bloc/home_bloc.dart';
+import 'package:memories_app/routes/story_detail/bloc/story_detail_bloc.dart';
+import 'package:memories_app/routes/story_detail/story_detail_route.dart';
 import 'package:memories_app/util/router.dart';
 import 'package:memories_app/routes/home/model/story_model.dart';
 import 'package:memories_app/util/utils.dart';
@@ -18,6 +20,7 @@ class _HomeRouteState extends State<HomeRoute>
   bool get wantKeepAlive => true;
 
   final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     _scrollController.addListener(_scrollListener);
@@ -97,10 +100,36 @@ class _HomeRouteState extends State<HomeRoute>
       controller: _scrollController,
       itemCount: stories.length,
       itemBuilder: (BuildContext context, int index) {
-        return _buildStoryCard(stories[index]);
+        return GestureDetector(
+          onTap: () {
+            _navigateToStoryDetail(context, stories[index]);
+          },
+          child: _buildStoryCard(stories[index]),
+        );
       },
       padding: const EdgeInsets.all(8),
     );
+  }
+
+  Future<void> _navigateToStoryDetail(
+      BuildContext context, StoryModel story) async {
+    final bool shouldRefreshStories = await Navigator.push(
+      context,
+      // ignore: always_specify_types
+      MaterialPageRoute(
+        builder: (BuildContext context) => BlocProvider<StoryDetailBloc>(
+          create: (BuildContext context) => StoryDetailBloc(),
+          child: StoryDetailRoute(
+            story: story,
+          ),
+        ),
+      ),
+    );
+
+    if (shouldRefreshStories) {
+      // ignore: use_build_context_synchronously
+      BlocProvider.of<HomeBloc>(context).add(HomeEventRefreshStories());
+    }
   }
 
   Future<void> _scrollListener() async {
