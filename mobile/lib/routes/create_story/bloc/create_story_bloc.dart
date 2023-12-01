@@ -128,10 +128,20 @@ class CreateStoryBloc extends Bloc<CreateStoryEvent, CreateStoryState> {
         if (polygons[i].points.isNotEmpty) {
           List<List<double>> singlePolygon = [];
 
+          LatLng firstPoint = polygons[i].points.first;
+          List<double> firstCoordinates = [
+            firstPoint.longitude,
+            firstPoint.latitude
+          ];
+          singlePolygon.add(firstCoordinates);
+
           for (LatLng point in polygons[i].points) {
             List<double> coordinatesList = [point.longitude, point.latitude];
             singlePolygon.add(coordinatesList);
           }
+
+          // Add the first coordinate again to close the polygon
+          singlePolygon.add(firstCoordinates);
 
           coordinates.add(singlePolygon);
         }
@@ -144,6 +154,7 @@ class CreateStoryBloc extends Bloc<CreateStoryEvent, CreateStoryState> {
         locationIds.add(polygon);
       }
     }
+
     if (polyLines != null && polyLines.isNotEmpty) {
       for (int i = 0; i < polyLines.length; i++) {
         List<List<double>> coordinates = [];
