@@ -17,7 +17,7 @@ class LocationNamesContainer extends StatelessWidget {
       children: <Widget>[
         for (LocationModel location in story.locationIds!) ...<Widget>[
           Text(
-            Uri.decodeComponent(location.name),
+            location.name ?? "",
             style: const TextStyle(
               color: Colors.black,
               fontSize: 14,

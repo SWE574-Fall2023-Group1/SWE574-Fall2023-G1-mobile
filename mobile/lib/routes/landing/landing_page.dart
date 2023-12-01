@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:memories_app/routes/create_story/bloc/create_story_bloc.dart';
+import 'package:memories_app/routes/create_story/create_story_repository.dart';
 import 'package:memories_app/routes/home/bloc/home_bloc.dart';
 import 'package:memories_app/routes/home/home_route.dart';
 import 'package:memories_app/routes/landing/bloc/landing_bloc.dart';
+import 'package:memories_app/routes/create_story/create_story_route.dart';
 import 'package:memories_app/util/utils.dart';
 
 class LandingPage extends StatefulWidget {
@@ -59,7 +62,18 @@ class _LandingPageState extends State<LandingPage> {
       },
       listener: (BuildContext context, LandingState state) {
         if (state is LandingJumpToPageState) {
-          _pageController.jumpToPage(state.tabIndex);
+          if (state.tabIndex == 2) {
+            // ignore: always_specify_types
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (BuildContext context) => BlocProvider<CreateStoryBloc>(
+                create: (BuildContext context) =>
+                    CreateStoryBloc(repository: CreateStoryRepositoryImp()),
+                child: const CreateStoryRoute(),
+              ),
+            ));
+          } else {
+            _pageController.jumpToPage(state.tabIndex);
+          }
         }
       },
     );
@@ -73,7 +87,7 @@ class _LandingPageState extends State<LandingPage> {
         child: const HomeRoute(),
       ),
       const Center(child: Text('Index 1: Profile')),
-      const Center(child: Text('Index 2: Create')),
+      const Placeholder(),
       const Center(child: Text('Index 3: Search')),
       const Center(child: Text('Index 4: More')),
     ];

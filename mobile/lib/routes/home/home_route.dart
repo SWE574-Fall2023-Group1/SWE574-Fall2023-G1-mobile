@@ -1,3 +1,5 @@
+// ignore_for_file: always_specify_types, duplicate_ignore
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memories_app/routes/home/bloc/home_bloc.dart';
@@ -39,15 +41,18 @@ class _HomeRouteState extends State<HomeRoute>
           column = state.stories.isNotEmpty
               ? RefreshIndicator(
                   onRefresh: _refreshStories,
-                  child: Column(children: <Widget>[
-                    Expanded(child: _buildStoryList(state.stories)),
-                    if (state.showLoadingAnimation) ...<Widget>[
-                      const SizedBox(
-                        height: SpaceSizes.x16,
-                      ),
-                      const CircularProgressIndicator(),
-                    ]
-                  ]),
+                  child: Container(
+                    color: Colors.white,
+                    child: Column(children: <Widget>[
+                      Expanded(child: _buildStoryList(state.stories)),
+                      if (state.showLoadingAnimation) ...<Widget>[
+                        const SizedBox(
+                          height: SpaceSizes.x16,
+                        ),
+                        const CircularProgressIndicator(),
+                      ]
+                    ]),
+                  ),
                 )
               : const Center(
                   child:
@@ -115,7 +120,6 @@ class _HomeRouteState extends State<HomeRoute>
       BuildContext context, StoryModel story) async {
     final bool shouldRefreshStories = await Navigator.push(
       context,
-      // ignore: always_specify_types
       MaterialPageRoute(
         builder: (BuildContext context) => BlocProvider<StoryDetailBloc>(
           create: (BuildContext context) => StoryDetailBloc(),
@@ -145,7 +149,8 @@ class _HomeRouteState extends State<HomeRoute>
 }
 
 Widget _buildStoryCard(StoryModel story) => Card(
-      elevation: 4,
+      elevation: 2,
+      color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -216,7 +221,9 @@ Widget _buildStoryCard(StoryModel story) => Card(
                 const SizedBox(width: 4),
                 Expanded(
                   child: Text(
-                    Uri.decodeComponent(story.locationIds?[0].name ?? ''),
+                    story.locationIds != null && story.locationIds!.isNotEmpty
+                        ? story.locationIds?.first.name ?? ''
+                        : '',
                     style: const TextStyle(
                       color: Color(0xFFAFB4B7),
                       fontSize: 14,
