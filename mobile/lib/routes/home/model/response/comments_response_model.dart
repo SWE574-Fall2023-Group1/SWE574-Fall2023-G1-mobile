@@ -1,3 +1,5 @@
+// ignore_for_file: always_specify_types
+
 import 'package:memories_app/routes/story_detail/model/comment_model.dart';
 
 class CommentResponseModel {
@@ -12,9 +14,9 @@ class CommentResponseModel {
     required this.comments,
     required this.hasNext,
     required this.hasPrev,
+    required this.totalPages,
     this.nextPage,
     this.prevPage,
-    required this.totalPages,
   });
 
   factory CommentResponseModel.fromJson(Map<String, dynamic> json) {
