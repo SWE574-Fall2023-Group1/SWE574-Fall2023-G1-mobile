@@ -118,7 +118,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       case 'decade':
         return 'Decade: ${story.decade?.toString() ?? ''}';
       case 'year_interval':
-        return 'Start: ${_formatDate(story.startYear.toString())} \nEnd: ${_formatDate(story.endYear.toString())}';
+        return 'Start: ${story.startYear.toString()} \nEnd: ${story.endYear.toString()}';
       case 'normal_date':
         return _formatDate(story.date) ?? '';
       case 'interval_date':

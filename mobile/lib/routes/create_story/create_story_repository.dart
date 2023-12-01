@@ -16,7 +16,7 @@ class CreateStoryRepositoryImp extends CreateStoryRepository {
   @override
   Future<CreateStoryResponseModel> createStory(CreateStoryModel model) async {
     final Result result =
-        await _networkManager.post(ApiEndpoints.createStory, model);
+        await _networkManager.post(ApiEndpoints.createStory, body: model);
     return CreateStoryResponseModel.fromJson(result.json);
   }
 }

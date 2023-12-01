@@ -1,7 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-// ignore_for_file: always_specify_types
-
 part of 'create_story_model.dart';
 
 // **************************************************************************
@@ -48,14 +46,14 @@ Map<String, dynamic> _$CreateStoryModelToJson(CreateStoryModel instance) =>
       'include_time': instance.includeTime,
     };
 
-StoryTag _$StoryTagsFromJson(Map<String, dynamic> json) => StoryTag(
+StoryTag _$StoryTagFromJson(Map<String, dynamic> json) => StoryTag(
       name: json['name'] as String,
       label: json['label'] as String,
       wikidataId: json['wikidata_id'] as String,
       description: json['description'] as String,
     );
 
-Map<String, dynamic> _$StoryTagsToJson(StoryTag instance) => <String, dynamic>{
+Map<String, dynamic> _$StoryTagToJson(StoryTag instance) => <String, dynamic>{
       'name': instance.name,
       'label': instance.label,
       'wikidata_id': instance.wikidataId,
@@ -89,19 +87,22 @@ Map<String, dynamic> _$LocationIdToJson(LocationId instance) =>
       'line': instance.line,
     };
 
-PointLocation _$PointFromJson(Map<String, dynamic> json) => PointLocation(
+PointLocation _$PointLocationFromJson(Map<String, dynamic> json) =>
+    PointLocation(
       coordinates: (json['coordinates'] as List<dynamic>)
           .map((e) => (e as num).toDouble())
           .toList(),
       type: json['type'] as String? ?? "Point",
     );
 
-Map<String, dynamic> _$PointToJson(PointLocation instance) => <String, dynamic>{
+Map<String, dynamic> _$PointLocationToJson(PointLocation instance) =>
+    <String, dynamic>{
       'type': instance.type,
       'coordinates': instance.coordinates,
     };
 
-PolygonLocation _$PolygonFromJson(Map<String, dynamic> json) => PolygonLocation(
+PolygonLocation _$PolygonLocationFromJson(Map<String, dynamic> json) =>
+    PolygonLocation(
       coordinates: (json['coordinates'] as List<dynamic>)
           .map((e) => (e as List<dynamic>)
               .map((e) => (e as List<dynamic>)
@@ -112,13 +113,13 @@ PolygonLocation _$PolygonFromJson(Map<String, dynamic> json) => PolygonLocation(
       type: json['type'] as String? ?? "Polygon",
     );
 
-Map<String, dynamic> _$PolygonToJson(PolygonLocation instance) =>
+Map<String, dynamic> _$PolygonLocationToJson(PolygonLocation instance) =>
     <String, dynamic>{
       'type': instance.type,
       'coordinates': instance.coordinates,
     };
 
-LineStringLocation _$LineStringFromJson(Map<String, dynamic> json) =>
+LineStringLocation _$LineStringLocationFromJson(Map<String, dynamic> json) =>
     LineStringLocation(
       coordinates: (json['coordinates'] as List<dynamic>)
           .map((e) =>
@@ -127,7 +128,7 @@ LineStringLocation _$LineStringFromJson(Map<String, dynamic> json) =>
       type: json['type'] as String? ?? "LineString",
     );
 
-Map<String, dynamic> _$LineStringToJson(LineStringLocation instance) =>
+Map<String, dynamic> _$LineStringLocationToJson(LineStringLocation instance) =>
     <String, dynamic>{
       'type': instance.type,
       'coordinates': instance.coordinates,

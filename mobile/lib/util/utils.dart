@@ -28,6 +28,7 @@ class AppColors {
   static const Color textFieldHintColor = Color(0xFF757575);
   static const Color buttonColor = Color(0xFF7E49FF);
   static const Color disabledButtonTextColor = Color(0xFF757575);
+  static const Color backgroundColor = Color(0xFFEFEFEF);
 }
 
 class AppScreenSizeUtils {

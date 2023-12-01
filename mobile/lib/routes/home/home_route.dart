@@ -1,8 +1,10 @@
-// ignore_for_file: always_specify_types
+// ignore_for_file: always_specify_types, duplicate_ignore
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memories_app/routes/home/bloc/home_bloc.dart';
+import 'package:memories_app/routes/story_detail/bloc/story_detail_bloc.dart';
+import 'package:memories_app/routes/story_detail/story_detail_route.dart';
 import 'package:memories_app/util/router.dart';
 import 'package:memories_app/routes/home/model/story_model.dart';
 import 'package:memories_app/util/utils.dart';
@@ -20,6 +22,7 @@ class _HomeRouteState extends State<HomeRoute>
   bool get wantKeepAlive => true;
 
   final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     _scrollController.addListener(_scrollListener);
@@ -38,15 +41,18 @@ class _HomeRouteState extends State<HomeRoute>
           column = state.stories.isNotEmpty
               ? RefreshIndicator(
                   onRefresh: _refreshStories,
-                  child: Column(children: <Widget>[
-                    Expanded(child: _buildStoryList(state.stories)),
-                    if (state.showLoadingAnimation) ...<Widget>[
-                      const SizedBox(
-                        height: SpaceSizes.x16,
-                      ),
-                      const CircularProgressIndicator(),
-                    ]
-                  ]),
+                  child: Container(
+                    color: Colors.white,
+                    child: Column(children: <Widget>[
+                      Expanded(child: _buildStoryList(state.stories)),
+                      if (state.showLoadingAnimation) ...<Widget>[
+                        const SizedBox(
+                          height: SpaceSizes.x16,
+                        ),
+                        const CircularProgressIndicator(),
+                      ]
+                    ]),
+                  ),
                 )
               : const Center(
                   child:
@@ -99,10 +105,35 @@ class _HomeRouteState extends State<HomeRoute>
       controller: _scrollController,
       itemCount: stories.length,
       itemBuilder: (BuildContext context, int index) {
-        return _buildStoryCard(stories[index]);
+        return GestureDetector(
+          onTap: () {
+            _navigateToStoryDetail(context, stories[index]);
+          },
+          child: _buildStoryCard(stories[index]),
+        );
       },
       padding: const EdgeInsets.all(8),
     );
+  }
+
+  Future<void> _navigateToStoryDetail(
+      BuildContext context, StoryModel story) async {
+    final bool shouldRefreshStories = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) => BlocProvider<StoryDetailBloc>(
+          create: (BuildContext context) => StoryDetailBloc(),
+          child: StoryDetailRoute(
+            story: story,
+          ),
+        ),
+      ),
+    );
+
+    if (shouldRefreshStories) {
+      // ignore: use_build_context_synchronously
+      BlocProvider.of<HomeBloc>(context).add(HomeEventRefreshStories());
+    }
   }
 
   Future<void> _scrollListener() async {
@@ -118,7 +149,8 @@ class _HomeRouteState extends State<HomeRoute>
 }
 
 Widget _buildStoryCard(StoryModel story) => Card(
-      elevation: 4,
+      elevation: 2,
+      color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),

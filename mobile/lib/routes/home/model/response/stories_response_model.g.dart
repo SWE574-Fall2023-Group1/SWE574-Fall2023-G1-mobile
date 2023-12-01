@@ -9,8 +9,8 @@ part of 'stories_response_model.dart';
 StoriesResponseModel _$StoriesResponseModelFromJson(
         Map<String, dynamic> json) =>
     StoriesResponseModel(
-      stories: (json['stories'] as List<dynamic>)
-          .map((dynamic e) => StoryModel.fromJson(e as Map<String, dynamic>))
+      stories: (json['stories'] as List<dynamic>?)
+          ?.map((e) => StoryModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       hasNext: json['hasNext'] as bool?,
       hasPrev: json['hasPrev'] as bool?,

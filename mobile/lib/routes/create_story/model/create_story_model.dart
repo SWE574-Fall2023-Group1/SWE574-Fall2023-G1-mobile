@@ -68,9 +68,9 @@ class StoryTag {
       required this.description});
 
   factory StoryTag.fromJson(Map<String, dynamic> json) =>
-      _$StoryTagsFromJson(json);
+      _$StoryTagFromJson(json);
 
-  Map<String, dynamic> toJson() => _$StoryTagsToJson(this);
+  Map<String, dynamic> toJson() => _$StoryTagToJson(this);
 }
 
 @JsonSerializable()
@@ -108,9 +108,9 @@ class PointLocation {
   });
 
   factory PointLocation.fromJson(Map<String, dynamic> json) =>
-      _$PointFromJson(json);
+      _$PointLocationFromJson(json);
 
-  Map<String, dynamic> toJson() => _$PointToJson(this);
+  Map<String, dynamic> toJson() => _$PointLocationToJson(this);
 }
 
 @JsonSerializable()
@@ -124,9 +124,9 @@ class PolygonLocation {
   });
 
   factory PolygonLocation.fromJson(Map<String, dynamic> json) =>
-      _$PolygonFromJson(json);
+      _$PolygonLocationFromJson(json);
 
-  Map<String, dynamic> toJson() => _$PolygonToJson(this);
+  Map<String, dynamic> toJson() => _$PolygonLocationToJson(this);
 }
 
 @JsonSerializable()
@@ -140,7 +140,7 @@ class LineStringLocation {
   });
 
   factory LineStringLocation.fromJson(Map<String, dynamic> json) =>
-      _$LineStringFromJson(json);
+      _$LineStringLocationFromJson(json);
 
-  Map<String, dynamic> toJson() => _$LineStringToJson(this);
+  Map<String, dynamic> toJson() => _$LineStringLocationToJson(this);
 }
