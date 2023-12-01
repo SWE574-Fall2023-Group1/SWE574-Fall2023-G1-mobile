@@ -28,3 +28,16 @@ class CreateStoryFailure extends CreateStoryState {
   @override
   String toString() => 'Create story is failed with $error';
 }
+
+class CreateStoryOffline extends CreateStoryState {
+  final String? offlineMessage;
+
+  const CreateStoryOffline({required this.offlineMessage});
+
+  @override
+  List<Object?> get props => <Object?>[offlineMessage];
+
+  @override
+  String toString() =>
+      'Create story service is offline with message: $offlineMessage';
+}

@@ -117,6 +117,9 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
 
   Widget _buildPage(BuildContext context) {
     return BlocConsumer<CreateStoryBloc, CreateStoryState>(
+      buildWhen: (CreateStoryState previousState, CreateStoryState state) {
+        return !(state is CreateStoryFailure || state is CreateStoryOffline);
+      },
       builder: (BuildContext context, CreateStoryState state) {
         return Scaffold(
           appBar: AppBar(
@@ -199,8 +202,13 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
       },
       listener: (BuildContext context, CreateStoryState state) {
         if (state is CreateStorySuccess) {
+          AppRoute.landing.navigate(context);
         } else if (state is CreateStoryFailure) {
           ShowsDialog.showAlertDialog(context, 'Oops!', state.error.toString(),
+              isCreateStoryFail: true);
+        } else if (state is CreateStoryOffline) {
+          ShowsDialog.showAlertDialog(
+              context, 'Oops!', state.offlineMessage.toString(),
               isCreateStoryFail: true);
         }
       },

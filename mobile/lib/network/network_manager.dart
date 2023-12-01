@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:memories_app/util/sp_helper.dart';
 
@@ -52,6 +53,9 @@ class NetworkManager {
     if (!await _isConnectedToInternet()) {
       throw const SocketException('');
     }
+    String test = jsonEncode(body);
+    debugPrint(test);
+
     Map<String, String> customHeaders = await _constructHeaders();
     final http.Response response = await http.post(
         Uri.parse('$baseUrl/$endpoint'),
