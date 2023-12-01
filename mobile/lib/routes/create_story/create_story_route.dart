@@ -59,7 +59,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
 
   List<String> tags = <String>[];
 
-  String selectedDateType = '';
+  String selectedDateType = 'Year';
   String selectedSeason = '';
   final TextEditingController _yearController = TextEditingController();
   final TextEditingController _endYearController = TextEditingController();
@@ -80,6 +80,9 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   final List<StoryTag> _storyTags = [];
 
   final TextEditingController _tagsLabelController = TextEditingController();
+  final List<String> _pointAdresses = [];
+  final List<String> _polylineAdresses = [];
+  final List<String> _circleAdresses = [];
 
   @override
   void initState() {
@@ -255,8 +258,8 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
       onPressed: () {
         setState(() {
           _storyTags.add(StoryTag(
-              name: _tagsLabelController.text,
-              label: _semanticTagSelected.label,
+              name: _semanticTagSelected.label,
+              label: _tagsLabelController.text,
               wikidataId: _semanticTagSelected.id,
               description: _semanticTagSelected.description));
           _tagsLabelController.text = "";
@@ -373,24 +376,40 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   }
 
   void _onPressCreate(BuildContext context) {
+    setState(() {
+      _pointAdresses.removeWhere((element) => element.isEmpty);
+      _polylineAdresses.removeWhere((element) => element.isEmpty);
+      _circleAdresses.removeWhere((element) => element.isEmpty);
+    });
+
     BlocProvider.of<CreateStoryBloc>(context).add(CreateStoryCreateStoryEvent(
       title: _titleController.text,
       content: content,
       storyTags: _storyTags,
       dateType: selectedDateType,
       circleMarkers: _circleMarkers,
-      date: _datePickerController.text,
-      decade: _selectedDecade,
-      endDate: _endDatePickerController.text,
-      endYear: _endYearController.text,
-      includeTime: _includeTime,
       markersForPoint: _markersForPoint,
       polyLines: _completedPolylines,
       polygons: _polygons,
-      seasonName: selectedSeason,
-      startDate: _datePickerController.text,
-      startYear: _yearController.text,
-      year: _yearController.text,
+      pointAdresses: _pointAdresses,
+      circleAdresses: _circleAdresses,
+      polylineAdresses: _polylineAdresses,
+      //
+      date: _datePickerController.text.isEmpty
+          ? null
+          : _datePickerController.text,
+      decade: _selectedDecade.isEmpty ? null : _selectedDecade,
+      endDate: _endDatePickerController.text.isEmpty
+          ? null
+          : _endDatePickerController.text,
+      endYear: _endYearController.text.isEmpty ? null : _endYearController.text,
+      includeTime: _includeTime,
+      seasonName: selectedSeason.isEmpty ? null : selectedSeason,
+      startDate: _datePickerController.text.isEmpty
+          ? null
+          : _datePickerController.text,
+      startYear: _yearController.text.isEmpty ? null : _yearController.text,
+      year: _yearController.text.isEmpty ? null : _yearController.text,
     ));
   }
 
@@ -528,8 +547,9 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
           }
 
           String formattedDate =
-              DateFormat(_includeTime ? 'dd-MM-yyyy HH:mm' : 'dd-MM-yyyy')
+              DateFormat(_includeTime ? 'yyyy-MM-dd HH:mm' : 'yyyy-MM-dd')
                   .format(pickedDate);
+
           setState(() {
             _datePickerController.text = formattedDate;
           });
@@ -576,8 +596,9 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
           }
 
           String formattedDate =
-              DateFormat(_includeTime ? 'dd-MM-yyyy HH:mm' : 'dd-MM-yyyy')
+              DateFormat(_includeTime ? 'yyyy-MM-dd HH:mm' : 'yyyy-MM-dd')
                   .format(pickedDate);
+
           setState(() {
             _endDatePickerController.text = formattedDate;
           });
@@ -898,6 +919,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   }
 
   List<Widget> get _buildPolylineAdresses {
+    _polylineAdresses.add("");
     return <Widget>[
       const Align(
           alignment: Alignment.centerLeft,
@@ -929,6 +951,9 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
                         } else if (snapshot.hasError) {
                           return Text("Error: ${snapshot.error}");
                         } else {
+                          _polylineAdresses[index] =
+                              snapshot.data?.join('-') ?? "Addresses not found";
+
                           return Text(snapshot.data?.join('-') ??
                               "Addresses not found");
                         }
@@ -938,6 +963,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
+                        _polylineAdresses.removeAt(index);
                         List<LatLng> polylinePoints =
                             _completedPolylines[index].points;
 
@@ -968,6 +994,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   }
 
   List<Widget> get _buildCircleAdresses {
+    _circleAdresses.add("");
     return <Widget>[
       const Align(
           alignment: Alignment.centerLeft,
@@ -999,6 +1026,12 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
                         } else if (snapshot.hasError) {
                           return Text("Error: ${snapshot.error}");
                         } else {
+                          _circleAdresses[
+                                  _circleMarkers.indexOf(circleMarker)] =
+                              snapshot.data != null
+                                  ? "Circle area around ${snapshot.data}"
+                                  : "Address not found ";
+
                           return Text(snapshot.data != null
                               ? "Circle area around ${snapshot.data}"
                               : "Address not found");
@@ -1009,6 +1042,8 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
+                        _circleAdresses
+                            .removeAt(_circleMarkers.indexOf(circleMarker));
                         _circleMarkers.remove(circleMarker);
                       });
                     },
@@ -1028,6 +1063,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   }
 
   List<Widget> get _buildMarkerAdresses {
+    _pointAdresses.add("");
     return <Widget>[
       const Align(
           alignment: Alignment.centerLeft,
@@ -1059,6 +1095,9 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
                         } else if (snapshot.hasError) {
                           return Text("Error: ${snapshot.error}");
                         } else {
+                          _pointAdresses[_markersForPoint.indexOf(marker)] =
+                              snapshot.data ?? "Address not found";
+
                           return Text(snapshot.data ?? "Address not found");
                         }
                       },
@@ -1067,6 +1106,8 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
                   GestureDetector(
                     onTap: () {
                       setState(() {
+                        _pointAdresses
+                            .removeAt(_markersForPoint.indexOf(marker));
                         _markersForPoint.remove(marker);
                       });
                     },

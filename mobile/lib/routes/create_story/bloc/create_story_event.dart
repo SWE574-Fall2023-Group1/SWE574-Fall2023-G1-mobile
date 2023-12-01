@@ -13,6 +13,9 @@ class CreateStoryCreateStoryEvent extends CreateStoryEvent {
   final List<Polygon>? polygons;
   final List<Polyline>? polyLines;
   final List<CircleMarker>? circleMarkers;
+  final List<String>? pointAdresses;
+  final List<String>? circleAdresses;
+  final List<String>? polylineAdresses;
   final String? seasonName;
   final String? startYear;
   final String? endYear;
@@ -32,6 +35,9 @@ class CreateStoryCreateStoryEvent extends CreateStoryEvent {
     this.polygons,
     this.polyLines,
     this.circleMarkers,
+    this.pointAdresses,
+    this.circleAdresses,
+    this.polylineAdresses,
     this.seasonName,
     this.startYear,
     this.endYear,
