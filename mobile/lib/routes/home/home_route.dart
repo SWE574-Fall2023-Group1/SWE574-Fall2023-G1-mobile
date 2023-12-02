@@ -1,14 +1,14 @@
-import 'dart:convert';
+// ignore_for_file: always_specify_types, duplicate_ignore
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memories_app/routes/home/bloc/home_bloc.dart';
-import 'package:memories_app/routes/home/model/post_response_model.dart';
+import 'package:memories_app/routes/story_detail/bloc/story_detail_bloc.dart';
+import 'package:memories_app/routes/story_detail/story_detail_route.dart';
 import 'package:memories_app/util/router.dart';
+import 'package:memories_app/routes/home/model/story_model.dart';
+import 'package:memories_app/util/utils.dart';
 
-// TODO: Move business logic to bloc
-// TODO: Move PostCard to a separate file
-// TODO: Improve design
 class HomeRoute extends StatefulWidget {
   const HomeRoute({super.key});
 
@@ -21,97 +21,136 @@ class _HomeRouteState extends State<HomeRoute>
   @override
   bool get wantKeepAlive => true;
 
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    _scrollController.addListener(_scrollListener);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
     return BlocConsumer<HomeBloc, HomeState>(
       builder: (BuildContext context, HomeState state) {
-        Widget container;
+        Widget column;
         if (state is HomeInitial) {
-          container = const CircularProgressIndicator();
+          column = const Center(child: CircularProgressIndicator());
         } else if (state is HomeDisplayState) {
-          container = MaterialApp(
-            home: Scaffold(
-              appBar: AppBar(
-                backgroundColor: Colors.white,
-                leading: IconButton(
-                  icon: const Icon(
-                    Icons.power_settings_new,
-                    color: Colors.black87, // Set the color to dark grey
+          column = state.stories.isNotEmpty
+              ? RefreshIndicator(
+                  onRefresh: _refreshStories,
+                  child: Container(
+                    color: Colors.white,
+                    child: Column(children: <Widget>[
+                      Expanded(child: _buildStoryList(state.stories)),
+                      if (state.showLoadingAnimation) ...<Widget>[
+                        const SizedBox(
+                          height: SpaceSizes.x16,
+                        ),
+                        const CircularProgressIndicator(),
+                      ]
+                    ]),
                   ),
-                  // You can use any other icon you prefer
-                  onPressed: () {
-                    handleLogout(context);
-                  },
-                ),
-                title: Image.asset(
-                  'assets/login/logo.png',
-                  height: 140,
-                ),
-                centerTitle: true,
-              ),
-              body: const PostList(),
-            ),
+                )
+              : const Center(
+                  child:
+                      Text("There no stories from the users you are following"),
+                );
+        } else if (state is HomeFailure) {
+          column = Center(
+            child: Text("Error: ${state.error.toString()}"),
+          );
+        } else if (state is HomeOffline) {
+          column = Center(
+            child: Text(state.offlineMessage.toString()),
           );
         } else {
-          container = const CircularProgressIndicator();
+          column = const Center(child: CircularProgressIndicator());
         }
-        return container;
+        return Material(
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: Colors.white,
+              leading: IconButton(
+                icon: const Icon(
+                  Icons.power_settings_new,
+                  color: Colors.black87,
+                ),
+                onPressed: () {
+                  onPressLogout(context);
+                },
+              ),
+              title: Image.asset(
+                'assets/login/logo.png',
+                height: 140,
+              ),
+              centerTitle: true,
+            ),
+            body: column,
+          ),
+        );
       },
-      listener: (BuildContext context, HomeState state) {},
+      listener: (BuildContext context, HomeState state) {
+        if (state is HomeNavigateToLoginState) {
+          AppRoute.login.navigate(context);
+        }
+      },
     );
+  }
+
+  Widget _buildStoryList(List<StoryModel> stories) {
+    return ListView.builder(
+      controller: _scrollController,
+      itemCount: stories.length,
+      itemBuilder: (BuildContext context, int index) {
+        return GestureDetector(
+          onTap: () {
+            _navigateToStoryDetail(context, stories[index]);
+          },
+          child: _buildStoryCard(stories[index]),
+        );
+      },
+      padding: const EdgeInsets.all(8),
+    );
+  }
+
+  Future<void> _navigateToStoryDetail(
+      BuildContext context, StoryModel story) async {
+    final bool shouldRefreshStories = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) => BlocProvider<StoryDetailBloc>(
+          create: (BuildContext context) => StoryDetailBloc(),
+          child: StoryDetailRoute(
+            story: story,
+          ),
+        ),
+      ),
+    );
+
+    if (shouldRefreshStories) {
+      // ignore: use_build_context_synchronously
+      BlocProvider.of<HomeBloc>(context).add(HomeEventRefreshStories());
+    }
+  }
+
+  Future<void> _scrollListener() async {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      context.read<HomeBloc>().add(HomeEventLoadMoreStory());
+    }
+  }
+
+  Future<void> _refreshStories() async {
+    context.read<HomeBloc>().add(HomeEventRefreshStories());
   }
 }
 
-class PostList extends StatelessWidget {
-  const PostList({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<PostModel>>(
-      future: loadPosts(context),
-      builder: (BuildContext context, AsyncSnapshot<List<PostModel>> snapshot) {
-        if (snapshot.hasData) {
-          List<PostModel> posts = snapshot.data!;
-          return ListView.builder(
-            itemCount: posts.length,
-            itemBuilder: (BuildContext context, int index) {
-              return PostCard(post: posts[index]);
-            },
-            padding: const EdgeInsets.all(8),
-          );
-        } else if (snapshot.hasError) {
-          return const Center(child: Text('Error loading posts'));
-        }
-        return const Center(child: CircularProgressIndicator());
-      },
-    );
-  }
-}
-
-Future<List<PostModel>> loadPosts(BuildContext context) async {
-  List<dynamic> jsonList = jsonDecode(await DefaultAssetBundle.of(context)
-      .loadString('assets/home/mock_up.json'));
-
-  return jsonList.map((json) {
-    return PostModel(
-      username: json['username'],
-      title: json['title'],
-      date: json['date'],
-      location: json['location'],
-    );
-  }).toList();
-}
-
-class PostCard extends StatelessWidget {
-  final PostModel post;
-
-  const PostCard({required this.post, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
+Widget _buildStoryCard(StoryModel story) => Card(
+      elevation: 2,
+      color: Colors.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
@@ -122,7 +161,7 @@ class PostCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(
-              'By ${post.username}',
+              'By ${story.authorUsername}',
               style: const TextStyle(
                 color: Color(0xFFAFB4B7),
                 fontSize: 14,
@@ -134,14 +173,16 @@ class PostCard extends StatelessWidget {
             const SizedBox(height: 16),
             Row(
               children: <Widget>[
-                Text(
-                  post.title,
-                  style: const TextStyle(
-                    color: Color(0xFF5F6565),
-                    fontSize: 18,
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w600,
-                    height: 0,
+                Expanded(
+                  child: Text(
+                    story.title ?? "",
+                    style: const TextStyle(
+                      color: Color(0xFF5F6565),
+                      fontSize: 18,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w600,
+                      height: 0,
+                    ),
                   ),
                 ),
               ],
@@ -155,14 +196,16 @@ class PostCard extends StatelessWidget {
                   width: 20,
                 ),
                 const SizedBox(width: 4),
-                Text(
-                  post.date,
-                  style: const TextStyle(
-                    color: Color(0xFFAFB4B7),
-                    fontSize: 14,
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w500,
-                    height: 0,
+                Expanded(
+                  child: Text(
+                    story.dateText ?? '',
+                    style: const TextStyle(
+                      color: Color(0xFFAFB4B7),
+                      fontSize: 14,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w500,
+                      height: 0,
+                    ),
                   ),
                 ),
               ],
@@ -176,17 +219,19 @@ class PostCard extends StatelessWidget {
                   width: 20,
                 ),
                 const SizedBox(width: 4),
-                Text(
-                  post.location,
-                  style: const TextStyle(
-                    color: Color(0xFFAFB4B7),
-                    fontSize: 14,
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w500,
-                    height: 0,
+                Expanded(
+                  child: Text(
+                    story.locations?.firstOrNull?.name ?? '',
+                    style: const TextStyle(
+                      color: Color(0xFFAFB4B7),
+                      fontSize: 14,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w500,
+                      height: 0,
+                    ),
                   ),
                 ),
-                const Spacer(),
+                const SizedBox(width: SpaceSizes.x16),
                 Row(
                   children: <Widget>[
                     const Text(
@@ -213,11 +258,7 @@ class PostCard extends StatelessWidget {
         ),
       ),
     );
-  }
-}
 
-void handleLogout(BuildContext context) {
-  // Add your logout logic here
-  // For example, you can clear user session and navigate to the login screen.
-  AppRoute.login.navigate(context);
+void onPressLogout(BuildContext context) {
+  BlocProvider.of<HomeBloc>(context).add(HomeEventPressLogout());
 }

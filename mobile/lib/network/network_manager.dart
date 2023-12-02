@@ -1,10 +1,13 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:memories_app/util/sp_helper.dart';
 
-class _NetworkConstant {
+class NetworkConstant {
   static const String baseURL = 'http://34.72.72.115:8000/';
 }
 
@@ -25,7 +28,7 @@ class NetworkManager {
 
   static NetworkManager? _instance;
 
-  factory NetworkManager({String baseUrl = _NetworkConstant.baseURL}) {
+  factory NetworkManager({String baseUrl = NetworkConstant.baseURL}) {
     _instance ??= NetworkManager._internal(baseUrl: baseUrl);
     return _instance!;
   }
@@ -46,10 +49,13 @@ class NetworkManager {
     }
   }
 
-  Future<dynamic> post(String endpoint, Object body) async {
+  Future<dynamic> post(String endpoint, {Object? body}) async {
     if (!await _isConnectedToInternet()) {
       throw const SocketException('');
     }
+    String test = jsonEncode(body);
+    debugPrint(test);
+
     Map<String, String> customHeaders = await _constructHeaders();
     final http.Response response = await http.post(
         Uri.parse('$baseUrl/$endpoint'),
@@ -90,5 +96,18 @@ class NetworkManager {
     } else {
       return true;
     }
+  }
+
+  static Future<String?> fetchMapUrl(Uri uri,
+      {Map<String, String>? headers}) async {
+    try {
+      final http.Response response = await http.get(uri, headers: headers);
+      if (response.statusCode == 200) {
+        return response.body;
+      }
+    } catch (e) {
+      print(e.toString());
+    }
+    return null;
   }
 }

@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:memories_app/routes/create_story/bloc/create_story_bloc.dart';
 import 'package:memories_app/routes/login/bloc/login_bloc.dart';
 import 'package:memories_app/routes/register/bloc/register_bloc.dart';
 import 'package:memories_app/util/utils.dart';
 
 class ShowsDialog {
   static void showAlertDialog(
-      BuildContext context, String title, String message,
-      {bool isLoginFail = false,
-      bool isRegisterFail = false,
-      bool isRegisterSuccess = false}) {
+    BuildContext context,
+    String title,
+    String message, {
+    bool isLoginFail = false,
+    bool isRegisterFail = false,
+    bool isRegisterSuccess = false,
+    bool isCreateStoryFail = false,
+  }) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -68,6 +73,10 @@ class ShowsDialog {
       if (isRegisterSuccess) {
         BlocProvider.of<RegisterBloc>(context)
             .add(RegisterSuccessPopupClosedEvent());
+      }
+      if (isCreateStoryFail) {
+        BlocProvider.of<CreateStoryBloc>(context)
+            .add(CreateStoryErrorPopupClosedEvent());
       }
     });
   }
