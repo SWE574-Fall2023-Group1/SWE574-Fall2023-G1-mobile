@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:memories_app/routes/home/model/location_model.dart';
 import 'package:memories_app/routes/home/model/story_model.dart';
@@ -113,13 +115,13 @@ class Map extends StatelessWidget {
     });
 
     return FlutterMap(
-      options: const MapOptions(
-        initialCenter: LatLng(35.0, 35.0),
-        initialZoom: 4.0,
+      options: MapOptions(
+        initialCenter: calculateBounds(markers, circles, polygons, lines),
+        initialZoom: 6,
       ),
       children: <Widget>[
         TileLayer(
-          urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
           subdomains: const <String>['a', 'b', 'c'],
         ),
         MarkerLayer(markers: markers),
@@ -129,4 +131,46 @@ class Map extends StatelessWidget {
       ],
     );
   }
+}
+
+LatLng calculateBounds(
+  List<Marker> markers,
+  List<CircleMarker> circles,
+  List<Polygon> polygons,
+  List<Polyline> lines,
+) {
+  double? north, east, south, west;
+
+  void updateBounds(double lat, double lon) {
+    north = (north == null) ? lat : max(north!, lat);
+    south = (south == null) ? lat : min(south!, lat);
+    east = (east == null) ? lon : max(east!, lon);
+    west = (west == null) ? lon : min(west!, lon);
+  }
+
+  // For markers
+  for (Marker marker in markers) {
+    updateBounds(marker.point.latitude, marker.point.longitude);
+  }
+
+  // For circles
+  for (CircleMarker circle in circles) {
+    updateBounds(circle.point.latitude, circle.point.longitude);
+  }
+
+  // For polygons
+  for (Polygon polygon in polygons) {
+    for (LatLng point in polygon.points) {
+      updateBounds(point.latitude, point.longitude);
+    }
+  }
+
+  // For polylines
+  for (Polyline polyline in lines) {
+    for (LatLng point in polyline.points) {
+      updateBounds(point.latitude, point.longitude);
+    }
+  }
+
+  return LatLngBounds(LatLng(north!, west!), LatLng(south!, east!)).center;
 }
