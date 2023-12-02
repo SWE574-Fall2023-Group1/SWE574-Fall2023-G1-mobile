@@ -39,7 +39,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   final List<CircleMarker> _circleMarkers = <CircleMarker>[];
   late ValueNotifier<double> _radiusNotifier;
 
-  final double _currentRadiusInMeter = 100000;
+  final double _currentRadiusInMeter = 1000;
 
   List<Polyline> _polylinesForPolygon = <Polyline>[];
   List<Polyline> _currentPolylinesForPolylineSelection = <Polyline>[];
