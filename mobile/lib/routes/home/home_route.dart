@@ -221,9 +221,7 @@ Widget _buildStoryCard(StoryModel story) => Card(
                 const SizedBox(width: 4),
                 Expanded(
                   child: Text(
-                    story.locationIds != null && story.locationIds!.isNotEmpty
-                        ? story.locationIds?.first.name ?? ''
-                        : '',
+                    story.locations?.firstOrNull?.name ?? '',
                     style: const TextStyle(
                       color: Color(0xFFAFB4B7),
                       fontSize: 14,

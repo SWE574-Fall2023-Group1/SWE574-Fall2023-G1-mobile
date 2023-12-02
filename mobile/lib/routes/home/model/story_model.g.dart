@@ -15,7 +15,7 @@ StoryModel _$StoryModelFromJson(Map<String, dynamic> json) => StoryModel(
       storyTags: (json['story_tags'] as List<dynamic>?)
           ?.map((e) => TagModel.fromJson(e as Map<String, dynamic>))
           .toList(),
-      locationIds: (json['location_ids'] as List<dynamic>?)
+      locations: (json['location_ids'] as List<dynamic>?)
           ?.map((e) => LocationModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       dateType: json['date_type'] as String?,
@@ -43,7 +43,7 @@ Map<String, dynamic> _$StoryModelToJson(StoryModel instance) =>
       'title': instance.title,
       'content': instance.content,
       'story_tags': instance.storyTags,
-      'location_ids': instance.locationIds,
+      'location_ids': instance.locations,
       'date_type': instance.dateType,
       'season_name': instance.seasonName,
       'year': instance.year,

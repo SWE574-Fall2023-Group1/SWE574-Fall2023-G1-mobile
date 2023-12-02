@@ -1,7 +1,6 @@
-import 'package:memories_app/routes/create_story/model/create_story_model.dart';
-import 'package:memories_app/routes/home/model/location_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:memories_app/routes/story_detail/model/tag_model.dart';
+import 'package:memories_app/routes/home/model/location_model.dart';
 
 part 'story_model.g.dart';
 
@@ -16,7 +15,7 @@ class StoryModel {
   @JsonKey(name: "story_tags")
   List<TagModel>? storyTags;
   @JsonKey(name: "location_ids")
-  List<LocationModel>? locationIds;
+  List<LocationModel>? locations;
   @JsonKey(name: "date_type")
   String? dateType;
   @JsonKey(name: "season_name")
@@ -46,7 +45,7 @@ class StoryModel {
     required this.title,
     required this.content,
     required this.storyTags,
-    required this.locationIds,
+    required this.locations,
     required this.dateType,
     required this.seasonName,
     required this.year,
