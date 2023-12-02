@@ -10,8 +10,10 @@ import 'package:latlong2/latlong.dart';
 import 'package:memories_app/routes/create_story/create_story_repository.dart';
 import 'package:memories_app/routes/create_story/model/create_story_model.dart';
 import 'package:memories_app/routes/create_story/model/create_story_response_model.dart';
+import 'package:memories_app/routes/story_detail/model/tag_model.dart';
 
 part 'create_story_event.dart';
+
 part 'create_story_state.dart';
 
 class _Constants {
@@ -30,6 +32,7 @@ class CreateStoryBloc extends Bloc<CreateStoryEvent, CreateStoryState> {
   }
 
   late CreateStoryModel storyModel;
+
   Future<void> _createStoryEvent(
       CreateStoryCreateStoryEvent event, Emitter<CreateStoryState> emit) async {
     storyModel = _createStoryModel(event);

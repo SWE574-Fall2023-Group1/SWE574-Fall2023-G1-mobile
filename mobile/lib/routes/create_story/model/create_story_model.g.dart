@@ -13,7 +13,7 @@ CreateStoryModel _$CreateStoryModelFromJson(Map<String, dynamic> json) =>
       title: json['title'] as String,
       content: json['content'] as String,
       storyTags: (json['story_tags'] as List<dynamic>?)
-          ?.map((e) => StoryTag.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => TagModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       locationIds: (json['location_ids'] as List<dynamic>)
           .map((e) => LocationId.fromJson(e as Map<String, dynamic>))
@@ -46,20 +46,6 @@ Map<String, dynamic> _$CreateStoryModelToJson(CreateStoryModel instance) =>
       'end_date': instance.endDate,
       'decade': instance.decade,
       'include_time': instance.includeTime,
-    };
-
-StoryTag _$StoryTagFromJson(Map<String, dynamic> json) => StoryTag(
-      name: json['name'] as String,
-      label: json['label'] as String,
-      wikidataId: json['wikidata_id'] as String,
-      description: json['description'] as String,
-    );
-
-Map<String, dynamic> _$StoryTagToJson(StoryTag instance) => <String, dynamic>{
-      'name': instance.name,
-      'label': instance.label,
-      'wikidata_id': instance.wikidataId,
-      'description': instance.description,
     };
 
 LocationId _$LocationIdFromJson(Map<String, dynamic> json) => LocationId(

@@ -1,7 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-// ignore_for_file: always_specify_types
-
 part of 'story_model.dart';
 
 // **************************************************************************
@@ -10,12 +8,12 @@ part of 'story_model.dart';
 
 StoryModel _$StoryModelFromJson(Map<String, dynamic> json) => StoryModel(
       id: json['id'] as int,
-      author: json['author'] as int,
-      authorUsername: json['author_username'] as String,
-      title: json['title'] as String,
-      content: json['content'] as String,
-      storyTags: (json['story_tags'] as List<dynamic>)
-          .map((dynamic e) => TagModel.fromJson(e as Map<String, dynamic>))
+      author: json['author'] as int?,
+      authorUsername: json['author_username'] as String?,
+      title: json['title'] as String?,
+      content: json['content'] as String?,
+      storyTags: (json['story_tags'] as List<dynamic>?)
+          ?.map((e) => TagModel.fromJson(e as Map<String, dynamic>))
           .toList(),
       locationIds: (json['location_ids'] as List<dynamic>?)
           ?.map((e) => LocationModel.fromJson(e as Map<String, dynamic>))

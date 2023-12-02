@@ -11,11 +11,11 @@ import 'package:latlong2/latlong.dart';
 import 'package:memories_app/network/network_manager.dart';
 import 'package:memories_app/routes/create_story/bloc/create_story_bloc.dart';
 import 'package:memories_app/routes/create_story/location_list_tile.dart';
-import 'package:memories_app/routes/create_story/model/create_story_model.dart';
 import 'package:memories_app/routes/create_story/model/place_autocomplete_response.dart';
 import 'package:memories_app/routes/create_story/model/place_details_response.dart';
 import 'package:memories_app/routes/create_story/model/tag.dart';
 import 'package:memories_app/routes/create_story/zoom_buttons.dart';
+import 'package:memories_app/routes/story_detail/model/tag_model.dart';
 import 'package:memories_app/ui/shows_dialog.dart';
 import 'package:memories_app/util/router.dart';
 import 'package:memories_app/util/utils.dart';
@@ -77,7 +77,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
 
   late Tag _semanticTagSelected;
 
-  final List<StoryTag> _storyTags = [];
+  final List<TagModel> _storyTags = [];
 
   final TextEditingController _tagsLabelController = TextEditingController();
   final List<String> _pointAdresses = [];
@@ -265,11 +265,13 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
       child: const Text("Add Tag"),
       onPressed: () {
         setState(() {
-          _storyTags.add(StoryTag(
-              name: _semanticTagSelected.label,
-              label: _tagsLabelController.text,
-              wikidataId: _semanticTagSelected.id,
-              description: _semanticTagSelected.description));
+          _storyTags.add(
+            TagModel(
+                name: _semanticTagSelected.label,
+                label: _tagsLabelController.text,
+                wikidataId: _semanticTagSelected.id,
+                description: _semanticTagSelected.description),
+          );
           _tagsLabelController.text = "";
           _searchTagsController.text = "";
         });
