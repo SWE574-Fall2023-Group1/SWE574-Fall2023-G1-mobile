@@ -175,18 +175,24 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
                   if (selectedDateType == 'Decade') _buildDecadeDropdown(),
                   const Divider(),
                   _buildMapAndAdresses(context),
-                  const Divider(),
                   Center(
-                    child: OutlinedButton(
-                        onPressed: () async {
-                          var contentTemp = await _editorController.getText();
-                          setState(() {
-                            content = contentTemp;
-                            debugPrint(content);
-                          });
-                          _onPressCreate(context);
-                        },
-                        child: const Text("Create Story")),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                              onPressed: () async {
+                                var contentTemp =
+                                    await _editorController.getText();
+                                setState(() {
+                                  content = contentTemp;
+                                  debugPrint(content);
+                                });
+                                _onPressCreate(context);
+                              },
+                              child: const Text("Create Story")),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(
                     height: SpaceSizes.x16,
@@ -711,26 +717,6 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
           controller: _editorController,
           crossAxisAlignment: WrapCrossAlignment.start,
           direction: Axis.horizontal,
-          customButtons: [
-            Container(
-              width: 25,
-              height: 25,
-              decoration: BoxDecoration(
-                  color: Colors.green, borderRadius: BorderRadius.circular(15)),
-            ),
-            InkWell(
-                onTap: () async {
-                  var selectedText = await _editorController.getSelectedText();
-                  debugPrint('selectedText $selectedText');
-                  var selectedHtmlText =
-                      await _editorController.getSelectedHtmlText();
-                  debugPrint('selectedHtmlText $selectedHtmlText');
-                },
-                child: const Icon(
-                  Icons.add_circle,
-                  color: Colors.black,
-                )),
-          ],
         ),
         QuillHtmlEditor(
           hintText: 'Enter your content',
@@ -839,7 +825,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
               color: Colors.white,
             ),
             label: const Text(
-              "Use my Current Location",
+              "Use My Current Location",
               style: TextStyle(color: Colors.white),
             ),
             style: ElevatedButton.styleFrom(
@@ -1532,7 +1518,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
 
       String reverseGeocodeResult = await _reverseGeocode(centroidX, centroidY);
       if (reverseGeocodeResult != "not found") {
-        address = 'Area around $reverseGeocodeResult';
+        address = '$reverseGeocodeResult';
       } else {
         address = "Cannot do reverse geocoding";
       }
