@@ -11,6 +11,10 @@ class ApiEndpoints {
     return "user/userStories?page=$page&size=$size";
   }
 
+  static String buildAllStoriesWithOwnUrl(int page, int size) {
+    return "user/allStorieswithOwn?page=$page&size=$size";
+  }
+
   static String buildStoryGetUrl(int id) {
     return "user/storyGet/$id";
   }

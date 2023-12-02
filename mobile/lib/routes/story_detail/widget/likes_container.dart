@@ -51,22 +51,24 @@ class _LikesContainerState extends State<LikesContainer> {
     return Row(
       children: <Widget>[
         Container(
-          padding: const EdgeInsets.all(12),
+          alignment: Alignment.center,
+          width: 32,
+          height: 32,
           decoration: const BoxDecoration(
             shape: BoxShape.circle,
             color: Color(0xFFD9D9D9),
           ),
           child: Text(
-            likesCount.toString(),
+            formatNumber(likesCount),
             style: const TextStyle(
               color: Colors.black,
               fontSize: 14,
               fontFamily: 'Inter',
               fontWeight: FontWeight.w700,
-              letterSpacing: 1.75,
             ),
           ),
         ),
+        const SizedBox(width: 5),
         GestureDetector(
           onTap: () {
             setState(() {
@@ -91,9 +93,20 @@ class _LikesContainerState extends State<LikesContainer> {
           child: Icon(
             isHeartFilled ? Icons.favorite : Icons.favorite_border,
             color: isHeartFilled ? Colors.red : Colors.black,
+            size: 32,
           ),
         ),
       ],
     );
+  }
+
+  String formatNumber(int number) {
+    if (number >= 1000000) {
+      return '${(number / 1000000).toStringAsFixed(1)}m';
+    }
+    if (number >= 1000) {
+      return '${(number / 1000).toStringAsFixed(1)}k';
+    }
+    return number.toString();
   }
 }

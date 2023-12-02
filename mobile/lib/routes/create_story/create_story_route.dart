@@ -3,7 +3,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -11,17 +10,16 @@ import 'package:latlong2/latlong.dart';
 import 'package:memories_app/network/network_manager.dart';
 import 'package:memories_app/routes/create_story/bloc/create_story_bloc.dart';
 import 'package:memories_app/routes/create_story/location_list_tile.dart';
-import 'package:memories_app/routes/create_story/model/create_story_model.dart';
 import 'package:memories_app/routes/create_story/model/place_autocomplete_response.dart';
 import 'package:memories_app/routes/create_story/model/place_details_response.dart';
 import 'package:memories_app/routes/create_story/model/tag.dart';
 import 'package:memories_app/routes/create_story/zoom_buttons.dart';
+import 'package:memories_app/routes/story_detail/model/tag_model.dart';
 import 'package:memories_app/ui/shows_dialog.dart';
 import 'package:memories_app/util/router.dart';
 import 'package:memories_app/util/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:quill_html_editor/quill_html_editor.dart';
-import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 
 class CreateStoryRoute extends StatefulWidget {
@@ -41,7 +39,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   final List<CircleMarker> _circleMarkers = <CircleMarker>[];
   late ValueNotifier<double> _radiusNotifier;
 
-  final double _currentRadius = 50;
+  final double _currentRadiusInMeter = 1000;
 
   List<Polyline> _polylinesForPolygon = <Polyline>[];
   List<Polyline> _currentPolylinesForPolylineSelection = <Polyline>[];
@@ -77,7 +75,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
 
   late Tag _semanticTagSelected;
 
-  final List<StoryTag> _storyTags = [];
+  final List<TagModel> _storyTags = [];
 
   final TextEditingController _tagsLabelController = TextEditingController();
   final List<String> _pointAdresses = [];
@@ -92,7 +90,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
     _markersForPoint = <Marker>[];
     _polygons = <Polygon>[];
     _completedPolylines = <Polyline>[];
-    _radiusNotifier = ValueNotifier<double>(_currentRadius);
+    _radiusNotifier = ValueNotifier<double>(_currentRadiusInMeter);
   }
 
   @override
@@ -177,19 +175,24 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
                   if (selectedDateType == 'Decade') _buildDecadeDropdown(),
                   const Divider(),
                   _buildMapAndAdresses(context),
-                  const Divider(),
                   Center(
-                    child: OutlinedButton(
-                        onPressed: () async {
-                          var contentTemp = await _compressImagesInHtml(
-                              await _editorController.getText());
-                          setState(() {
-                            content = contentTemp;
-                            debugPrint(content);
-                          });
-                          _onPressCreate(context);
-                        },
-                        child: const Text("Create Story")),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                              onPressed: () async {
+                                var contentTemp =
+                                    await _editorController.getText();
+                                setState(() {
+                                  content = contentTemp;
+                                  debugPrint(content);
+                                });
+                                _onPressCreate(context);
+                              },
+                              child: const Text("Create Story")),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(
                     height: SpaceSizes.x16,
@@ -265,11 +268,13 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
       child: const Text("Add Tag"),
       onPressed: () {
         setState(() {
-          _storyTags.add(StoryTag(
-              name: _semanticTagSelected.label,
-              label: _tagsLabelController.text,
-              wikidataId: _semanticTagSelected.id,
-              description: _semanticTagSelected.description));
+          _storyTags.add(
+            TagModel(
+                name: _semanticTagSelected.label,
+                label: _tagsLabelController.text,
+                wikidataId: _semanticTagSelected.id,
+                description: _semanticTagSelected.description),
+          );
           _tagsLabelController.text = "";
           _searchTagsController.text = "";
         });
@@ -712,26 +717,6 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
           controller: _editorController,
           crossAxisAlignment: WrapCrossAlignment.start,
           direction: Axis.horizontal,
-          customButtons: [
-            Container(
-              width: 25,
-              height: 25,
-              decoration: BoxDecoration(
-                  color: Colors.green, borderRadius: BorderRadius.circular(15)),
-            ),
-            InkWell(
-                onTap: () async {
-                  var selectedText = await _editorController.getSelectedText();
-                  debugPrint('selectedText $selectedText');
-                  var selectedHtmlText =
-                      await _editorController.getSelectedHtmlText();
-                  debugPrint('selectedHtmlText $selectedHtmlText');
-                },
-                child: const Icon(
-                  Icons.add_circle,
-                  color: Colors.black,
-                )),
-          ],
         ),
         QuillHtmlEditor(
           hintText: 'Enter your content',
@@ -840,7 +825,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
               color: Colors.white,
             ),
             label: const Text(
-              "Use my Current Location",
+              "Use My Current Location",
               style: TextStyle(color: Colors.white),
             ),
             style: ElevatedButton.styleFrom(
@@ -897,7 +882,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
                           return Slider(
                             value: value,
                             min: 1.0,
-                            max: 100.0,
+                            max: 200000,
                             onChanged: (double newValue) {
                               _radiusNotifier.value = newValue;
                               _updateCircleRadius();
@@ -1345,67 +1330,6 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
     );
   }
 
-  Future<String> _compressImagesInHtml(String htmlText) async {
-    RegExp regex = RegExp(r'<img\s+src="data:(.*?)base64,(.*?)".*?>');
-    Iterable<Match> matches = regex.allMatches(htmlText);
-
-    List<Map<String, String>> replacements = [];
-
-    for (Match match in matches) {
-      if (match.groupCount == 2) {
-        String? imageType = match.group(1);
-        String? imageData = match.group(2);
-
-        if (imageType == null || imageData == null) {
-          continue;
-        }
-
-        Uint8List imageBytes =
-            Uint8List.fromList(List<int>.from(base64.decode(imageData)));
-
-        CompressFormat imageFormat;
-        if (imageType.contains('image/png')) {
-          imageFormat = CompressFormat.png;
-        } else if (imageType.contains('image/jpeg')) {
-          imageFormat = CompressFormat.jpeg;
-        } else if (imageType.contains('image/webp')) {
-          imageFormat = CompressFormat.webp;
-        } else if (imageType.contains('image/heic')) {
-          imageFormat = CompressFormat.heic;
-        } else {
-          imageFormat = CompressFormat.jpeg;
-        }
-
-        List<int> compressedBytes = await FlutterImageCompress.compressWithList(
-          imageBytes,
-          quality: 1,
-          format: imageFormat, // Always compress as JPEG
-        );
-
-        // Replace the original image with the compressed image in the HTML string
-        String compressedImageData = base64.encode(compressedBytes);
-        String compressedImageTag =
-            '<img src="data:${imageType}base64,$compressedImageData"/>';
-
-        // Store the replacement information
-        replacements.add({
-          'start': match.start.toString(),
-          'end': match.end.toString(),
-          'replacement': compressedImageTag,
-        });
-      }
-    }
-
-    // Apply the replacements to the HTML string
-    for (int i = replacements.length - 1; i >= 0; i--) {
-      Map<String, String> replacement = replacements[i];
-      htmlText = htmlText.replaceRange(int.parse(replacement['start']!),
-          int.parse(replacement['end']!), replacement['replacement']!);
-    }
-
-    return htmlText;
-  }
-
   Future<String> _reverseGeocode(double latitude, double longitude) async {
     List<Placemark> placemarks = await placemarkFromCoordinates(
         latitude, longitude,
@@ -1594,7 +1518,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
 
       String reverseGeocodeResult = await _reverseGeocode(centroidX, centroidY);
       if (reverseGeocodeResult != "not found") {
-        address = 'Area around $reverseGeocodeResult';
+        address = '$reverseGeocodeResult';
       } else {
         address = "Cannot do reverse geocoding";
       }
@@ -1643,10 +1567,10 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
     setState(() {
       _circleMarkers.add(
         CircleMarker(
-          point: point,
-          color: Colors.red.withOpacity(0.5),
-          radius: _currentRadius,
-        ),
+            point: point,
+            color: Colors.red.withOpacity(0.5),
+            radius: _currentRadiusInMeter,
+            useRadiusInMeter: true),
       );
     });
   }
@@ -1656,10 +1580,10 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
     _circleMarkers.removeLast(); // Remove the existing circle
     _circleMarkers.add(
       CircleMarker(
-        point: lastCircle.point,
-        color: Colors.red.withOpacity(0.5),
-        radius: _radiusNotifier.value, // Use the updated radius
-      ),
+          point: lastCircle.point,
+          radius: _radiusNotifier.value,
+          color: Colors.red.withOpacity(0.5),
+          useRadiusInMeter: true),
     );
   }
 

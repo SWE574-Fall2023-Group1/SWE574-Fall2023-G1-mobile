@@ -1,6 +1,5 @@
-// ignore_for_file: always_specify_types
-
 import 'package:json_annotation/json_annotation.dart';
+import 'package:memories_app/routes/story_detail/model/tag_model.dart';
 
 part 'create_story_model.g.dart';
 
@@ -9,7 +8,7 @@ class CreateStoryModel {
   final String title;
   final String content;
   @JsonKey(name: 'story_tags')
-  final List<StoryTag>? storyTags;
+  final List<TagModel>? storyTags;
   @JsonKey(name: 'location_ids')
   final List<LocationId> locationIds;
   @JsonKey(name: 'date_type')
@@ -51,26 +50,6 @@ class CreateStoryModel {
       _$CreateStoryModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$CreateStoryModelToJson(this);
-}
-
-@JsonSerializable()
-class StoryTag {
-  final String name;
-  final String label;
-  @JsonKey(name: 'wikidata_id')
-  final String wikidataId;
-  final String description;
-
-  StoryTag(
-      {required this.name,
-      required this.label,
-      required this.wikidataId,
-      required this.description});
-
-  factory StoryTag.fromJson(Map<String, dynamic> json) =>
-      _$StoryTagFromJson(json);
-
-  Map<String, dynamic> toJson() => _$StoryTagToJson(this);
 }
 
 @JsonSerializable()

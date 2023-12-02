@@ -5,6 +5,9 @@ import 'package:memories_app/util/api_endpoints.dart';
 abstract class HomeRepository {
   Future<StoriesResponseModel> getUserStories(
       {required int page, required int size});
+
+  Future<StoriesResponseModel> getAllStoriesWithOwnUrl(
+      {required int page, required int size});
 }
 
 class HomeRepositoryImp extends HomeRepository {
@@ -18,6 +21,14 @@ class HomeRepositoryImp extends HomeRepository {
       {required int page, required int size}) async {
     final Result result =
         await _networkManager.get(ApiEndpoints.buildUserStoriesUrl(page, size));
+    return StoriesResponseModel.fromJson(result.json);
+  }
+
+  @override
+  Future<StoriesResponseModel> getAllStoriesWithOwnUrl(
+      {required int page, required int size}) async {
+    final Result result = await _networkManager
+        .get(ApiEndpoints.buildAllStoriesWithOwnUrl(page, size));
     return StoriesResponseModel.fromJson(result.json);
   }
 }

@@ -1,18 +1,16 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:memories_app/routes/create_story/model/create_story_model.dart';
 import 'package:memories_app/routes/home/model/story_model.dart';
 import 'package:memories_app/routes/story_detail/bloc/story_detail_bloc.dart';
 import 'package:memories_app/routes/story_detail/bloc/story_detail_state.dart';
 import 'package:memories_app/routes/story_detail/model/story_detail_repository.dart';
 import 'package:memories_app/routes/story_detail/widget/comments_container.dart';
 import 'package:memories_app/routes/story_detail/widget/likes_container.dart';
-import 'package:memories_app/routes/story_detail/widget/location_names_container.dart';
+import 'package:memories_app/routes/story_detail/widget/story_location_container.dart';
 import 'package:memories_app/routes/story_detail/widget/story_date_container.dart';
 import 'package:memories_app/routes/story_detail/widget/story_detail_app_bar.dart';
+import 'package:memories_app/routes/story_detail/widget/story_tag_chips.dart';
 import 'package:memories_app/ui/date_text_view.dart';
 
 bool shouldRefreshStories = false;
@@ -112,7 +110,7 @@ class ShowPostDetail extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 28),
-            LocationNamesContainer(story: story),
+            StoryLocationContainer(story: story),
             const Divider(
               color: Colors.black,
               thickness: 1,
@@ -139,13 +137,7 @@ class ShowPostDetail extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       DateText.build(text: "Tags:"),
-                      if (story.storyTags != null)
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: story.storyTags!.map((StoryTag tag) {
-                            return DateText.build(text: tag.label);
-                          }).toList(),
-                        ),
+                      StoryTagChips(tagModels: story.storyTags)
                     ],
                   ),
                 ),
