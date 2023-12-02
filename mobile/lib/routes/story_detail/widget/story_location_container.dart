@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:memories_app/routes/create_story/zoom_buttons.dart';
 import 'package:memories_app/routes/home/model/location_model.dart';
 import 'package:memories_app/routes/home/model/story_model.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -96,8 +97,9 @@ class Map extends StatelessWidget {
             points: location.polygon!.coordinates
                 .map((List<double> e) => LatLng(e.last, e.first))
                 .toList(),
-            color: Colors.green.withOpacity(0.7),
-            borderColor: Colors.green,
+            color: Colors.red.withOpacity(0.5),
+            isFilled: true,
+            borderColor: Colors.red,
             borderStrokeWidth: 2,
           ),
         );
@@ -122,7 +124,16 @@ class Map extends StatelessWidget {
       children: <Widget>[
         TileLayer(
           urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-          subdomains: const <String>['a', 'b', 'c'],
+          userAgentPackageName: 'dev.fleaflet.flutter_map.example',
+        ),
+        const FlutterMapZoomButtons(
+          minZoom: 4,
+          maxZoom: 19,
+          mini: true,
+          padding: 10,
+          alignment: Alignment.bottomRight,
+          zoomInColorIcon: Colors.white,
+          zoomOutColorIcon: Colors.white,
         ),
         MarkerLayer(markers: markers),
         CircleLayer(circles: circles),
