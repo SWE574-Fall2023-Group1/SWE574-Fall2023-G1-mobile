@@ -13,6 +13,7 @@ class StoryTagChips extends StatelessWidget {
     }
 
     return Wrap(
+      spacing: 8.0,
       children: tagModels!
           .map((TagModel tag) => Tooltip(
               message: tag.description, child: Chip(label: Text(tag.label))))
