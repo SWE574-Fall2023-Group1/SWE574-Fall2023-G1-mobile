@@ -54,7 +54,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     StoriesResponseModel? responseModel;
 
     responseModel = await HomeRepositoryImp()
-        .getUserStories(page: page, size: _Constants.size);
+        .getAllStoriesWithOwnUrl(page: page, size: _Constants.size);
     if (responseModel.stories != null) {
       responseModel.stories?.forEach((StoryModel story) {
         story.dateText = _getFormattedDate(story);
