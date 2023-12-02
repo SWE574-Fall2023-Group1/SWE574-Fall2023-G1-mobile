@@ -1,3 +1,4 @@
+import 'package:memories_app/routes/create_story/model/create_story_model.dart';
 import 'package:memories_app/routes/home/model/location_model.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:memories_app/routes/story_detail/model/tag_model.dart';
@@ -28,12 +29,12 @@ class StoryModel {
   String? date;
   @JsonKey(name: "creation_date")
   DateTime? creationDate;
-  @JsonKey(name: "startDate")
+  @JsonKey(name: "start_date")
   String? startDate;
   @JsonKey(name: "end_date")
   String? endDate;
   int? decade;
-  @JsonKey(name: "includeTime")
+  @JsonKey(name: "include_time")
   bool includeTime;
   List<int>? likes;
   String? dateText;

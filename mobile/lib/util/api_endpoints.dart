@@ -30,4 +30,6 @@ class ApiEndpoints {
   static String postComment(int id) {
     return "user/comment/$id";
   }
+
+  static const String createStory = "user/storyCreate";
 }

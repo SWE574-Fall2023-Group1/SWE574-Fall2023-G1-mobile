@@ -28,6 +28,7 @@ class AppColors {
   static const Color textFieldHintColor = Color(0xFF757575);
   static const Color buttonColor = Color(0xFF7E49FF);
   static const Color disabledButtonTextColor = Color(0xFF757575);
+  static const Color backgroundColor = Color(0xFFEFEFEF);
 }
 
 class AppScreenSizeUtils {
@@ -54,4 +55,8 @@ class TestDevices {
     iphone14,
     iphone14ProMax
   ];
+}
+
+class AppConstants {
+  static const String apiKey = "AIzaSyCwMxxa__lqDW7drk5rXgyjDAVKA1t7LOY";
 }

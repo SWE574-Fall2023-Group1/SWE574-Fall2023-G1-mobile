@@ -1,6 +1,9 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:memories_app/routes/create_story/model/create_story_model.dart';
 import 'package:memories_app/routes/home/model/story_model.dart';
 import 'package:memories_app/routes/story_detail/bloc/story_detail_bloc.dart';
 import 'package:memories_app/routes/story_detail/bloc/story_detail_state.dart';
@@ -137,7 +140,7 @@ class ShowPostDetail extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       DateText.build(text: "Tags:"),
-                      StoryTagChips(tagModels: story.storyTags)
+                      DateText.build(text: story.storyTags ?? "N/A")
                     ],
                   ),
                 ),
