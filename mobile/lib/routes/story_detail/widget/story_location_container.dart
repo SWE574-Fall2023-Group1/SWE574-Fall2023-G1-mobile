@@ -83,9 +83,7 @@ class Map extends StatelessWidget {
               location.circle!.coordinates.first,
             ),
             color: Colors.red.withOpacity(0.5),
-            borderStrokeWidth: 4,
             useRadiusInMeter: true,
-            borderColor: Colors.red,
             radius: location.radius!,
           ),
         );
