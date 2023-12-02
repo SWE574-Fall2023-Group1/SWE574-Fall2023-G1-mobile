@@ -6,10 +6,10 @@ help:
 	@echo "           web and mobile app for social networking                 "
 	@echo "    focusing on sharing past memories with other users worldwide    "
 	@echo "--------------------------------------------------------------------"
-	@echo "   targets: flutter-test, pre-commit, help                          "
+	@echo "   targets: test, pre-commit, help                                  "
 	@echo "--------------------------------------------------------------------"
 	@echo "    Flutter test:                                                   "
-	@echo "          > make flutter-test;                                      "
+	@echo "          > make test;                                              "
 	@echo "    Run pre-commit for all files:                                   "
 	@echo "          > make pre-commit;                                        "
 	@echo "    Help:                                                           "
@@ -17,7 +17,7 @@ help:
 	@echo "          > make help;                                              "
 	@echo "--------------------------------------------------------------------"
 
-flutter-test:
+test:
 ifeq ($(OS),Windows_NT)
 	powershell ./hack/flutter-test.ps1
 else
