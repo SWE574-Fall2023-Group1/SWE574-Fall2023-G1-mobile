@@ -39,7 +39,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   final List<CircleMarker> _circleMarkers = <CircleMarker>[];
   late ValueNotifier<double> _radiusNotifier;
 
-  final double _currentRadius = 50;
+  final double _currentRadiusInMeter = 100000;
 
   List<Polyline> _polylinesForPolygon = <Polyline>[];
   List<Polyline> _currentPolylinesForPolylineSelection = <Polyline>[];
@@ -90,7 +90,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
     _markersForPoint = <Marker>[];
     _polygons = <Polygon>[];
     _completedPolylines = <Polyline>[];
-    _radiusNotifier = ValueNotifier<double>(_currentRadius);
+    _radiusNotifier = ValueNotifier<double>(_currentRadiusInMeter);
   }
 
   @override
@@ -882,7 +882,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
                           return Slider(
                             value: value,
                             min: 1.0,
-                            max: 100.0,
+                            max: 200000,
                             onChanged: (double newValue) {
                               _radiusNotifier.value = newValue;
                               _updateCircleRadius();
@@ -1567,10 +1567,10 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
     setState(() {
       _circleMarkers.add(
         CircleMarker(
-          point: point,
-          color: Colors.red.withOpacity(0.5),
-          radius: _currentRadius,
-        ),
+            point: point,
+            color: Colors.red.withOpacity(0.5),
+            radius: _currentRadiusInMeter,
+            useRadiusInMeter: true),
       );
     });
   }
@@ -1580,10 +1580,10 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
     _circleMarkers.removeLast(); // Remove the existing circle
     _circleMarkers.add(
       CircleMarker(
-        point: lastCircle.point,
-        color: Colors.red.withOpacity(0.5),
-        radius: _radiusNotifier.value, // Use the updated radius
-      ),
+          point: lastCircle.point,
+          radius: _radiusNotifier.value,
+          color: Colors.red.withOpacity(0.5),
+          useRadiusInMeter: true),
     );
   }
 

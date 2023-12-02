@@ -82,10 +82,10 @@ class Map extends StatelessWidget {
               location.circle!.coordinates.last,
               location.circle!.coordinates.first,
             ),
-            color: Colors.blue.withOpacity(0.7),
-            borderStrokeWidth: 2,
+            color: Colors.red.withOpacity(0.5),
+            borderStrokeWidth: 4,
             useRadiusInMeter: true,
-            borderColor: Colors.blue,
+            borderColor: Colors.red,
             radius: location.radius!,
           ),
         );
@@ -100,7 +100,7 @@ class Map extends StatelessWidget {
             color: Colors.red.withOpacity(0.5),
             isFilled: true,
             borderColor: Colors.red,
-            borderStrokeWidth: 2,
+            borderStrokeWidth: 4,
           ),
         );
       }

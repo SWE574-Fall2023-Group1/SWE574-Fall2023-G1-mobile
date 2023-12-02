@@ -194,8 +194,7 @@ class CreateStoryBloc extends Bloc<CreateStoryEvent, CreateStoryState> {
             circleMarkers[i].point.latitude
           ],
         ),
-        radius:
-            double.parse((circleMarkers[i].radius * 1000).toStringAsFixed(10)),
+        radius: double.parse((circleMarkers[i].radius).toStringAsFixed(10)),
       );
       locationIds.add(circleLocation);
     }
