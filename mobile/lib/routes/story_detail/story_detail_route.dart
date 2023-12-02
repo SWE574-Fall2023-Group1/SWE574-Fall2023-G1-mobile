@@ -7,7 +7,7 @@ import 'package:memories_app/routes/story_detail/bloc/story_detail_state.dart';
 import 'package:memories_app/routes/story_detail/model/story_detail_repository.dart';
 import 'package:memories_app/routes/story_detail/widget/comments_container.dart';
 import 'package:memories_app/routes/story_detail/widget/likes_container.dart';
-import 'package:memories_app/routes/story_detail/widget/location_names_container.dart';
+import 'package:memories_app/routes/story_detail/widget/story_location_container.dart';
 import 'package:memories_app/routes/story_detail/widget/story_date_container.dart';
 import 'package:memories_app/routes/story_detail/widget/story_detail_app_bar.dart';
 import 'package:memories_app/routes/story_detail/widget/story_tag_chips.dart';
