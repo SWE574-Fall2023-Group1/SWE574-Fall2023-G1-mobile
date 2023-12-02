@@ -3,7 +3,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -21,7 +20,6 @@ import 'package:memories_app/util/router.dart';
 import 'package:memories_app/util/utils.dart';
 import 'package:intl/intl.dart';
 import 'package:quill_html_editor/quill_html_editor.dart';
-import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 
 class CreateStoryRoute extends StatefulWidget {
@@ -181,8 +179,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
                   Center(
                     child: OutlinedButton(
                         onPressed: () async {
-                          var contentTemp = await _compressImagesInHtml(
-                              await _editorController.getText());
+                          var contentTemp = await _editorController.getText();
                           setState(() {
                             content = contentTemp;
                             debugPrint(content);
@@ -1345,67 +1342,6 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
         CircleLayer(circles: _circleMarkers),
       ],
     );
-  }
-
-  Future<String> _compressImagesInHtml(String htmlText) async {
-    RegExp regex = RegExp(r'<img\s+src="data:(.*?)base64,(.*?)".*?>');
-    Iterable<Match> matches = regex.allMatches(htmlText);
-
-    List<Map<String, String>> replacements = [];
-
-    for (Match match in matches) {
-      if (match.groupCount == 2) {
-        String? imageType = match.group(1);
-        String? imageData = match.group(2);
-
-        if (imageType == null || imageData == null) {
-          continue;
-        }
-
-        Uint8List imageBytes =
-            Uint8List.fromList(List<int>.from(base64.decode(imageData)));
-
-        CompressFormat imageFormat;
-        if (imageType.contains('image/png')) {
-          imageFormat = CompressFormat.png;
-        } else if (imageType.contains('image/jpeg')) {
-          imageFormat = CompressFormat.jpeg;
-        } else if (imageType.contains('image/webp')) {
-          imageFormat = CompressFormat.webp;
-        } else if (imageType.contains('image/heic')) {
-          imageFormat = CompressFormat.heic;
-        } else {
-          imageFormat = CompressFormat.jpeg;
-        }
-
-        List<int> compressedBytes = await FlutterImageCompress.compressWithList(
-          imageBytes,
-          quality: 1,
-          format: imageFormat, // Always compress as JPEG
-        );
-
-        // Replace the original image with the compressed image in the HTML string
-        String compressedImageData = base64.encode(compressedBytes);
-        String compressedImageTag =
-            '<img src="data:${imageType}base64,$compressedImageData"/>';
-
-        // Store the replacement information
-        replacements.add({
-          'start': match.start.toString(),
-          'end': match.end.toString(),
-          'replacement': compressedImageTag,
-        });
-      }
-    }
-
-    // Apply the replacements to the HTML string
-    for (int i = replacements.length - 1; i >= 0; i--) {
-      Map<String, String> replacement = replacements[i];
-      htmlText = htmlText.replaceRange(int.parse(replacement['start']!),
-          int.parse(replacement['end']!), replacement['replacement']!);
-    }
-
-    return htmlText;
   }
 
   Future<String> _reverseGeocode(double latitude, double longitude) async {
