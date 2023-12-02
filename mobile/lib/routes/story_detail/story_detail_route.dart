@@ -110,7 +110,7 @@ class ShowPostDetail extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 28),
-            LocationNamesContainer(story: story),
+            StoryLocationContainer(story: story),
             const Divider(
               color: Colors.black,
               thickness: 1,

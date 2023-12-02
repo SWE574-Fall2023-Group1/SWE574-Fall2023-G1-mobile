@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 @JsonSerializable()
 class LocationModel {
-  final String? name;
+  final String name;
   final PointLocation? point;
   final PointLocation? circle;
   final double? radius;
@@ -20,7 +20,7 @@ class LocationModel {
 
   factory LocationModel.fromJson(Map<String, dynamic> json) {
     return LocationModel(
-      name: json['name'] as String?,
+      name: json['name'] as String,
       point:
           json['point'] == null ? null : PointLocation.fromJson(json['point']),
       circle: json['circle'] == null
@@ -48,18 +48,22 @@ class PointLocation {
   });
 
   factory PointLocation.fromJson(String pointString) {
-    // Extract coordinates from the WKT format
-    String coordsString = pointString.split('(').last.split(')')[0];
-    List<double> coords =
-        coordsString.split(' ').map((String str) => double.parse(str)).toList();
-    return PointLocation(coordinates: coords);
+    return PointLocation(
+      coordinates: pointString
+          .split('(')
+          .last
+          .split(')')[0]
+          .split(' ')
+          .map((String str) => double.parse(str))
+          .toList(),
+    );
   }
 }
 
 @JsonSerializable()
 class PolygonLocation {
   final String? type;
-  final List<List<List<double>>> coordinates;
+  final List<List<double>> coordinates;
 
   PolygonLocation({
     required this.coordinates,
@@ -67,19 +71,14 @@ class PolygonLocation {
   });
 
   factory PolygonLocation.fromJson(String polygonString) {
-    // Removing the POLYGON and SRID parts
-    String rawCoordinates = polygonString.split('POLYGON ((')[1].split('))')[0];
-
-    // Splitting into coordinate pairs
-    List<String> pairs = rawCoordinates.split(', ');
-
-    // Parsing each pair into a list of doubles
-    List<List<double>> ring = pairs.map((String pair) {
-      return pair.split(' ').map((String p) => double.parse(p)).toList();
-    }).toList();
-
     return PolygonLocation(
-      coordinates: <List<List<double>>>[ring],
+      coordinates: polygonString
+          .split('POLYGON ((')[1]
+          .split('))')[0]
+          .split(', ')
+          .map((String pair) {
+        return pair.split(' ').map((String p) => double.parse(p)).toList();
+      }).toList(),
     );
   }
 }
@@ -95,14 +94,13 @@ class LineStringLocation {
   });
 
   factory LineStringLocation.fromJson(String lineString) {
-    String rawCoordinates = lineString.split('LINESTRING (')[1].split(')')[0];
-
-    // Splitting into coordinate pairs
-    List<String> pairs = rawCoordinates.split(', ');
-
     return LineStringLocation(
-      coordinates: pairs.map((pair) {
-        return pair.split(' ').map((p) => double.parse(p)).toList();
+      coordinates: lineString
+          .split('LINESTRING (')[1]
+          .split(')')[0]
+          .split(', ')
+          .map((String pair) {
+        return pair.split(' ').map((String p) => double.parse(p)).toList();
       }).toList(),
     );
   }
