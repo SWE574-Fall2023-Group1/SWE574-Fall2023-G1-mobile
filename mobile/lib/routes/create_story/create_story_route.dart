@@ -74,7 +74,6 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   final List<Tag> _tagsSearchResults = [];
 
   late Tag _semanticTagSelected;
-  String _tagInitialValue = "";
 
   final List<TagModel> _storyTags = [];
 
@@ -83,7 +82,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   final List<String> _polylineAdresses = [];
   final List<String> _circleAdresses = [];
 
-  TextEditingController _radiusInputController =
+  final TextEditingController _radiusInputController =
       TextEditingController(text: "500");
 
   @override
@@ -123,85 +122,91 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
         return !(state is CreateStoryFailure || state is CreateStoryOffline);
       },
       builder: (BuildContext context, CreateStoryState state) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text("Create Story"),
-            leading: GestureDetector(
-                onTap: () {
-                  AppRoute.landing.navigate(context);
-                },
-                child: const Icon(Icons.close)),
-          ),
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  const SizedBox(
-                    height: SpaceSizes.x16,
-                  ),
-
-                  _buildTitleField(),
-                  const SizedBox(
-                    height: SpaceSizes.x8,
-                  ),
-
-                  const Divider(),
-                  _buildRichText(context),
-                  const SizedBox(
-                    height: SpaceSizes.x8,
-                  ),
-                  const Divider(),
-
-                  _searchTags(),
-                  const SizedBox(
-                    height: SpaceSizes.x4,
-                  ),
-                  if (_tagsSearchResults.isNotEmpty) _buildSearchTagsResult(),
-                  const Divider(),
-                  _buildTagsLabelInput(),
-                  _buildAddTagButton(),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  _buildTagsBoxes(),
-                  const Divider(),
-                  _buildDateTypeDropdown(),
-                  const SizedBox(height: SpaceSizes.x16),
-                  // Additional input fields based on date type
-                  if (selectedDateType == 'Year' ||
-                      selectedDateType == 'Interval Year')
-                    _buildYearSelection(),
-                  if (selectedDateType == 'Normal Date' ||
-                      selectedDateType == 'Interval Date')
-                    _buildDateSelection(),
-                  if (selectedDateType == 'Decade') _buildDecadeDropdown(),
-                  const Divider(),
-                  _buildMapAndAdresses(context),
-                  Center(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                              onPressed: () async {
-                                var contentTemp =
-                                    await _editorController.getText();
-                                setState(() {
-                                  content = contentTemp;
-                                  debugPrint(content);
-                                });
-                                _onPressCreate(context);
-                              },
-                              child: const Text("Create Story")),
-                        ),
-                      ],
+        return WillPopScope(
+          onWillPop: () async {
+            AppRoute.landing.navigate(context);
+            return true;
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text("Create Story"),
+              leading: GestureDetector(
+                  onTap: () {
+                    AppRoute.landing.navigate(context);
+                  },
+                  child: const Icon(Icons.close)),
+            ),
+            body: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const SizedBox(
+                      height: SpaceSizes.x16,
                     ),
-                  ),
-                  const SizedBox(
-                    height: SpaceSizes.x16,
-                  )
-                ],
+
+                    _buildTitleField(),
+                    const SizedBox(
+                      height: SpaceSizes.x8,
+                    ),
+
+                    const Divider(),
+                    _buildRichText(context),
+                    const SizedBox(
+                      height: SpaceSizes.x8,
+                    ),
+                    const Divider(),
+
+                    _searchTags(),
+                    const SizedBox(
+                      height: SpaceSizes.x4,
+                    ),
+                    if (_tagsSearchResults.isNotEmpty) _buildSearchTagsResult(),
+                    const Divider(),
+                    _buildTagsLabelInput(),
+                    _buildAddTagButton(),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    _buildTagsBoxes(),
+                    const Divider(),
+                    _buildDateTypeDropdown(),
+                    const SizedBox(height: SpaceSizes.x16),
+                    // Additional input fields based on date type
+                    if (selectedDateType == 'Year' ||
+                        selectedDateType == 'Interval Year')
+                      _buildYearSelection(),
+                    if (selectedDateType == 'Normal Date' ||
+                        selectedDateType == 'Interval Date')
+                      _buildDateSelection(),
+                    if (selectedDateType == 'Decade') _buildDecadeDropdown(),
+                    const Divider(),
+                    _buildMapAndAdresses(context),
+                    Center(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                                onPressed: () async {
+                                  var contentTemp =
+                                      await _editorController.getText();
+                                  setState(() {
+                                    content = contentTemp;
+                                    debugPrint(content);
+                                  });
+                                  _onPressCreate(context);
+                                },
+                                child: const Text("Create Story")),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: SpaceSizes.x16,
+                    )
+                  ],
+                ),
               ),
             ),
           ),
