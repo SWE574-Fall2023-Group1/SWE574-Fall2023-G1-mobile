@@ -8,13 +8,16 @@ class StoryTagChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> tags =
-        tagModels?.map((TagModel model) => model.label).toList() ??
-            List<String>.empty();
+    if (tagModels?.isNotEmpty != true) {
+      return Container();
+    }
 
     return Wrap(
       spacing: 8.0,
-      children: tags.map((String tag) => Chip(label: Text(tag))).toList(),
+      children: tagModels!
+          .map((TagModel tag) => Tooltip(
+              message: tag.description, child: Chip(label: Text(tag.label))))
+          .toList(),
     );
   }
 }
