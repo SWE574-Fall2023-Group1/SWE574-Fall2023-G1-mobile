@@ -39,7 +39,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   final List<CircleMarker> _circleMarkers = <CircleMarker>[];
   late ValueNotifier<double> _radiusNotifier;
 
-  final double _currentRadiusInMeter = 1000;
+  final double _currentRadiusInMeter = 5000;
 
   List<Polyline> _polylinesForPolygon = <Polyline>[];
   List<Polyline> _currentPolylinesForPolylineSelection = <Polyline>[];
@@ -82,6 +82,9 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   final List<String> _polylineAdresses = [];
   final List<String> _circleAdresses = [];
 
+  final TextEditingController _radiusInputController =
+      TextEditingController(text: "500");
+
   @override
   void initState() {
     super.initState();
@@ -119,85 +122,91 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
         return !(state is CreateStoryFailure || state is CreateStoryOffline);
       },
       builder: (BuildContext context, CreateStoryState state) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text("Create Story"),
-            leading: GestureDetector(
-                onTap: () {
-                  AppRoute.landing.navigate(context);
-                },
-                child: const Icon(Icons.close)),
-          ),
-          body: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  const SizedBox(
-                    height: SpaceSizes.x16,
-                  ),
-
-                  _buildTitleField(),
-                  const SizedBox(
-                    height: SpaceSizes.x8,
-                  ),
-
-                  const Divider(),
-                  _buildRichText(context),
-                  const SizedBox(
-                    height: SpaceSizes.x8,
-                  ),
-                  const Divider(),
-
-                  _searchTags(),
-                  const SizedBox(
-                    height: SpaceSizes.x4,
-                  ),
-                  if (_tagsSearchResults.isNotEmpty) _buildSearchTagsResult(),
-                  const Divider(),
-                  _buildTagsLabelInput(),
-                  _buildAddTagButton(),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  _buildTagsBoxes(),
-                  const Divider(),
-                  _buildDateTypeDropdown(),
-                  const SizedBox(height: SpaceSizes.x16),
-                  // Additional input fields based on date type
-                  if (selectedDateType == 'Year' ||
-                      selectedDateType == 'Interval Year')
-                    _buildYearSelection(),
-                  if (selectedDateType == 'Normal Date' ||
-                      selectedDateType == 'Interval Date')
-                    _buildDateSelection(),
-                  if (selectedDateType == 'Decade') _buildDecadeDropdown(),
-                  const Divider(),
-                  _buildMapAndAdresses(context),
-                  Center(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton(
-                              onPressed: () async {
-                                var contentTemp =
-                                    await _editorController.getText();
-                                setState(() {
-                                  content = contentTemp;
-                                  debugPrint(content);
-                                });
-                                _onPressCreate(context);
-                              },
-                              child: const Text("Create Story")),
-                        ),
-                      ],
+        return WillPopScope(
+          onWillPop: () async {
+            AppRoute.landing.navigate(context);
+            return true;
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              title: const Text("Create Story"),
+              leading: GestureDetector(
+                  onTap: () {
+                    AppRoute.landing.navigate(context);
+                  },
+                  child: const Icon(Icons.close)),
+            ),
+            body: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const SizedBox(
+                      height: SpaceSizes.x16,
                     ),
-                  ),
-                  const SizedBox(
-                    height: SpaceSizes.x16,
-                  )
-                ],
+
+                    _buildTitleField(),
+                    const SizedBox(
+                      height: SpaceSizes.x8,
+                    ),
+
+                    const Divider(),
+                    _buildRichText(context),
+                    const SizedBox(
+                      height: SpaceSizes.x8,
+                    ),
+                    const Divider(),
+
+                    _searchTags(),
+                    const SizedBox(
+                      height: SpaceSizes.x4,
+                    ),
+                    if (_tagsSearchResults.isNotEmpty) _buildSearchTagsResult(),
+                    const Divider(),
+                    _buildTagsLabelInput(),
+                    _buildAddTagButton(),
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    _buildTagsBoxes(),
+                    const Divider(),
+                    _buildDateTypeDropdown(),
+                    const SizedBox(height: SpaceSizes.x16),
+                    // Additional input fields based on date type
+                    if (selectedDateType == 'Year' ||
+                        selectedDateType == 'Interval Year')
+                      _buildYearSelection(),
+                    if (selectedDateType == 'Normal Date' ||
+                        selectedDateType == 'Interval Date')
+                      _buildDateSelection(),
+                    if (selectedDateType == 'Decade') _buildDecadeDropdown(),
+                    const Divider(),
+                    _buildMapAndAdresses(context),
+                    Center(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                                onPressed: () async {
+                                  var contentTemp =
+                                      await _editorController.getText();
+                                  setState(() {
+                                    content = contentTemp;
+                                    debugPrint(content);
+                                  });
+                                  _onPressCreate(context);
+                                },
+                                child: const Text("Create Story")),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: SpaceSizes.x16,
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -267,17 +276,27 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
     return TextButton(
       child: const Text("Add Tag"),
       onPressed: () {
-        setState(() {
-          _storyTags.add(
-            TagModel(
-                name: _semanticTagSelected.label,
-                label: _tagsLabelController.text,
-                wikidataId: _semanticTagSelected.id,
-                description: _semanticTagSelected.description),
+        if (_tagsLabelController.text.isNotEmpty) {
+          setState(() {
+            _storyTags.add(
+              TagModel(
+                  name: _semanticTagSelected.label,
+                  label: _tagsLabelController.text,
+                  wikidataId: _semanticTagSelected.id,
+                  description: _semanticTagSelected.description),
+            );
+            _tagsLabelController.text = "";
+            _searchTagsController.text = "";
+          });
+        } else {
+          const snackdemo = SnackBar(
+            content: Text('Please enter a label you want to give the tag'),
+            elevation: 10,
+            behavior: SnackBarBehavior.floating,
+            margin: EdgeInsets.all(5),
           );
-          _tagsLabelController.text = "";
-          _searchTagsController.text = "";
-        });
+          ScaffoldMessenger.of(context).showSnackBar(snackdemo);
+        }
       },
     );
   }
@@ -318,6 +337,8 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
                               _semanticTagSelected = _tagsSearchResults[i];
                               _searchTagsController.text =
                                   _tagsSearchResults[i].label;
+                              _tagsLabelController.text =
+                                  _searchTagsController.text;
                               _tagsSearchResults.clear();
                             });
                           },
@@ -867,32 +888,71 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
                     },
                   ),
                 ),
-              if (_selectedMode == "Circle" && _circleMarkers.isNotEmpty)
+              if (_selectedMode == "Circle" && _circleMarkers.isNotEmpty) ...[
                 Positioned.fill(
-                  top:
-                      MediaQuery.of(context).size.height * 0.5 - SpaceSizes.x60,
+                  top: MediaQuery.of(context).size.height * 0.5 - 90,
                   child: Align(
                     alignment: Alignment.bottomCenter,
-                    child: SizedBox(
-                      width: 100,
-                      child: ValueListenableBuilder<double>(
-                        valueListenable: _radiusNotifier,
-                        builder: (BuildContext context, double value,
-                            Widget? child) {
-                          return Slider(
-                            value: value,
-                            min: 1.0,
-                            max: 200000,
-                            onChanged: (double newValue) {
-                              _radiusNotifier.value = newValue;
-                              _updateCircleRadius();
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.7,
+                          child: ValueListenableBuilder<double>(
+                            valueListenable: _radiusNotifier,
+                            builder: (BuildContext context, double value,
+                                Widget? child) {
+                              return Slider(
+                                value: value,
+                                min: 500,
+                                max: 200000,
+                                onChanged: (double newValue) {
+                                  _radiusNotifier.value = newValue;
+
+                                  _updateCircleRadius();
+                                  setState(() {
+                                    _radiusInputController.text =
+                                        "${newValue.toInt()}";
+                                  });
+                                },
+                              );
                             },
-                          );
-                        },
-                      ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: 75,
+                          height: 32,
+                          child: TextFormField(
+                            controller: _radiusInputController,
+                            style: const TextStyle(fontSize: 13),
+                            keyboardType: TextInputType.number,
+                            onChanged: (value) {
+                              double temp = double.parse(value);
+                              if (temp > 500 && temp < 200000) {
+                                _radiusNotifier.value = temp;
+                                _updateCircleRadius();
+                              }
+                            },
+                            decoration: InputDecoration(
+                                hintText: "Radius",
+                                hintStyle: const TextStyle(fontSize: 13),
+                                border: const OutlineInputBorder(),
+                                fillColor: Colors.white.withOpacity(0.5),
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.never,
+                                filled: true,
+                                suffixText: "m",
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 0, horizontal: 8)),
+                          ),
+                        ),
+                        const SizedBox(
+                          height: SpaceSizes.x4,
+                        )
+                      ],
                     ),
                   ),
                 ),
+              ]
             ],
           ),
         ),
@@ -1331,15 +1391,19 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   }
 
   Future<String> _reverseGeocode(double latitude, double longitude) async {
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-        latitude, longitude,
-        localeIdentifier: "en");
+    List<Placemark> placemarks = [];
+    try {
+      placemarks = await placemarkFromCoordinates(latitude, longitude,
+          localeIdentifier: "en");
+    } catch (e) {
+      return "lat:$latitude, long:$longitude";
+    }
 
     if (placemarks.isNotEmpty) {
       Placemark placemark = placemarks[0];
       return "${placemark.name ?? ''}, ${placemark.administrativeArea ?? ''}, ${placemark.country ?? ''} ";
     } else {
-      return "not found";
+      return "lat:$latitude, long:$longitude";
     }
   }
 
@@ -1517,8 +1581,8 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
       String address = "...";
 
       String reverseGeocodeResult = await _reverseGeocode(centroidX, centroidY);
-      if (reverseGeocodeResult != "not found") {
-        address = '$reverseGeocodeResult';
+      if (reverseGeocodeResult != "lat:$centroidX, long:$centroidY") {
+        address = reverseGeocodeResult;
       } else {
         address = "Cannot do reverse geocoding";
       }
@@ -1531,9 +1595,9 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
             color: Colors.red.withOpacity(0.5),
             borderColor: Colors.red,
             borderStrokeWidth: 4,
-            label: address != "not found"
+            label: address != "lat:$centroidX, long:$centroidY"
                 ? 'Area around $address'
-                : "Cannot do reverse geocoding",
+                : "Polygon area around at lat:$centroidX, long:$centroidY",
             // Add any additional label styling if needed
             labelPlacement: PolygonLabelPlacement.polylabel,
             labelStyle: const TextStyle(
@@ -1629,7 +1693,6 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
         _addMarkerForPointSelection(point);
       });
       _mapController.move(point, _mapController.camera.zoom + 5);
-      //_reverseGeocode(position.latitude, position.longitude);
     }).catchError((e) {
       debugPrint(e);
     });
@@ -1642,7 +1705,8 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
 
     if (response.statusCode == 200) {
       // Parse the response as a list of tags
-      List<dynamic> tagsJson = json.decode(response.body)['tags'];
+      List<dynamic> tagsJson =
+          json.decode(utf8.decode(response.bodyBytes))['tags'];
 
       // Convert the list of tags to a List<Tag>
       List<Tag> results = tagsJson
