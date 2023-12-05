@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:memories_app/util/sp_helper.dart';
 
 class NetworkConstant {
-  static const String baseURL = 'http://34.72.72.115:8000/';
+  static const String baseURL = 'http://34.68.58.169:8000/';
 }
 
 class Result {
