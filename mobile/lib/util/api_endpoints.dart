@@ -36,4 +36,8 @@ class ApiEndpoints {
   }
 
   static const String createStory = "user/storyCreate";
+
+  static String getStoriesByAuthorId(int id) {
+    return "user/storyGetbyAuthor/$id";
+  }
 }

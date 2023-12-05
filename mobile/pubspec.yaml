@@ -32,6 +32,7 @@ dependencies:
   geolocator: ^10.1.0
   textfield_tags: ^1.4.2
   quill_html_editor: ^2.2.7
+  cached_network_image: ^3.3.0
 
 
 dev_dependencies:
