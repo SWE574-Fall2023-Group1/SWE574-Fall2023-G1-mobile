@@ -52,9 +52,9 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     if (value == null || value.isEmpty) {
       return _Constants.usernameRequiredMessage;
     }
-    // if (value.length < 6 || value.length > 10) {
-    //   return _Constants.usernameCharLimitMessage;
-    // }
+    if (value.length < 6 || value.length > 10) {
+      return _Constants.usernameCharLimitMessage;
+    }
     return null;
   }
 
@@ -76,9 +76,9 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     if (password == null || password.isEmpty) {
       return _Constants.passwordRequiredMessage;
     }
-    if (password.length != 6) {
-      return _Constants.passwordCharLimitMessage;
-    }
+    // if (password.length != 6) {
+    //   return _Constants.passwordCharLimitMessage;
+    // }
     return null;
   }
 
