@@ -5,6 +5,8 @@ on:
     branches:
       - main
       - dev
+    paths:
+      - 'mobile/**'
 
 jobs:
   test_flutter:
