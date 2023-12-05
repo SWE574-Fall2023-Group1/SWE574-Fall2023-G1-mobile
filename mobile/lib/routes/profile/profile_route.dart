@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:memories_app/routes/login/model/user_details_response_model.dart';
 import 'package:memories_app/routes/profile/model/profile_repository.dart';
 import 'package:memories_app/routes/story_detail/widget/avatar_container.dart';
+import 'package:memories_app/ui/titled_app_bar.dart';
 
 class ProfileRoute extends StatelessWidget {
   const ProfileRoute({super.key});
@@ -9,7 +10,7 @@ class ProfileRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Profile")),
+      appBar: TitledAppBar.build("Profile"),
       body: FutureBuilder<UserDetailsResponseModel>(
         future: ProfileRepositoryImp().getUserDetails(),
         builder: (BuildContext context,
@@ -37,17 +38,37 @@ class ProfileDetails extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            LoadAvatar(id: user.id, radius: 80),
-            Text(user.username),
-            Text(user.email),
-            if (user.biography != null) Text(user.biography!),
-            // Add more fields or buttons as needed
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: <Color>[
+                  Color.fromRGBO(151, 71, 255, 1),
+                  Color.fromRGBO(198, 198, 198, 0.8),
+                ],
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                const SizedBox(height: 20),
+                LoadAvatar(id: user.id, radius: 70),
+                const SizedBox(height: 10),
+                Text("${user.username}'s Profile"),
+                const SizedBox(height: 10),
+              ],
+            ),
+          ),
+          Column(
+            children: <Widget>[
+              if (user.biography != null) Text(user.biography!),
+            ],
+          ),
+        ],
       ),
     );
   }
