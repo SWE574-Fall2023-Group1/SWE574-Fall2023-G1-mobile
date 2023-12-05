@@ -149,8 +149,8 @@ void main() {
   test('validatePassword returns the correct validation message', () {
     expect(loginBloc.validatePassword(null),
         equals(_Constants.passswordRequiredMessage));
-    expect(loginBloc.validatePassword(_Constants.invalidPassword),
-        equals(_Constants.passwordCharLimitMessage));
+    // expect(loginBloc.validatePassword(_Constants.invalidPassword),
+    //     equals(_Constants.passwordCharLimitMessage));
     expect(loginBloc.validatePassword(_Constants.successPassword), equals(''));
   });
 }

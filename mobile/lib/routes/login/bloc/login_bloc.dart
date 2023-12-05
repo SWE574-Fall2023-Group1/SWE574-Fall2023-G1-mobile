@@ -55,9 +55,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     if (value == null || value.isEmpty) {
       return _Constants.passswordRequiredMessage;
     }
-    if (value.length != 6) {
-      return _Constants.passwordCharLimitMessage;
-    }
+    // if (value.length != 6) {
+    //   return _Constants.passwordCharLimitMessage;
+    // }
     return ''; // Return empty if the validation is successful
   }
 

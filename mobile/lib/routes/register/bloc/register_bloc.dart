@@ -76,9 +76,9 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
     if (password == null || password.isEmpty) {
       return _Constants.passwordRequiredMessage;
     }
-    if (password.length != 6) {
-      return _Constants.passwordCharLimitMessage;
-    }
+    // if (password.length != 6) {
+    //   return _Constants.passwordCharLimitMessage;
+    // }
     return null;
   }
 
