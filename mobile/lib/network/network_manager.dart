@@ -65,6 +65,22 @@ class NetworkManager {
     return _createResponse(response);
   }
 
+  Future<dynamic> put(String endpoint, {Object? body}) async {
+    if (!await _isConnectedToInternet()) {
+      throw const SocketException('');
+    }
+    String test = jsonEncode(body);
+    debugPrint(test);
+
+    Map<String, String> customHeaders = await _constructHeaders();
+    final http.Response response = await http.put(
+        Uri.parse('$baseUrl/$endpoint'),
+        body: jsonEncode(body),
+        headers: customHeaders);
+
+    return _createResponse(response);
+  }
+
   Future<Map<String, String>> _constructHeaders() async {
     final String? refreshToken =
         await SPHelper.getString(SPKeys.refreshTokenKey);

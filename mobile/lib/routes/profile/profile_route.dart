@@ -5,8 +5,9 @@ import 'package:memories_app/routes/home/model/story_model.dart';
 import 'package:memories_app/routes/login/model/user_details_response_model.dart';
 import 'package:memories_app/routes/profile/model/profile_repository.dart';
 import 'package:memories_app/routes/profile/util/date_util.dart';
-import 'package:memories_app/routes/profile/widget/cached_avatar.dart';
-import 'package:memories_app/routes/profile/widget/profile_avatar.dart';
+import 'package:memories_app/routes/profile/widget/biography_container.dart';
+import 'package:memories_app/routes/profile/widget/collapsed_header.dart';
+import 'package:memories_app/routes/profile/widget/expanded_header.dart';
 import 'package:memories_app/routes/profile/widget/story_card.dart';
 import 'package:memories_app/routes/story_detail/bloc/story_detail_bloc.dart';
 import 'package:memories_app/routes/story_detail/story_detail_route.dart';
@@ -86,7 +87,7 @@ class ProfileDetails extends StatelessWidget {
         child: CustomScrollView(
           slivers: <Widget>[
             SliverAppBar(
-              expandedHeight: 200.0,
+              expandedHeight: 220,
               floating: false,
               pinned: true,
               backgroundColor: Colors.white,
@@ -99,44 +100,8 @@ class ProfileDetails extends StatelessWidget {
                   return FlexibleSpaceBar(
                     titlePadding:
                         EdgeInsets.only(left: isCollapsed ? 48 : 0, bottom: 14),
-                    title: isCollapsed
-                        ? Row(
-                            children: <Widget>[
-                              CachedAvatar(url: user.profilePhoto, radius: 20),
-                              const SizedBox(width: 10),
-                              Text(
-                                user.username,
-                                style: const TextStyle(
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ],
-                          )
-                        : null,
-                    background: !isCollapsed
-                        ? Stack(
-                            alignment: Alignment.center,
-                            children: <Widget>[
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  ProfileAvatar(url: user.profilePhoto),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    user.username,
-                                    style: const TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          )
-                        : null,
+                    title: isCollapsed ? collapsedHeader(user) : null,
+                    background: !isCollapsed ? expandedHeader(user) : null,
                   );
                 },
               ),
@@ -144,12 +109,15 @@ class ProfileDetails extends StatelessWidget {
             SliverList(
               delegate: SliverChildListDelegate(
                 <Widget>[
+                  EditableBiography(biography: user.biography),
                   FutureBuilder<List<StoryModel>>(
                     future: _loadPosts(user.id),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<StoryModel>> snapshot) {
+                    builder: (
+                      BuildContext context,
+                      AsyncSnapshot<List<StoryModel>> snapshot,
+                    ) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
+                        return Container();
                       }
                       if (snapshot.hasError) {
                         return Text('Error: ${snapshot.error}');
@@ -157,7 +125,9 @@ class ProfileDetails extends StatelessWidget {
                       if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         return const Text('No stories found.');
                       }
-                      return _buildStoryList(snapshot.data!, context);
+                      return _buildStoryList(
+                          snapshot.data! + snapshot.data! + snapshot.data!,
+                          context);
                     },
                   ),
                 ],
