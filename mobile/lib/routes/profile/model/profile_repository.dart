@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:memories_app/network/network_manager.dart';
 import 'package:memories_app/routes/home/model/response/stories_response_model.dart';
 import 'package:memories_app/routes/login/model/user_details_response_model.dart';
@@ -10,6 +12,10 @@ abstract class ProfileRepository {
   Future<StoriesResponseModel> getOwnStories(int id);
 
   Future<UpdateBiographyRequestModel> updateBiography(String biography);
+
+  Future<Object> addAvatar(Uint8List content);
+
+  Future<Object> deleteAvatar();
 }
 
 class ProfileRepositoryImp extends ProfileRepository {
@@ -38,5 +44,18 @@ class ProfileRepositoryImp extends ProfileRepository {
         ApiEndpoints.updateBiography,
         body: UpdateBiographyRequestModel(biography: biography));
     return UpdateBiographyRequestModel.fromJson(result.json);
+  }
+
+  @override
+  Future<Object> addAvatar(Uint8List content) async {
+    final Result result =
+        await _networkManager.put(ApiEndpoints.avatar, body: content);
+    return Future<Object>.value(Object);
+  }
+
+  @override
+  Future<Object> deleteAvatar() async {
+    final Result result = await _networkManager.delete(ApiEndpoints.avatar);
+    return Future<Object>.value(Object);
   }
 }

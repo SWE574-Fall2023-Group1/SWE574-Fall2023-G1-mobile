@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memories_app/routes/profile/model/profile_repository.dart';
 import 'package:memories_app/routes/profile/widget/cached_avatar.dart';
 
 class ProfileAvatar extends StatelessWidget {
@@ -43,7 +44,8 @@ class ProfileAvatar extends StatelessWidget {
                           InkWell(
                             onTap: () {
                               // Handle 'Remove Photo' option
-                              Navigator.of(context).pop(); // Close the dialog
+                              // ProfileRepositoryImp().deleteAvatar();
+                              Navigator.of(context).pop();
                             },
                             child: const Padding(
                               padding: EdgeInsets.all(8.0),

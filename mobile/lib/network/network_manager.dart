@@ -81,6 +81,20 @@ class NetworkManager {
     return _createResponse(response);
   }
 
+  Future<dynamic> delete(String endpoint) async {
+    if (!await _isConnectedToInternet()) {
+      throw const SocketException('');
+    } else {
+      Map<String, String> customHeaders = await _constructHeaders();
+      final http.Response response = await http.delete(
+        Uri.parse('$baseUrl/$endpoint'),
+        headers: customHeaders,
+      );
+
+      return _createResponse(response);
+    }
+  }
+
   Future<Map<String, String>> _constructHeaders() async {
     final String? refreshToken =
         await SPHelper.getString(SPKeys.refreshTokenKey);
