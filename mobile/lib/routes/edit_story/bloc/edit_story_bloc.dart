@@ -72,7 +72,7 @@ class EditStoryBloc extends Bloc<EditStoryEvent, EditStoryState> {
           event.polylineAdresses),
       dateType: dateType,
       date: dateType == "normal_date" ? event.date : null,
-      decade: dateType == "decade" ? event.decade : null,
+      decade: dateType == "decade" ? extractDecade(event.decade) : null,
       endDate: dateType == "interval_date" ? event.endDate : null,
       endYear: dateType == "year_interval" ? event.endYear : null,
       includeTime: _includeTime(dateType, event) ? true : false,
@@ -219,6 +219,16 @@ class EditStoryBloc extends Bloc<EditStoryEvent, EditStoryState> {
       );
       locationIds.add(pointLocation);
     }
+  }
+
+  int? extractDecade(String? decade) {
+    if (decade == null || decade.isEmpty) {
+      return null;
+    }
+
+    // Remove trailing 's' and parse the remaining part as an integer
+    String numericPart = decade.substring(0, decade.length - 1);
+    return int.tryParse(numericPart);
   }
 }
 

@@ -25,7 +25,7 @@ class StoryRequestModel {
   final String? startDate;
   @JsonKey(name: 'end_date')
   final String? endDate;
-  final String? decade;
+  final int? decade;
   @JsonKey(name: 'include_time')
   bool includeTime;
 
@@ -55,10 +55,15 @@ class StoryRequestModel {
 @JsonSerializable()
 class LocationId {
   final String name;
+  @JsonKey(includeIfNull: false)
   final PointLocation? point;
+  @JsonKey(includeIfNull: false)
   final PointLocation? circle;
+  @JsonKey(includeIfNull: false)
   final double? radius;
+  @JsonKey(includeIfNull: false)
   final PolygonLocation? polygon;
+  @JsonKey(includeIfNull: false)
   final LineStringLocation? line;
 
   LocationId({

@@ -18,7 +18,7 @@ class EditStoryRepositoryImp extends EditStoryRepository {
   Future<EditStoryResponseModel> editStory(
       StoryRequestModel model, int storyId) async {
     final Result result = await _networkManager
-        .post(ApiEndpoints.storyUpdate(storyId), body: model);
+        .put(ApiEndpoints.storyUpdate(storyId), body: model);
     return EditStoryResponseModel.fromJson(result.json);
   }
 }

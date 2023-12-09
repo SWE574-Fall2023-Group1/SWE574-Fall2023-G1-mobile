@@ -24,7 +24,7 @@ StoryRequestModel _$StoryRequestModelFromJson(Map<String, dynamic> json) =>
       date: json['date'] as String?,
       startDate: json['start_date'] as String?,
       endDate: json['end_date'] as String?,
-      decade: json['decade'] as String?,
+      decade: json['decade'] as int?,
       includeTime: json['include_time'] as bool? ?? false,
     );
 
@@ -63,15 +63,24 @@ LocationId _$LocationIdFromJson(Map<String, dynamic> json) => LocationId(
           : LineStringLocation.fromJson(json['line'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$LocationIdToJson(LocationId instance) =>
-    <String, dynamic>{
-      'name': instance.name,
-      'point': instance.point,
-      'circle': instance.circle,
-      'radius': instance.radius,
-      'polygon': instance.polygon,
-      'line': instance.line,
-    };
+Map<String, dynamic> _$LocationIdToJson(LocationId instance) {
+  final val = <String, dynamic>{
+    'name': instance.name,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('point', instance.point);
+  writeNotNull('circle', instance.circle);
+  writeNotNull('radius', instance.radius);
+  writeNotNull('polygon', instance.polygon);
+  writeNotNull('line', instance.line);
+  return val;
+}
 
 PointLocation _$PointLocationFromJson(Map<String, dynamic> json) =>
     PointLocation(
