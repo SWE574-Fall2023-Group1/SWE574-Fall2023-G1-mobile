@@ -1,10 +1,10 @@
 import 'package:memories_app/network/network_manager.dart';
-import 'package:memories_app/routes/create_story/model/create_story_model.dart';
+import 'package:memories_app/routes/create_story/model/story_request_model.dart';
 import 'package:memories_app/routes/create_story/model/create_story_response_model.dart';
 import 'package:memories_app/util/api_endpoints.dart';
 
 abstract class CreateStoryRepository {
-  Future<CreateStoryResponseModel> createStory(CreateStoryModel model);
+  Future<CreateStoryResponseModel> createStory(StoryRequestModel model);
 }
 
 class CreateStoryRepositoryImp extends CreateStoryRepository {
@@ -14,7 +14,7 @@ class CreateStoryRepositoryImp extends CreateStoryRepository {
       : _networkManager = networkManager ?? NetworkManager();
 
   @override
-  Future<CreateStoryResponseModel> createStory(CreateStoryModel model) async {
+  Future<CreateStoryResponseModel> createStory(StoryRequestModel model) async {
     final Result result =
         await _networkManager.post(ApiEndpoints.createStory, body: model);
     return CreateStoryResponseModel.fromJson(result.json);

@@ -13,14 +13,11 @@ class _Constants {
   static const String invalidUsername = 'ayhan';
   static const String successPassword = '123456';
   static const String failPassword = '123457';
-  static const String invalidPassword = '12345';
 
   static const String usernameCharLimitMessage =
       'Username should be between 6 and 10 characters';
   static const String usernameRequiredMessage = 'Username is required';
 
-  static const String passwordCharLimitMessage =
-      'Password should be 6 characters';
   static const String passswordRequiredMessage = 'Password is required';
 
   static final LoginResponseModel responseSuccess = LoginResponseModel(

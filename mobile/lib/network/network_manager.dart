@@ -62,6 +62,8 @@ class NetworkManager {
         body: jsonEncode(body),
         headers: customHeaders);
 
+    debugPrint(response.body);
+
     return _createResponse(response);
   }
 

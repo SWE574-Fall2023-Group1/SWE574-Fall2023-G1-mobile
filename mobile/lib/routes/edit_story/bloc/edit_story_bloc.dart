@@ -7,53 +7,56 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:memories_app/routes/create_story/create_story_repository.dart';
 import 'package:memories_app/routes/create_story/model/story_request_model.dart';
-import 'package:memories_app/routes/create_story/model/create_story_response_model.dart';
+import 'package:memories_app/routes/edit_story/model/edit_story_repository.dart';
+import 'package:memories_app/routes/edit_story/model/edit_story_response_model.dart';
 import 'package:memories_app/routes/story_detail/model/tag_model.dart';
 
-part 'create_story_event.dart';
+part 'edit_story_event.dart';
 
-part 'create_story_state.dart';
+part 'edit_story_state.dart';
 
 class _Constants {
   static const String offlineMessage =
       'You are currently offline.\n Please check your internet connection!';
 }
 
-class CreateStoryBloc extends Bloc<CreateStoryEvent, CreateStoryState> {
-  final CreateStoryRepository _repository;
+// TODO: Change repository
+class EditStoryBloc extends Bloc<EditStoryEvent, EditStoryState> {
+  final EditStoryRepository _repository;
 
-  CreateStoryBloc({required CreateStoryRepository repository})
+  EditStoryBloc({required EditStoryRepository repository})
       : _repository = repository,
-        super(const CreateStoryState()) {
-    on<CreateStoryCreateStoryEvent>(_createStoryEvent);
-    on<CreateStoryErrorPopupClosedEvent>(_onErrorPopupClosed);
+        super(const EditStoryState()) {
+    on<EditStoryUpdateStoryEvent>(_updateStoryEvent);
+    on<EditStoryErrorPopupClosedEvent>(_onErrorPopupClosed);
   }
-
   late StoryRequestModel storyModel;
 
-  Future<void> _createStoryEvent(
-      CreateStoryCreateStoryEvent event, Emitter<CreateStoryState> emit) async {
+  Future<void> _updateStoryEvent(
+      EditStoryUpdateStoryEvent event, Emitter<EditStoryState> emit) async {
     storyModel = _createStoryModel(event);
-    CreateStoryResponseModel? response;
+    EditStoryResponseModel? response;
     try {
-      response = await _repository.createStory(storyModel);
+      response = await _repository.editStory(storyModel, event.id);
     } on SocketException {
-      emit(const CreateStoryOffline(offlineMessage: _Constants.offlineMessage));
+      emit(const EditStoryOffline(offlineMessage: _Constants.offlineMessage));
     } catch (error) {
-      emit(CreateStoryFailure(error: error.toString()));
+      emit(EditStoryFailure(error: error.toString()));
     }
     if (response != null) {
       if (response.success == true) {
-        emit(const CreateStorySuccess());
+        emit(const EditStorySuccess());
       } else {
-        emit(CreateStoryFailure(error: response.msg.toString()));
+        emit(EditStoryFailure(error: response.msg.toString()));
       }
     }
   }
 
-  StoryRequestModel _createStoryModel(CreateStoryCreateStoryEvent event) {
+  void _onErrorPopupClosed(
+      EditStoryErrorPopupClosedEvent event, Emitter<EditStoryState> emit) {}
+
+  StoryRequestModel _createStoryModel(EditStoryUpdateStoryEvent event) {
     final String dateType = mapDateTypeToValue(event.dateType.toLowerCase());
     StoryRequestModel createStoryModel = StoryRequestModel(
       title: event.title,
@@ -83,7 +86,7 @@ class CreateStoryBloc extends Bloc<CreateStoryEvent, CreateStoryState> {
     return createStoryModel;
   }
 
-  bool _includeTime(String dateType, CreateStoryCreateStoryEvent event) {
+  bool _includeTime(String dateType, EditStoryUpdateStoryEvent event) {
     return dateType.contains("normal_date") &&
             (event.startDate != null &&
                 event.startDate!.isNotEmpty &&
@@ -216,11 +219,6 @@ class CreateStoryBloc extends Bloc<CreateStoryEvent, CreateStoryState> {
       );
       locationIds.add(pointLocation);
     }
-  }
-
-  void _onErrorPopupClosed(
-      CreateStoryErrorPopupClosedEvent event, Emitter<CreateStoryState> emit) {
-    emit(const CreateStoryState());
   }
 }
 

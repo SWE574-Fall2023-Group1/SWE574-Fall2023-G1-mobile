@@ -1,10 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:memories_app/routes/story_detail/model/tag_model.dart';
 
-part 'create_story_model.g.dart';
+part 'story_request_model.g.dart';
 
 @JsonSerializable()
-class CreateStoryModel {
+class StoryRequestModel {
   final String title;
   final String content;
   @JsonKey(name: 'story_tags')
@@ -29,7 +29,7 @@ class CreateStoryModel {
   @JsonKey(name: 'include_time')
   bool includeTime;
 
-  CreateStoryModel({
+  StoryRequestModel({
     required this.title,
     required this.content,
     required this.storyTags,
@@ -46,10 +46,10 @@ class CreateStoryModel {
     this.includeTime = false,
   });
 
-  factory CreateStoryModel.fromJson(Map<String, dynamic> json) =>
-      _$CreateStoryModelFromJson(json);
+  factory StoryRequestModel.fromJson(Map<String, dynamic> json) =>
+      _$StoryRequestModelFromJson(json);
 
-  Map<String, dynamic> toJson() => _$CreateStoryModelToJson(this);
+  Map<String, dynamic> toJson() => _$StoryRequestModelToJson(this);
 }
 
 @JsonSerializable()

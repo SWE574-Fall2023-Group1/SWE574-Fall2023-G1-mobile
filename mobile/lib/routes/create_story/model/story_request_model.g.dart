@@ -1,15 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-// ignore_for_file: always_specify_types
-
-part of 'create_story_model.dart';
+part of 'story_request_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-CreateStoryModel _$CreateStoryModelFromJson(Map<String, dynamic> json) =>
-    CreateStoryModel(
+StoryRequestModel _$StoryRequestModelFromJson(Map<String, dynamic> json) =>
+    StoryRequestModel(
       title: json['title'] as String,
       content: json['content'] as String,
       storyTags: (json['story_tags'] as List<dynamic>?)
@@ -30,7 +28,7 @@ CreateStoryModel _$CreateStoryModelFromJson(Map<String, dynamic> json) =>
       includeTime: json['include_time'] as bool? ?? false,
     );
 
-Map<String, dynamic> _$CreateStoryModelToJson(CreateStoryModel instance) =>
+Map<String, dynamic> _$StoryRequestModelToJson(StoryRequestModel instance) =>
     <String, dynamic>{
       'title': instance.title,
       'content': instance.content,
