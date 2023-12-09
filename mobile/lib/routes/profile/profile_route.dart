@@ -125,9 +125,7 @@ class ProfileDetails extends StatelessWidget {
                       if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         return const Text('No stories found.');
                       }
-                      return _buildStoryList(
-                          snapshot.data! + snapshot.data! + snapshot.data!,
-                          context);
+                      return _buildStoryList(snapshot.data, context);
                     },
                   ),
                 ],
