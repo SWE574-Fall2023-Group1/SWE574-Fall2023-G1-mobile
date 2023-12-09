@@ -748,7 +748,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
           autoFocus: false,
           textStyle: const TextStyle(),
           hintTextAlign: TextAlign.start,
-          padding: const EdgeInsets.only(left: 10, top: 10),
+          padding: const EdgeInsets.only(left: 10, top: 10, bottom: 50),
           hintTextPadding: const EdgeInsets.only(left: 20),
           inputAction: InputAction.newline,
           loadingBuilder: (context) {
