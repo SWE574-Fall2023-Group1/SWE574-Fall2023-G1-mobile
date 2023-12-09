@@ -6,6 +6,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:memories_app/util/sp_helper.dart';
+import 'package:dio/dio.dart' as dio;
+import 'package:http_parser/http_parser.dart';
 
 class NetworkConstant {
   static const String baseURL = 'http://34.68.58.169:8000/';
@@ -63,6 +65,78 @@ class NetworkManager {
         headers: customHeaders);
 
     return _createResponse(response);
+  }
+
+  Future<dynamic> put(String endpoint, {Object? body}) async {
+    if (!await _isConnectedToInternet()) {
+      throw const SocketException('');
+    }
+    String test = jsonEncode(body);
+    debugPrint(test);
+
+    Map<String, String> customHeaders = await _constructHeaders();
+    final http.Response response = await http.put(
+        Uri.parse('$baseUrl/$endpoint'),
+        body: jsonEncode(body),
+        headers: customHeaders);
+
+    return _createResponse(response);
+  }
+
+  Future<dynamic> putFile(String endpoint, {required dio.FormData body}) async {
+    if (!await _isConnectedToInternet()) {
+      throw const SocketException('');
+    }
+
+    Map<String, String> customHeaders = await _constructHeaders();
+    Uri uri = Uri.parse('$baseUrl/$endpoint');
+
+    // Create a multipart request
+    http.MultipartRequest request = http.MultipartRequest('PUT', uri)
+      ..headers.addAll(customHeaders);
+
+    // Add fields from the FormData to the request
+    body.fields.forEach((MapEntry<String, String> field) {
+      request.fields[field.key] = field.value;
+    });
+
+    // Add files from the FormData to the request
+    for (MapEntry<String, dio.MultipartFile> fileEntry in body.files) {
+      dio.MultipartFile file = fileEntry.value;
+
+      // Create a new stream from the file's finalize method
+      http.ByteStream stream = http.ByteStream(file.finalize());
+
+      http.MultipartFile multipartFile = http.MultipartFile(
+        fileEntry.key,
+        stream,
+        file.length,
+        filename: file.filename,
+        contentType: MediaType.parse('multipart/form-data'),
+      );
+
+      request.files.add(multipartFile);
+    }
+
+    // Send the request
+    http.StreamedResponse response = await request.send();
+
+    // Retrieve the response
+    return _createResponse(await http.Response.fromStream(response));
+  }
+
+  Future<dynamic> delete(String endpoint) async {
+    if (!await _isConnectedToInternet()) {
+      throw const SocketException('');
+    } else {
+      Map<String, String> customHeaders = await _constructHeaders();
+      final http.Response response = await http.delete(
+        Uri.parse('$baseUrl/$endpoint'),
+        headers: customHeaders,
+      );
+
+      return _createResponse(response);
+    }
   }
 
   Future<Map<String, String>> _constructHeaders() async {

@@ -3,15 +3,14 @@ class UserDetailsResponseModel {
   final String username;
   final String email;
   final String? biography;
-
-  // final List<int?> followers;
+  final List<dynamic> followers;
   final String? profilePhoto;
 
   UserDetailsResponseModel({
     required this.id,
     required this.username,
     required this.email,
-    // required this.followers,
+    required this.followers,
     this.biography,
     this.profilePhoto,
   });
@@ -22,7 +21,7 @@ class UserDetailsResponseModel {
       username: json['username'] as String,
       email: json['email'] as String,
       biography: json['biography'] as String?,
-      // followers: json['followers'] as List<int?>,
+      followers: json['followers'] as List<dynamic>,
       profilePhoto: json['profile_photo'] as String?,
     );
   }

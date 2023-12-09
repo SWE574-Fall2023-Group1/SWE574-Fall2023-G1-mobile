@@ -7,9 +7,11 @@ import 'package:memories_app/routes/home/home_route.dart';
 import 'package:memories_app/routes/landing/bloc/landing_bloc.dart';
 import 'package:memories_app/routes/create_story/create_story_route.dart';
 import 'package:memories_app/util/utils.dart';
+import 'package:memories_app/routes/profile/profile_route.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
+
   static const String routeName = '/landing';
 
   @override
@@ -86,7 +88,7 @@ class _LandingPageState extends State<LandingPage> {
             HomeBloc()..add(HomeLoadDisplayEvent()),
         child: const HomeRoute(),
       ),
-      const Center(child: Text('Index 1: Profile')),
+      const Center(child: ProfileRoute()),
       const Placeholder(),
       const Center(child: Text('Index 3: Search')),
       const Center(child: Text('Index 4: More')),

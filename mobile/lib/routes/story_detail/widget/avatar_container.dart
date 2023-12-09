@@ -4,8 +4,9 @@ import 'package:memories_app/routes/story_detail/model/story_detail_repository.d
 
 class LoadAvatar extends StatelessWidget {
   final int id;
+  final double? radius;
 
-  const LoadAvatar({required this.id, super.key});
+  const LoadAvatar({required this.id, this.radius, super.key});
 
   Future<AvatarResponseModel> loadAvatar(BuildContext context) async {
     AvatarResponseModel? responseModel;
@@ -23,6 +24,7 @@ class LoadAvatar extends StatelessWidget {
           AvatarResponseModel avatar = snapshot.data!;
           return CircleAvatar(
             backgroundImage: NetworkImage(avatar.url ?? ""),
+            radius: radius ?? 20,
           );
         }
         return const Center(child: CircularProgressIndicator());

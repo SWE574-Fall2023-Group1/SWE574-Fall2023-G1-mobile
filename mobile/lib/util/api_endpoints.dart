@@ -2,6 +2,8 @@ class ApiEndpoints {
   static const String login = "user/login";
   static const String register = "user/register";
   static const String getUserDetails = "user/userDetails";
+  static const String updateBiography = "user/biography";
+  static const String avatar = "user/profilePhoto";
 
   static String buildAllStoriesUrl(int page, int size) {
     return "user/allStories?page=$page&size=$size";
@@ -36,4 +38,8 @@ class ApiEndpoints {
   }
 
   static const String createStory = "user/storyCreate";
+
+  static String getStoriesByAuthorId(int id) {
+    return "user/storyGetbyAuthor/$id";
+  }
 }
