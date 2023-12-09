@@ -1,4 +1,4 @@
-// ignore_for_file: no_leading_underscores_for_local_identifiers
+// ignore_for_file: no_leading_underscores_for_local_identifiers, use_build_context_synchronously, always_specify_types
 
 import 'dart:convert';
 
@@ -779,7 +779,6 @@ class _EditStoryRouteState extends State<EditStoryRoute> {
           hintTextAlign: TextAlign.start,
           padding: const EdgeInsets.only(left: 10, top: 10, bottom: 50),
           hintTextPadding: const EdgeInsets.only(left: 20),
-          inputAction: InputAction.newline,
           loadingBuilder: (context) {
             return const Center(
                 child: CircularProgressIndicator(

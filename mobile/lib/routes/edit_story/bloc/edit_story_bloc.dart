@@ -21,7 +21,6 @@ class _Constants {
       'You are currently offline.\n Please check your internet connection!';
 }
 
-// TODO: Change repository
 class EditStoryBloc extends Bloc<EditStoryEvent, EditStoryState> {
   final EditStoryRepository _repository;
 

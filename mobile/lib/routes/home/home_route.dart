@@ -178,7 +178,7 @@ Widget _buildStoryCard(BuildContext context, StoryModel story) => Card(
                       onTap: () {
                         AppRoute.editStory.navigate(context, arguments: story);
                       },
-                      child: Icon(Icons.edit)),
+                      child: const Icon(Icons.edit)),
               ],
             ),
             const SizedBox(height: 16),
