@@ -1,10 +1,10 @@
-import 'dart:typed_data';
-
 import 'package:memories_app/network/network_manager.dart';
 import 'package:memories_app/routes/home/model/response/stories_response_model.dart';
 import 'package:memories_app/routes/login/model/user_details_response_model.dart';
 import 'package:memories_app/routes/profile/model/request/update_biography_request_model.dart';
 import 'package:memories_app/util/api_endpoints.dart';
+import 'dart:io';
+import 'package:dio/dio.dart' as dio;
 
 abstract class ProfileRepository {
   Future<UserDetailsResponseModel> getUserDetails();
@@ -13,7 +13,7 @@ abstract class ProfileRepository {
 
   Future<UpdateBiographyRequestModel> updateBiography(String biography);
 
-  Future<Object> addAvatar(Uint8List content);
+  Future<Object> addAvatar(File content);
 
   Future<Object> deleteAvatar();
 }
@@ -47,10 +47,17 @@ class ProfileRepositoryImp extends ProfileRepository {
   }
 
   @override
-  Future<Object> addAvatar(Uint8List content) async {
+  Future<Result> addAvatar(File content) async {
+    dio.MultipartFile file = await dio.MultipartFile.fromFile(content.path,
+        filename: 'profile_photo');
+
+    dio.FormData formData = dio.FormData.fromMap({
+      "profile_photo": file,
+    });
+
     final Result result =
-        await _networkManager.put(ApiEndpoints.avatar, body: content);
-    return Future<Object>.value(Object);
+        await _networkManager.putFile(ApiEndpoints.avatar, body: formData);
+    return result;
   }
 
   @override

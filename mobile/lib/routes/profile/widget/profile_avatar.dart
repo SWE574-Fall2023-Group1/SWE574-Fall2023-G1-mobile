@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:memories_app/routes/profile/model/profile_repository.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:memories_app/routes/profile/widget/cached_avatar.dart';
 
 class ProfileAvatar extends StatelessWidget {
@@ -32,9 +34,11 @@ class ProfileAvatar extends StatelessWidget {
                       child: ListBody(
                         children: <Widget>[
                           InkWell(
-                            onTap: () {
+                            onTap: () async {
                               // Handle 'Change Photo' option
-                              Navigator.of(context).pop(); // Close the dialog
+                              File imageFile = await pickImage();
+                              ProfileRepositoryImp().addAvatar(imageFile);
+                              Navigator.of(context).pop();
                             },
                             child: const Padding(
                               padding: EdgeInsets.all(8.0),
@@ -72,5 +76,17 @@ class ProfileAvatar extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+Future<File> pickImage() async {
+  final ImagePicker picker = ImagePicker();
+  final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+  if (pickedFile != null) {
+    return File(pickedFile.path);
+  } else {
+    // Handle the case when the user doesn't pick an image
+    throw Exception('No image selected.');
   }
 }
