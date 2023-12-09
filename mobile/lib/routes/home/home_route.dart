@@ -109,7 +109,7 @@ class _HomeRouteState extends State<HomeRoute>
           onTap: () {
             _navigateToStoryDetail(context, stories[index]);
           },
-          child: _buildStoryCard(stories[index]),
+          child: _buildStoryCard(context, stories[index]),
         );
       },
       padding: const EdgeInsets.all(8),
@@ -148,7 +148,7 @@ class _HomeRouteState extends State<HomeRoute>
   }
 }
 
-Widget _buildStoryCard(StoryModel story) => Card(
+Widget _buildStoryCard(BuildContext context, StoryModel story) => Card(
       elevation: 2,
       color: Colors.white,
       shape: RoundedRectangleBorder(
@@ -160,15 +160,26 @@ Widget _buildStoryCard(StoryModel story) => Card(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
-              'By ${story.authorUsername}',
-              style: const TextStyle(
-                color: Color(0xFFAFB4B7),
-                fontSize: 14,
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.bold,
-                height: 0,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'By ${story.authorUsername}',
+                  style: const TextStyle(
+                    color: Color(0xFFAFB4B7),
+                    fontSize: 14,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.bold,
+                    height: 0,
+                  ),
+                ),
+                if (story.isEditable)
+                  GestureDetector(
+                      onTap: () {
+                        AppRoute.editStory.navigate(context, arguments: story);
+                      },
+                      child: Icon(Icons.edit)),
+              ],
             ),
             const SizedBox(height: 16),
             Row(
