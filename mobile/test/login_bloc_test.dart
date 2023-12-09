@@ -46,6 +46,7 @@ class MockLoginRepository extends LoginRepository {
         id: 1,
         username: "John Doe",
         email: "john.doe@example.com",
+        followers: <dynamic>[2],
       ),
     );
   }
