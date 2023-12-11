@@ -12,7 +12,7 @@ RegisterRequestModel _$RegisterRequestModelFromJson(
       username: json['username'] as String,
       email: json['email'] as String,
       password: json['password'] as String,
-      passwordAgain: json['passwordAgain'] as String,
+      passwordAgain: json['password_again'] as String,
     );
 
 Map<String, dynamic> _$RegisterRequestModelToJson(
@@ -21,5 +21,5 @@ Map<String, dynamic> _$RegisterRequestModelToJson(
       'username': instance.username,
       'email': instance.email,
       'password': instance.password,
-      'passwordAgain': instance.passwordAgain,
+      'password_again': instance.passwordAgain,
     };
