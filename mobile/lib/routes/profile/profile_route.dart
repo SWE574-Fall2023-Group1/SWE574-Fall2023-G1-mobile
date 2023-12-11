@@ -39,10 +39,29 @@ class ProfileRoute extends StatelessWidget {
   }
 }
 
-class ProfileDetails extends StatelessWidget {
+class ProfileDetails extends StatefulWidget {
   final UserDetailsResponseModel user;
 
   const ProfileDetails({required this.user, super.key});
+
+  @override
+  ProfileDetailsState createState() => ProfileDetailsState();
+}
+
+class ProfileDetailsState extends State<ProfileDetails> {
+  late UserDetailsResponseModel user;
+
+  @override
+  void initState() {
+    super.initState();
+    user = widget.user;
+  }
+
+  void _changeAvatar(String? url) {
+    setState(() {
+      user.profilePhoto = url;
+    });
+  }
 
   // ignore_for_file: always_specify_types
   Widget _buildStoryList(List<StoryModel> stories, BuildContext context) {
@@ -101,7 +120,14 @@ class ProfileDetails extends StatelessWidget {
                     titlePadding:
                         EdgeInsets.only(left: isCollapsed ? 48 : 0, bottom: 14),
                     title: isCollapsed ? collapsedHeader(user) : null,
-                    background: !isCollapsed ? expandedHeader(user) : null,
+                    background: !isCollapsed
+                        ? expandedHeader(
+                            user,
+                            (String? newUrl) {
+                              _changeAvatar(newUrl);
+                            },
+                          )
+                        : null,
                   );
                 },
               ),

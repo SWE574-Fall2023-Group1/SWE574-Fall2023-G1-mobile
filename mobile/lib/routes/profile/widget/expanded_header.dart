@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:memories_app/routes/login/model/user_details_response_model.dart';
 import 'package:memories_app/routes/profile/widget/profile_avatar.dart';
 
-Stack expandedHeader(UserDetailsResponseModel user) => Stack(
+Stack expandedHeader(
+  UserDetailsResponseModel user,
+  Function(String?) onAvatarChange,
+) =>
+    Stack(
       alignment: Alignment.center,
       children: <Widget>[
         Column(
@@ -16,7 +20,7 @@ Stack expandedHeader(UserDetailsResponseModel user) => Stack(
                     padding: const EdgeInsets.only(left: 5),
                     child: OutlinedButton(
                       onPressed: () {
-                        // Define the action when the button is pressed
+                        // TODO: Show a list of followers by name
                       },
                       child: Text(
                         "${user.followers.length} follower(s)",
@@ -27,6 +31,7 @@ Stack expandedHeader(UserDetailsResponseModel user) => Stack(
                 Center(
                   child: ProfileAvatar(
                     url: user.profilePhoto,
+                    onAvatarChange: onAvatarChange,
                   ),
                 ),
               ],

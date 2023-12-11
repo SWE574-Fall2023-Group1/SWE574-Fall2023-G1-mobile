@@ -3,11 +3,10 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:memories_app/util/sp_helper.dart';
-import 'package:dio/dio.dart' as dio;
-import 'package:http_parser/http_parser.dart';
 
 class NetworkConstant {
   static const String baseURL = 'http://34.68.58.169:8000/';
@@ -40,23 +39,22 @@ class NetworkManager {
   Future<dynamic> get(String endpoint) async {
     if (!await _isConnectedToInternet()) {
       throw const SocketException('');
-    } else {
-      Map<String, String> customHeaders = await _constructHeaders();
-      final http.Response response = await http.get(
-        Uri.parse('$baseUrl/$endpoint'),
-        headers: customHeaders,
-      );
-
-      return _createResponse(response);
     }
+
+    Map<String, String> customHeaders = await _constructHeaders();
+    final http.Response response = await http.get(
+      Uri.parse('$baseUrl/$endpoint'),
+      headers: customHeaders,
+    );
+
+    return _createResponse(response);
   }
 
   Future<dynamic> post(String endpoint, {Object? body}) async {
     if (!await _isConnectedToInternet()) {
       throw const SocketException('');
     }
-    String test = jsonEncode(body);
-    debugPrint(test);
+    debugPrint("Request: ${jsonEncode(body)}");
 
     Map<String, String> customHeaders = await _constructHeaders();
     final http.Response response = await http.post(
@@ -71,8 +69,7 @@ class NetworkManager {
     if (!await _isConnectedToInternet()) {
       throw const SocketException('');
     }
-    String test = jsonEncode(body);
-    debugPrint(test);
+    debugPrint("Request: ${jsonEncode(body)}");
 
     Map<String, String> customHeaders = await _constructHeaders();
     final http.Response response = await http.put(
@@ -83,46 +80,27 @@ class NetworkManager {
     return _createResponse(response);
   }
 
-  Future<dynamic> putFile(String endpoint, {required dio.FormData body}) async {
+  Future<dynamic> putFile(String endpoint, {required FormData formData}) async {
     if (!await _isConnectedToInternet()) {
       throw const SocketException('');
     }
 
     Map<String, String> customHeaders = await _constructHeaders();
-    Uri uri = Uri.parse('$baseUrl/$endpoint');
-
-    // Create a multipart request
-    http.MultipartRequest request = http.MultipartRequest('PUT', uri)
-      ..headers.addAll(customHeaders);
-
-    // Add fields from the FormData to the request
-    body.fields.forEach((MapEntry<String, String> field) {
-      request.fields[field.key] = field.value;
-    });
-
-    // Add files from the FormData to the request
-    for (MapEntry<String, dio.MultipartFile> fileEntry in body.files) {
-      dio.MultipartFile file = fileEntry.value;
-
-      // Create a new stream from the file's finalize method
-      http.ByteStream stream = http.ByteStream(file.finalize());
-
-      http.MultipartFile multipartFile = http.MultipartFile(
-        fileEntry.key,
-        stream,
-        file.length,
-        filename: file.filename,
-        contentType: MediaType.parse('multipart/form-data'),
-      );
-
-      request.files.add(multipartFile);
-    }
-
-    // Send the request
-    http.StreamedResponse response = await request.send();
-
-    // Retrieve the response
-    return _createResponse(await http.Response.fromStream(response));
+    customHeaders["Content-Type"] = "multipart/form-data";
+    Response<Map<String, dynamic>> response = await Dio().put(
+      '$baseUrl/$endpoint',
+      data: formData,
+      options: Options(
+        headers: customHeaders,
+        followRedirects: false,
+        validateStatus: (int? status) {
+          return status! < 500;
+        },
+      ),
+    );
+    return _createResponse(
+      http.Response(response.toString(), response.statusCode!),
+    );
   }
 
   Future<dynamic> delete(String endpoint) async {
@@ -155,6 +133,7 @@ class NetworkManager {
     try {
       final String responseString = utf8Decoder.convert(response.bodyBytes);
       responseJson = json.decode(responseString) as Map<String, dynamic>;
+      debugPrint("Response: $responseString");
     } on Exception {
       responseJson = <String, dynamic>{};
     }

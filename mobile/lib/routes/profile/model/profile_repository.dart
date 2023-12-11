@@ -1,10 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:memories_app/network/network_manager.dart';
+import 'package:memories_app/routes/app/model/response/base_response_model.dart';
 import 'package:memories_app/routes/home/model/response/stories_response_model.dart';
 import 'package:memories_app/routes/login/model/user_details_response_model.dart';
 import 'package:memories_app/routes/profile/model/request/update_biography_request_model.dart';
+import 'package:memories_app/routes/profile/model/response/change_avatar_response_model.dart';
 import 'package:memories_app/util/api_endpoints.dart';
 import 'dart:io';
-import 'package:dio/dio.dart' as dio;
 
 abstract class ProfileRepository {
   Future<UserDetailsResponseModel> getUserDetails();
@@ -13,9 +15,9 @@ abstract class ProfileRepository {
 
   Future<UpdateBiographyRequestModel> updateBiography(String biography);
 
-  Future<Object> addAvatar(File content);
+  Future<AddProfilePhotoResponseModel> addAvatar(File content);
 
-  Future<Object> deleteAvatar();
+  Future<BaseResponseModel> deleteAvatar();
 }
 
 class ProfileRepositoryImp extends ProfileRepository {
@@ -47,22 +49,21 @@ class ProfileRepositoryImp extends ProfileRepository {
   }
 
   @override
-  Future<Result> addAvatar(File content) async {
-    dio.MultipartFile file = await dio.MultipartFile.fromFile(content.path,
-        filename: 'profile_photo');
-
-    dio.FormData formData = dio.FormData.fromMap({
-      "profile_photo": file,
-    });
-
-    final Result result =
-        await _networkManager.putFile(ApiEndpoints.avatar, body: formData);
-    return result;
+  Future<AddProfilePhotoResponseModel> addAvatar(File content) async {
+    final Result result = await _networkManager.putFile(
+      ApiEndpoints.avatar,
+      formData: FormData.fromMap(
+        <String, dynamic>{
+          "profile_photo": await MultipartFile.fromFile(content.path)
+        },
+      ),
+    );
+    return AddProfilePhotoResponseModel.fromJson(result.json);
   }
 
   @override
-  Future<Object> deleteAvatar() async {
+  Future<BaseResponseModel> deleteAvatar() async {
     final Result result = await _networkManager.delete(ApiEndpoints.avatar);
-    return Future<Object>.value(Object);
+    return BaseResponseModel.fromJson(result.json);
   }
 }

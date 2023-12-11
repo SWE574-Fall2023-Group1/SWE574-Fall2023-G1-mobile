@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:memories_app/routes/profile/model/profile_repository.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:memories_app/routes/profile/model/response/change_avatar_response_model.dart';
 import 'package:memories_app/routes/profile/widget/cached_avatar.dart';
 
 class ProfileAvatar extends StatelessWidget {
   final String? url;
   final double radius;
+  final Function(String?) onAvatarChange;
 
   const ProfileAvatar({
     required this.url,
+    required this.onAvatarChange,
     this.radius = 70,
     super.key,
   });
@@ -35,24 +38,40 @@ class ProfileAvatar extends StatelessWidget {
                         children: <Widget>[
                           InkWell(
                             onTap: () async {
-                              // Handle 'Change Photo' option
-                              File imageFile = await pickImage();
-                              ProfileRepositoryImp().addAvatar(imageFile);
                               Navigator.of(context).pop();
+                              AddProfilePhotoResponseModel result =
+                                  await ProfileRepositoryImp().addAvatar(
+                                await pickImage(ImageSource.camera),
+                              );
+                              onAvatarChange(result.profilePhoto);
                             },
                             child: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text('Change Photo'),
+                              padding: EdgeInsets.all(8),
+                              child: Text('Take Photo'),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              Navigator.of(context).pop();
+                              AddProfilePhotoResponseModel result =
+                                  await ProfileRepositoryImp().addAvatar(
+                                await pickImage(ImageSource.gallery)
+                              );
+                              onAvatarChange(result.profilePhoto);
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.all(8),
+                              child: Text('Choose From Gallery'),
                             ),
                           ),
                           InkWell(
                             onTap: () {
-                              // Handle 'Remove Photo' option
-                              // ProfileRepositoryImp().deleteAvatar();
                               Navigator.of(context).pop();
+                              ProfileRepositoryImp().deleteAvatar();
+                              onAvatarChange(null);
                             },
                             child: const Padding(
-                              padding: EdgeInsets.all(8.0),
+                              padding: EdgeInsets.all(8),
                               child: Text('Remove Photo'),
                             ),
                           ),
@@ -79,14 +98,12 @@ class ProfileAvatar extends StatelessWidget {
   }
 }
 
-Future<File> pickImage() async {
-  final ImagePicker picker = ImagePicker();
-  final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+Future<File> pickImage(ImageSource source) async {
+  final XFile? pickedFile = await ImagePicker().pickImage(source: source);
 
   if (pickedFile != null) {
     return File(pickedFile.path);
   } else {
-    // Handle the case when the user doesn't pick an image
     throw Exception('No image selected.');
   }
 }
