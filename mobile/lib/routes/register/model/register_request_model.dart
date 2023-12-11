@@ -7,6 +7,7 @@ class RegisterRequestModel {
   final String username;
   final String email;
   final String password;
+  @JsonKey(name: "password_again")
   final String passwordAgain;
 
   RegisterRequestModel({
@@ -16,8 +17,7 @@ class RegisterRequestModel {
     required this.passwordAgain,
   });
 
-  factory RegisterRequestModel.fromJson(Map<String, dynamic> json) =>
-      _$RegisterRequestModelFromJson(json);
+  factory RegisterRequestModel.fromJson(Map<String, dynamic> json) => _$RegisterRequestModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$RegisterRequestModelToJson(this);
 }
