@@ -4,7 +4,7 @@ class UserDetailsResponseModel {
   final String email;
   final String? biography;
   final List<dynamic> followers;
-  final String? profilePhoto;
+  String? profilePhoto;
 
   UserDetailsResponseModel({
     required this.id,

@@ -17,14 +17,22 @@ class CachedAvatar extends StatelessWidget {
     return CachedNetworkImage(
       imageUrl: NetworkConstant.baseURL + (url ?? ""),
       placeholder: (BuildContext context, String url) => CircleAvatar(
-        backgroundColor: Colors.amber,
         radius: radius,
+        child: const CircularProgressIndicator(),
       ),
       imageBuilder:
           (BuildContext context, ImageProvider<Object> imageProvider) =>
               CircleAvatar(
         backgroundImage: imageProvider,
         radius: radius,
+      ),
+      errorWidget: (BuildContext context, String url, dynamic error) =>
+          CircleAvatar(
+        radius: radius,
+        child: Icon(
+          Icons.person,
+          size: radius,
+        ),
       ),
     );
   }
