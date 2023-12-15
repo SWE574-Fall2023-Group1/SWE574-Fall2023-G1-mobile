@@ -1,36 +1,39 @@
-// ignore_for_file: use_build_context_synchronously, always_specify_types
+// ignore_for_file: no_leading_underscores_for_local_identifiers, use_build_context_synchronously, always_specify_types
 
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:memories_app/network/network_manager.dart';
-import 'package:memories_app/routes/create_story/bloc/create_story_bloc.dart';
 import 'package:memories_app/routes/create_story/location_list_tile.dart';
 import 'package:memories_app/routes/create_story/model/place_autocomplete_response.dart';
 import 'package:memories_app/routes/create_story/model/place_details_response.dart';
 import 'package:memories_app/routes/create_story/model/tag.dart';
 import 'package:memories_app/routes/create_story/zoom_buttons.dart';
+import 'package:memories_app/routes/edit_story/bloc/edit_story_bloc.dart';
+import 'package:memories_app/routes/home/model/location_model.dart';
+import 'package:memories_app/routes/home/model/story_model.dart';
 import 'package:memories_app/routes/story_detail/model/tag_model.dart';
 import 'package:memories_app/ui/shows_dialog.dart';
 import 'package:memories_app/util/router.dart';
 import 'package:memories_app/util/utils.dart';
-import 'package:intl/intl.dart';
 import 'package:quill_html_editor/quill_html_editor.dart';
 import 'package:http/http.dart' as http;
 
-class CreateStoryRoute extends StatefulWidget {
-  const CreateStoryRoute({super.key});
+class EditStoryRoute extends StatefulWidget {
+  final StoryModel storyModel;
+  const EditStoryRoute({required this.storyModel, super.key});
 
   @override
-  State<CreateStoryRoute> createState() => _CreateStoryRouteState();
+  State<EditStoryRoute> createState() => _EditStoryRouteState();
 }
 
-class _CreateStoryRouteState extends State<CreateStoryRoute> {
-  // polygon variables
+class _EditStoryRouteState extends State<EditStoryRoute> {
   late List<Marker> _markersForPolygon;
   late List<Marker> _markersForPolyline;
   late List<Marker> _markersForPoint;
@@ -39,7 +42,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   final List<CircleMarker> _circleMarkers = <CircleMarker>[];
   late ValueNotifier<double> _radiusNotifier;
 
-  final double _currentRadiusInMeter = 5000;
+  double _currentRadiusInMeter = 5000;
 
   List<Polyline> _polylinesForPolygon = <Polyline>[];
   List<Polyline> _currentPolylinesForPolylineSelection = <Polyline>[];
@@ -71,16 +74,16 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
   String content = "";
 
   final TextEditingController _searchTagsController = TextEditingController();
-  final List<Tag> _tagsSearchResults = [];
+  final List<Tag> _tagsSearchResults = <Tag>[];
 
   late Tag _semanticTagSelected;
 
-  final List<TagModel> _storyTags = [];
+  List<TagModel> _storyTags = <TagModel>[];
 
   final TextEditingController _tagsLabelController = TextEditingController();
-  final List<String> _pointAdresses = [];
-  final List<String> _polylineAdresses = [];
-  final List<String> _circleAdresses = [];
+  final List<String> _pointAdresses = <String>[];
+  final List<String> _polylineAdresses = <String>[];
+  final List<String> _circleAdresses = <String>[];
 
   final TextEditingController _radiusInputController =
       TextEditingController(text: "500");
@@ -94,6 +97,61 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
     _polygons = <Polygon>[];
     _completedPolylines = <Polyline>[];
     _radiusNotifier = ValueNotifier<double>(_currentRadiusInMeter);
+    List<LocationModel>? _incomingPoints = widget.storyModel.locations
+        ?.where((LocationModel element) => element.point != null)
+        .toList();
+
+    List<LocationModel>? _incomingPolygons = widget.storyModel.locations
+        ?.where((LocationModel element) => element.polygon != null)
+        .toList();
+
+    List<LocationModel>? _incomingCircles = widget.storyModel.locations
+        ?.where((LocationModel element) => element.circle != null)
+        .toList();
+
+    List<LocationModel>? _incomingPolylines = widget.storyModel.locations
+        ?.where((LocationModel element) => element.line != null)
+        .toList();
+
+    _setPoints(_incomingPoints);
+    _setPolygons(_incomingPolygons);
+    _setCircles(_incomingCircles);
+    _setPolylines(_incomingPolylines);
+    if (widget.storyModel.title != null && widget.storyModel.title != "") {
+      _titleController.text = widget.storyModel.title!;
+    }
+    if (widget.storyModel.storyTags != null &&
+        widget.storyModel.storyTags!.isNotEmpty) {
+      _storyTags = widget.storyModel.storyTags!;
+    }
+
+    if (widget.storyModel.dateType != null &&
+        widget.storyModel.dateType!.isNotEmpty) {
+      selectedDateType = mapDateValueToDateType(widget.storyModel.dateType!);
+      if (selectedDateType == "Normal Date") {
+        _datePickerController.text = widget.storyModel.dateText!;
+        _includeTime = _datePickerController.text.contains(" ");
+      }
+      if (selectedDateType == "Interval Date") {
+        _datePickerController.text = widget.storyModel.startDate!;
+        _endDatePickerController.text = widget.storyModel.endDate!;
+        _includeTime = _datePickerController.text.contains(" ");
+      }
+      if (selectedDateType == "Year") {
+        _yearController.text = widget.storyModel.year.toString();
+        selectedSeason = widget.storyModel.seasonName ?? "Summer";
+      }
+      if (selectedDateType == "Interval Year") {
+        _yearController.text = widget.storyModel.year.toString();
+        _endYearController.text = widget.storyModel.endYear.toString();
+        selectedSeason = widget.storyModel.seasonName ?? "Summer";
+      }
+      if (selectedDateType == "Decade") {
+        _selectedDecade = widget.storyModel.decade != null
+            ? "${widget.storyModel.decade}s"
+            : "2020s";
+      }
+    }
   }
 
   @override
@@ -113,15 +171,11 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildPage(context);
-  }
-
-  Widget _buildPage(BuildContext context) {
-    return BlocConsumer<CreateStoryBloc, CreateStoryState>(
-      buildWhen: (CreateStoryState previousState, CreateStoryState state) {
-        return !(state is CreateStoryFailure || state is CreateStoryOffline);
+    return BlocConsumer<EditStoryBloc, EditStoryState>(
+      buildWhen: (EditStoryState previousState, EditStoryState state) {
+        return !(state is EditStoryFailure || state is EditStoryOffline);
       },
-      builder: (BuildContext context, CreateStoryState state) {
+      builder: (BuildContext context, EditStoryState state) {
         return WillPopScope(
           onWillPop: () async {
             AppRoute.landing.navigate(context);
@@ -129,7 +183,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
           },
           child: Scaffold(
             appBar: AppBar(
-              title: const Text("Create Story"),
+              title: const Text("Edit Story"),
               leading: GestureDetector(
                   onTap: () {
                     AppRoute.landing.navigate(context);
@@ -139,89 +193,95 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
             body: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const SizedBox(
-                      height: SpaceSizes.x16,
-                    ),
-
-                    _buildTitleField(),
-                    const SizedBox(
-                      height: SpaceSizes.x8,
-                    ),
-
-                    const Divider(),
-                    _buildRichText(context),
-                    const SizedBox(
-                      height: SpaceSizes.x8,
-                    ),
-                    const Divider(),
-
-                    _searchTags(),
-                    const SizedBox(
-                      height: SpaceSizes.x4,
-                    ),
-                    if (_tagsSearchResults.isNotEmpty) _buildSearchTagsResult(),
-                    const Divider(),
-                    _buildTagsLabelInput(),
-                    _buildAddTagButton(),
-                    const SizedBox(
-                      height: 8,
-                    ),
-                    _buildTagsBoxes(),
-                    const Divider(),
-                    _buildDateTypeDropdown(),
-                    const SizedBox(height: SpaceSizes.x16),
-                    // Additional input fields based on date type
-                    if (selectedDateType == 'Year' ||
-                        selectedDateType == 'Interval Year')
-                      _buildYearSelection(),
-                    if (selectedDateType == 'Normal Date' ||
-                        selectedDateType == 'Interval Date')
-                      _buildDateSelection(),
-                    if (selectedDateType == 'Decade') _buildDecadeDropdown(),
-                    const Divider(),
-                    _buildMapAndAdresses(context),
-                    Center(
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton(
-                                onPressed: () async {
-                                  var contentTemp =
-                                      await _editorController.getText();
-                                  setState(() {
-                                    content = contentTemp;
-                                    debugPrint(content);
-                                  });
-                                  _onPressCreate(context);
-                                },
-                                child: const Text("Create Story")),
-                          ),
-                        ],
+                child: GestureDetector(
+                  onTap: () {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                  },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      const SizedBox(
+                        height: SpaceSizes.x16,
                       ),
-                    ),
-                    const SizedBox(
-                      height: SpaceSizes.x16,
-                    )
-                  ],
+
+                      _buildTitleField(),
+                      const SizedBox(
+                        height: SpaceSizes.x8,
+                      ),
+
+                      const Divider(),
+                      _buildRichText(context),
+                      const SizedBox(
+                        height: SpaceSizes.x8,
+                      ),
+                      const Divider(),
+
+                      _searchTags(),
+                      const SizedBox(
+                        height: SpaceSizes.x4,
+                      ),
+                      if (_tagsSearchResults.isNotEmpty)
+                        _buildSearchTagsResult(),
+                      const Divider(),
+                      _buildTagsLabelInput(),
+                      _buildAddTagButton(),
+                      const SizedBox(
+                        height: 8,
+                      ),
+                      _buildTagsBoxes(),
+                      const Divider(),
+                      _buildDateTypeDropdown(),
+                      const SizedBox(height: SpaceSizes.x16),
+                      // Additional input fields based on date type
+                      if (selectedDateType == 'Year' ||
+                          selectedDateType == 'Interval Year')
+                        _buildYearSelection(),
+                      if (selectedDateType == 'Normal Date' ||
+                          selectedDateType == 'Interval Date')
+                        _buildDateSelection(),
+                      if (selectedDateType == 'Decade') _buildDecadeDropdown(),
+                      const Divider(),
+                      _buildMapAndAdresses(context),
+                      Center(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: OutlinedButton(
+                                  onPressed: () async {
+                                    var contentTemp =
+                                        await _editorController.getText();
+                                    setState(() {
+                                      content = contentTemp;
+                                      debugPrint(content);
+                                    });
+                                    _onPressUpdate(context);
+                                  },
+                                  child: const Text("Update Story")),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: SpaceSizes.x16,
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
         );
       },
-      listener: (BuildContext context, CreateStoryState state) {
-        if (state is CreateStorySuccess) {
+      listener: (BuildContext context, EditStoryState state) {
+        if (state is EditStorySuccess) {
           AppRoute.landing.navigate(context);
-        } else if (state is CreateStoryFailure) {
+        } else if (state is EditStoryFailure) {
           ShowsDialog.showAlertDialog(context, 'Oops!', state.error.toString(),
-              isCreateStoryFail: true);
-        } else if (state is CreateStoryOffline) {
+              isEditStoryFail: true);
+        } else if (state is EditStoryOffline) {
           ShowsDialog.showAlertDialog(
               context, 'Oops!', state.offlineMessage.toString(),
-              isCreateStoryFail: true);
+              isEditStoryFail: true);
         }
       },
     );
@@ -409,44 +469,6 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
     );
   }
 
-  void _onPressCreate(BuildContext context) {
-    setState(() {
-      _pointAdresses.removeWhere((element) => element.isEmpty);
-      _polylineAdresses.removeWhere((element) => element.isEmpty);
-      _circleAdresses.removeWhere((element) => element.isEmpty);
-    });
-
-    BlocProvider.of<CreateStoryBloc>(context).add(CreateStoryCreateStoryEvent(
-      title: _titleController.text,
-      content: content,
-      storyTags: _storyTags,
-      dateType: selectedDateType,
-      circleMarkers: _circleMarkers,
-      markersForPoint: _markersForPoint,
-      polyLines: _completedPolylines,
-      polygons: _polygons,
-      pointAdresses: _pointAdresses,
-      circleAdresses: _circleAdresses,
-      polylineAdresses: _polylineAdresses,
-      //
-      date: _datePickerController.text.isEmpty
-          ? null
-          : _datePickerController.text,
-      decade: _selectedDecade.isEmpty ? null : _selectedDecade,
-      endDate: _endDatePickerController.text.isEmpty
-          ? null
-          : _endDatePickerController.text,
-      endYear: _endYearController.text.isEmpty ? null : _endYearController.text,
-      includeTime: _includeTime,
-      seasonName: selectedSeason.isEmpty ? null : selectedSeason,
-      startDate: _datePickerController.text.isEmpty
-          ? null
-          : _datePickerController.text,
-      startYear: _yearController.text.isEmpty ? null : _yearController.text,
-      year: _yearController.text.isEmpty ? null : _yearController.text,
-    ));
-  }
-
   Widget _buildDecadeDropdown() {
     return DropdownButtonFormField<String>(
       onChanged: (String? newValue) {
@@ -454,6 +476,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
           _selectedDecade = newValue!;
         });
       },
+      value: _selectedDecade,
       decoration: InputDecoration(
         hintText: "Select a decade",
         border: OutlineInputBorder(
@@ -557,7 +580,11 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
       onTap: () async {
         DateTime? pickedDate = await showDatePicker(
           context: context,
-          initialDate: DateTime.now(),
+          initialDate: DateTime.tryParse(widget.storyModel.date != null
+              ? widget.storyModel.date!
+              : widget.storyModel.startDate != null
+                  ? widget.storyModel.startDate!
+                  : ""),
           firstDate: DateTime(1950),
           lastDate: DateTime.now(),
         );
@@ -681,6 +708,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
                 selectedSeason = newValue!;
               });
             },
+            value: selectedSeason,
             decoration: InputDecoration(
               hintText: "Season",
               border: OutlineInputBorder(
@@ -707,6 +735,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
           selectedDateType = newValue!;
         });
       },
+      value: selectedDateType,
       decoration: InputDecoration(
         hintText: "Date Type",
         border: OutlineInputBorder(
@@ -750,7 +779,6 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
           hintTextAlign: TextAlign.start,
           padding: const EdgeInsets.only(left: 10, top: 10, bottom: 50),
           hintTextPadding: const EdgeInsets.only(left: 20),
-          inputAction: InputAction.newline,
           loadingBuilder: (context) {
             return const Center(
                 child: CircularProgressIndicator(
@@ -760,6 +788,7 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
           },
           onTextChanged: (text) {},
           onEditorCreated: () {},
+          text: widget.storyModel.content,
         ),
       ],
     );
@@ -1390,6 +1419,208 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
     );
   }
 
+//methods
+  void _setPoints(List<LocationModel>? pointLocations) {
+    for (LocationModel location in pointLocations!) {
+      _addMarkerForPointSelection(LatLng(
+          location.point!.coordinates.last, location.point!.coordinates.first));
+    }
+  }
+
+  void _setCircles(List<LocationModel>? circleLocations) {
+    for (LocationModel location in circleLocations!) {
+      setState(() {
+        _currentRadiusInMeter = location.radius!;
+      });
+      _addCircleMarker(LatLng(location.circle!.coordinates.last,
+          location.circle!.coordinates.first));
+    }
+  }
+
+  Future<void> _setPolygons(List<LocationModel>? polygonLocations) async {
+    for (LocationModel location in polygonLocations!) {
+      List<LatLng> polygonPoints = <LatLng>[];
+      if (location.polygon != null) {
+        for (List<double> coordinate in location.polygon!.coordinates
+            .take(location.polygon!.coordinates.length - 1)) {
+          // Now you can use 'coordinate'
+          // ...
+          polygonPoints.add(LatLng(coordinate.last, coordinate.first));
+        }
+        double sumX = 0.0;
+        double sumY = 0.0;
+        for (LatLng point in polygonPoints) {
+          sumX += point.latitude;
+          sumY += point.longitude;
+        }
+        double centroidX = sumX / polygonPoints.length;
+        double centroidY = sumY / polygonPoints.length;
+
+        // Reverse geocode to get the address from the centroid coordinates
+        String address = "...";
+
+        String reverseGeocodeResult =
+            await _reverseGeocode(centroidX, centroidY);
+        if (reverseGeocodeResult != "lat:$centroidX, long:$centroidY") {
+          address = reverseGeocodeResult;
+        } else {
+          address = "Cannot do reverse geocoding";
+        }
+        setState(() {
+          _polygons.add(
+            Polygon(
+              points: polygonPoints,
+              isFilled: true,
+              color: Colors.red.withOpacity(0.5),
+              borderColor: Colors.red,
+              borderStrokeWidth: 4,
+              label: address != "lat:$centroidX, long:$centroidY"
+                  ? 'Area around $address'
+                  : "Polygon area around at lat:$centroidX, long:$centroidY",
+              // Add any additional label styling if needed
+              labelPlacement: PolygonLabelPlacement.polylabel,
+              labelStyle: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          );
+          polygonPoints = <LatLng>[];
+        });
+      }
+    }
+  }
+
+  void _setPolylines(List<LocationModel>? circleLocations) {
+    for (LocationModel location in circleLocations!) {
+      List<LatLng> polylinePoints = <LatLng>[];
+      if (location.line != null) {
+        for (List<double> coordinate in location.line!.coordinates) {
+          polylinePoints.add(LatLng(coordinate.last, coordinate.first));
+        }
+        if (polylinePoints.length > 1) {
+          setState(() {
+            _completedPolylines.add(
+              Polyline(
+                points: polylinePoints,
+                color: Colors.red,
+                strokeWidth: 3.0,
+              ),
+            );
+            polylinePoints =
+                <LatLng>[]; // Clear only when starting a new polyline
+          });
+        }
+      }
+    }
+  }
+
+  void _addMarkerForPointSelection(LatLng point) {
+    _markersForPoint.add(
+      Marker(
+        width: 40,
+        height: 40,
+        point: point,
+        child: GestureDetector(
+          child: const Icon(Icons.location_pin, size: 60, color: Colors.black),
+          onTap: () {
+            setState(() {
+              // remove marker
+              _markersForPoint
+                  .removeWhere((Marker element) => element.point == point);
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  void _completePolygon() async {
+    if (_currentPolygonPoints.length >= 3) {
+      // Calculate the centroid of the polygon
+      double sumX = 0.0;
+      double sumY = 0.0;
+      for (LatLng point in _currentPolygonPoints) {
+        sumX += point.latitude;
+        sumY += point.longitude;
+      }
+      double centroidX = sumX / _currentPolygonPoints.length;
+      double centroidY = sumY / _currentPolygonPoints.length;
+
+      // Reverse geocode to get the address from the centroid coordinates
+      String address = "...";
+
+      String reverseGeocodeResult = await _reverseGeocode(centroidX, centroidY);
+      if (reverseGeocodeResult != "lat:$centroidX, long:$centroidY") {
+        address = reverseGeocodeResult;
+      } else {
+        address = "Cannot do reverse geocoding";
+      }
+      // Create the Polygon with the address as the label
+      setState(() {
+        _polygons.add(
+          Polygon(
+            points: _currentPolygonPoints,
+            isFilled: true,
+            color: Colors.red.withOpacity(0.5),
+            borderColor: Colors.red,
+            borderStrokeWidth: 4,
+            label: address != "lat:$centroidX, long:$centroidY"
+                ? 'Area around $address'
+                : "Polygon area around at lat:$centroidX, long:$centroidY",
+            // Add any additional label styling if needed
+            labelPlacement: PolygonLabelPlacement.polylabel,
+            labelStyle: const TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        );
+        _currentPolygonPoints = <LatLng>[];
+      });
+    }
+  }
+
+  void _completePolyline() {
+    if (_currentPolylinePoints.length > 1) {
+      setState(() {
+        _completedPolylines.add(
+          Polyline(
+            points: _currentPolylinePoints,
+            color: Colors.red,
+            strokeWidth: 3.0,
+          ),
+        );
+        _currentPolylinePoints =
+            <LatLng>[]; // Clear only when starting a new polyline
+      });
+    }
+  }
+
+  void _addCircleMarker(LatLng point) {
+    setState(() {
+      _circleMarkers.add(
+        CircleMarker(
+            point: point,
+            color: Colors.red.withOpacity(0.5),
+            radius: _currentRadiusInMeter,
+            useRadiusInMeter: true),
+      );
+    });
+  }
+
+  void _updateCircleRadius() {
+    CircleMarker lastCircle = _circleMarkers.last;
+    _circleMarkers.removeLast(); // Remove the existing circle
+    _circleMarkers.add(
+      CircleMarker(
+          point: lastCircle.point,
+          radius: _radiusNotifier.value,
+          color: Colors.red.withOpacity(0.5),
+          useRadiusInMeter: true),
+    );
+  }
+
   Future<String> _reverseGeocode(double latitude, double longitude) async {
     List<Placemark> placemarks = [];
     try {
@@ -1499,26 +1730,6 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
     );
   }
 
-  void _addMarkerForPointSelection(LatLng point) {
-    _markersForPoint.add(
-      Marker(
-        width: 40,
-        height: 40,
-        point: point,
-        child: GestureDetector(
-          child: const Icon(Icons.location_pin, size: 60, color: Colors.black),
-          onTap: () {
-            setState(() {
-              // remove marker
-              _markersForPoint
-                  .removeWhere((Marker element) => element.point == point);
-            });
-          },
-        ),
-      ),
-    );
-  }
-
   void _startNewPolygon(LatLng point) {
     setState(() {
       _currentPolygonPoints = <LatLng>[point];
@@ -1563,92 +1774,6 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
       ];
       _addMarkerForPolyline(point);
     });
-  }
-
-  void _completePolygon() async {
-    if (_currentPolygonPoints.length >= 3) {
-      // Calculate the centroid of the polygon
-      double sumX = 0.0;
-      double sumY = 0.0;
-      for (LatLng point in _currentPolygonPoints) {
-        sumX += point.latitude;
-        sumY += point.longitude;
-      }
-      double centroidX = sumX / _currentPolygonPoints.length;
-      double centroidY = sumY / _currentPolygonPoints.length;
-
-      // Reverse geocode to get the address from the centroid coordinates
-      String address = "...";
-
-      String reverseGeocodeResult = await _reverseGeocode(centroidX, centroidY);
-      if (reverseGeocodeResult != "lat:$centroidX, long:$centroidY") {
-        address = reverseGeocodeResult;
-      } else {
-        address = "Cannot do reverse geocoding";
-      }
-      // Create the Polygon with the address as the label
-      setState(() {
-        _polygons.add(
-          Polygon(
-            points: _currentPolygonPoints,
-            isFilled: true,
-            color: Colors.red.withOpacity(0.5),
-            borderColor: Colors.red,
-            borderStrokeWidth: 4,
-            label: address != "lat:$centroidX, long:$centroidY"
-                ? 'Area around $address'
-                : "Polygon area around at lat:$centroidX, long:$centroidY",
-            // Add any additional label styling if needed
-            labelPlacement: PolygonLabelPlacement.polylabel,
-            labelStyle: const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        );
-        _currentPolygonPoints = <LatLng>[];
-      });
-    }
-  }
-
-  void _completePolyline() {
-    if (_currentPolylinePoints.length > 1) {
-      setState(() {
-        _completedPolylines.add(
-          Polyline(
-            points: _currentPolylinePoints,
-            color: Colors.red,
-            strokeWidth: 3.0,
-          ),
-        );
-        _currentPolylinePoints =
-            <LatLng>[]; // Clear only when starting a new polyline
-      });
-    }
-  }
-
-  void _addCircleMarker(LatLng point) {
-    setState(() {
-      _circleMarkers.add(
-        CircleMarker(
-            point: point,
-            color: Colors.red.withOpacity(0.5),
-            radius: _currentRadiusInMeter,
-            useRadiusInMeter: true),
-      );
-    });
-  }
-
-  void _updateCircleRadius() {
-    CircleMarker lastCircle = _circleMarkers.last;
-    _circleMarkers.removeLast(); // Remove the existing circle
-    _circleMarkers.add(
-      CircleMarker(
-          point: lastCircle.point,
-          radius: _radiusNotifier.value,
-          color: Colors.red.withOpacity(0.5),
-          useRadiusInMeter: true),
-    );
   }
 
   Future<bool> _handleLocationPermission() async {
@@ -1722,5 +1847,61 @@ class _CreateStoryRouteState extends State<CreateStoryRoute> {
         _tagsSearchResults.addAll(results);
       });
     } else {}
+  }
+
+  String mapDateValueToDateType(String dateType) {
+    switch (dateType) {
+      case "year":
+        return "Year";
+      case "year_interval":
+        return "Interval Year";
+      case "normal_date":
+        return "Normal Date";
+      case "interval_date":
+        return "Interval Date";
+      case "decade":
+        return "Decade";
+      default:
+        return "Year";
+    }
+  }
+
+  void _onPressUpdate(BuildContext context) {
+    setState(() {
+      _pointAdresses.removeWhere((element) => element.isEmpty);
+      _polylineAdresses.removeWhere((element) => element.isEmpty);
+      _circleAdresses.removeWhere((element) => element.isEmpty);
+    });
+
+    BlocProvider.of<EditStoryBloc>(context).add(EditStoryUpdateStoryEvent(
+      id: widget.storyModel.id,
+      title: _titleController.text,
+      content: content,
+      storyTags: _storyTags,
+      dateType: selectedDateType,
+      circleMarkers: _circleMarkers,
+      markersForPoint: _markersForPoint,
+      polyLines: _completedPolylines,
+      polygons: _polygons,
+      pointAdresses: _pointAdresses,
+      circleAdresses: _circleAdresses,
+      polylineAdresses: _polylineAdresses,
+      //
+      date: _datePickerController.text.isEmpty
+          ? null
+          : _datePickerController.text,
+      decade: _selectedDecade.isEmpty ? null : _selectedDecade,
+      endDate: _endDatePickerController.text.isEmpty
+          ? null
+          : _endDatePickerController.text,
+      endYear: _endYearController.text.isEmpty ? null : _endYearController.text,
+      includeTime: _includeTime,
+      seasonName: selectedSeason.isEmpty ? null : selectedSeason,
+      startDate: _datePickerController.text.isEmpty
+          ? null
+          : _datePickerController.text,
+      startYear: _yearController.text.isEmpty ? null : _yearController.text,
+      year: _yearController.text.isEmpty ? null : _yearController.text,
+    ));
   }
 }

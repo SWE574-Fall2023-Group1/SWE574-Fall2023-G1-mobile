@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:memories_app/routes/edit_story/bloc/edit_story_bloc.dart';
+import 'package:memories_app/routes/edit_story/edit_story_route.dart';
+import 'package:memories_app/routes/edit_story/model/edit_story_repository.dart';
 import 'package:memories_app/routes/landing/bloc/landing_bloc.dart';
 import 'package:memories_app/routes/landing/landing_page.dart';
 import 'package:memories_app/routes/login/bloc/login_bloc.dart';
@@ -14,7 +17,7 @@ import 'package:memories_app/routes/home/model/story_model.dart';
 
 // TODO: Edit this file as needed
 
-enum AppRoute { login, register, landing, storyDetail }
+enum AppRoute { login, register, landing, storyDetail, editStory }
 
 extension AppRouteExtension on AppRoute {
   void navigate(BuildContext context, {Object? arguments}) async {
@@ -73,6 +76,19 @@ extension AppRouteExtension on AppRoute {
                 create: (BuildContext context) => StoryDetailBloc(),
                 child: StoryDetailRoute(
                   story: arguments as StoryModel,
+                ),
+              ),
+            ));
+      case AppRoute.editStory:
+        Navigator.push(
+            context,
+            // ignore: always_specify_types
+            MaterialPageRoute(
+              builder: (BuildContext context) => BlocProvider<EditStoryBloc>(
+                create: (BuildContext context) =>
+                    EditStoryBloc(repository: EditStoryRepositoryImp()),
+                child: EditStoryRoute(
+                  storyModel: arguments as StoryModel,
                 ),
               ),
             ));

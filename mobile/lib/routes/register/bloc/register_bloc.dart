@@ -16,8 +16,6 @@ class _Constants {
   static const String usernameCharLimitMessage =
       'Username should be between 6 and 10 characters';
   static const String passwordRequiredMessage = 'Password is required';
-  static const String passwordCharLimitMessage =
-      'Password should be 6 characters';
   static const String passwordsNotMatch = 'Passwords must be same';
   static const String offlineMessage =
       'You are currently offline.\n Please check your internet connection!';

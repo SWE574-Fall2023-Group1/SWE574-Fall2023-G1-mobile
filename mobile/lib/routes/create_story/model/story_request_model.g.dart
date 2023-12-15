@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'create_story_model.dart';
+part of 'story_request_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-CreateStoryModel _$CreateStoryModelFromJson(Map<String, dynamic> json) =>
-    CreateStoryModel(
+StoryRequestModel _$StoryRequestModelFromJson(Map<String, dynamic> json) =>
+    StoryRequestModel(
       title: json['title'] as String,
       content: json['content'] as String,
       storyTags: (json['story_tags'] as List<dynamic>?)
@@ -24,11 +24,11 @@ CreateStoryModel _$CreateStoryModelFromJson(Map<String, dynamic> json) =>
       date: json['date'] as String?,
       startDate: json['start_date'] as String?,
       endDate: json['end_date'] as String?,
-      decade: json['decade'] as String?,
+      decade: json['decade'] as int?,
       includeTime: json['include_time'] as bool? ?? false,
     );
 
-Map<String, dynamic> _$CreateStoryModelToJson(CreateStoryModel instance) =>
+Map<String, dynamic> _$StoryRequestModelToJson(StoryRequestModel instance) =>
     <String, dynamic>{
       'title': instance.title,
       'content': instance.content,
@@ -63,15 +63,24 @@ LocationId _$LocationIdFromJson(Map<String, dynamic> json) => LocationId(
           : LineStringLocation.fromJson(json['line'] as Map<String, dynamic>),
     );
 
-Map<String, dynamic> _$LocationIdToJson(LocationId instance) =>
-    <String, dynamic>{
-      'name': instance.name,
-      'point': instance.point,
-      'circle': instance.circle,
-      'radius': instance.radius,
-      'polygon': instance.polygon,
-      'line': instance.line,
-    };
+Map<String, dynamic> _$LocationIdToJson(LocationId instance) {
+  final val = <String, dynamic>{
+    'name': instance.name,
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('point', instance.point);
+  writeNotNull('circle', instance.circle);
+  writeNotNull('radius', instance.radius);
+  writeNotNull('polygon', instance.polygon);
+  writeNotNull('line', instance.line);
+  return val;
+}
 
 PointLocation _$PointLocationFromJson(Map<String, dynamic> json) =>
     PointLocation(

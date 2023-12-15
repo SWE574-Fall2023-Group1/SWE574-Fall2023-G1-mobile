@@ -56,8 +56,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     responseModel = await HomeRepositoryImp()
         .getAllStoriesWithOwnUrl(page: page, size: _Constants.size);
     if (responseModel.stories != null) {
-      responseModel.stories?.forEach((StoryModel story) {
+      responseModel.stories?.forEach((StoryModel story) async {
         story.dateText = _getFormattedDate(story);
+        story.isEditable = await _onGetIsEditable(story);
       });
     }
     return responseModel.stories ?? <StoryModel>[];
@@ -149,5 +150,12 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       print('Error parsing date: $e');
       return null;
     }
+  }
+
+  Future<bool> _onGetIsEditable(StoryModel story) async {
+    int? currentUserId = await SPHelper.getInt(SPKeys.currentUserId);
+    return story.author == currentUserId &&
+        story.author != null &&
+        currentUserId != null;
   }
 }

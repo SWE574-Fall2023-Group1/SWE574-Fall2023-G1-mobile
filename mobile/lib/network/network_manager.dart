@@ -62,6 +62,8 @@ class NetworkManager {
         body: jsonEncode(body),
         headers: customHeaders);
 
+    debugPrint(response.body);
+
     return _createResponse(response);
   }
 
@@ -76,6 +78,8 @@ class NetworkManager {
         Uri.parse('$baseUrl/$endpoint'),
         body: jsonEncode(body),
         headers: customHeaders);
+
+    debugPrint(response.body);
 
     return _createResponse(response);
   }
