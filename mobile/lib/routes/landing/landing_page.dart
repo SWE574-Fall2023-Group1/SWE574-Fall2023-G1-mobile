@@ -46,6 +46,7 @@ class _LandingPageState extends State<LandingPage> {
               children: _buildBottomNavScreen(),
             ),
             bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
               items: _buildBottomBarItems(state.tabIndex),
               onTap: (int index) {
                 BlocProvider.of<LandingBloc>(context)
@@ -138,7 +139,7 @@ class _LandingPageState extends State<LandingPage> {
           "assets/landing/menu.png",
           color: selectedIndex == 4 ? AppColors.buttonColor : Colors.black,
         ),
-        label: 'More',
+        label: 'Suggested',
       ),
     ];
   }

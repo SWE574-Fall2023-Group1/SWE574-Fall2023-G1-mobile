@@ -7,6 +7,7 @@ import 'package:memories_app/routes/recommendations/model/recommendations_respon
 import 'package:memories_app/routes/story_detail/bloc/story_detail_bloc.dart';
 import 'package:memories_app/routes/story_detail/story_detail_route.dart';
 import 'package:memories_app/util/router.dart';
+import 'package:memories_app/util/styles.dart';
 import 'package:memories_app/util/utils.dart';
 
 class RecommendationsRoute extends StatefulWidget {
@@ -59,11 +60,11 @@ class _RecommendationsRouteState extends State<RecommendationsRoute> {
           child: Scaffold(
             appBar: AppBar(
               backgroundColor: Colors.white,
-              title: Image.asset(
-                'assets/login/logo.png',
-                height: 140,
-              ),
               centerTitle: true,
+              title: const Text(
+                "Suggested Stories",
+                style: Styles.appBarTitleStyle,
+              ),
             ),
             body: column,
           ),
@@ -103,11 +104,11 @@ class _RecommendationsRouteState extends State<RecommendationsRoute> {
       ),
     );
 
-    // if (shouldRefreshStories) {
-    //   // ignore: use_build_context_synchronously
-    //   BlocProvider.of<RecommendationsBloc>(context)
-    //       .add(RecommendationsEventRefreshStories());
-    // }
+    if (shouldRefreshStories) {
+      // ignore: use_build_context_synchronously
+      BlocProvider.of<RecommendationsBloc>(context)
+          .add(RecommendationsEventRefreshStories());
+    }
   }
 }
 
