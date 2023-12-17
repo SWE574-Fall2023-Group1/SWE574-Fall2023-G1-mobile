@@ -32,7 +32,6 @@ StoryModel _$StoryModelFromJson(Map<String, dynamic> json) => StoryModel(
       decade: json['decade'] as int?,
       includeTime: json['include_time'] as bool,
       likes: (json['likes'] as List<dynamic>?)?.map((e) => e as int).toList(),
-      dateText: json['dateText'] as String?,
     );
 
 Map<String, dynamic> _$StoryModelToJson(StoryModel instance) =>
@@ -56,5 +55,4 @@ Map<String, dynamic> _$StoryModelToJson(StoryModel instance) =>
       'decade': instance.decade,
       'include_time': instance.includeTime,
       'likes': instance.likes,
-      'dateText': instance.dateText,
     };

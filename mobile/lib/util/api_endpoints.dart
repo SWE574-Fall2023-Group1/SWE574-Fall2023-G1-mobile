@@ -3,6 +3,7 @@ class ApiEndpoints {
   static const String register = "user/register";
   static const String updateBiography = "user/biography";
   static const String avatar = "user/profilePhoto";
+  static const String getRecommendations = "user/recommendations";
 
   static String buildAllStoriesUrl(int page, int size) {
     return "user/allStories?page=$page&size=$size";
