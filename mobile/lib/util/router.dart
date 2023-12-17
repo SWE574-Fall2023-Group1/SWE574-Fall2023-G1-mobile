@@ -8,6 +8,8 @@ import 'package:memories_app/routes/landing/landing_page.dart';
 import 'package:memories_app/routes/login/bloc/login_bloc.dart';
 import 'package:memories_app/routes/login/login_route.dart';
 import 'package:memories_app/routes/login/model/login_repository.dart';
+import 'package:memories_app/routes/profile/bloc/profile_bloc.dart';
+import 'package:memories_app/routes/profile/profile_route.dart';
 import 'package:memories_app/routes/register/bloc/register_bloc.dart';
 import 'package:memories_app/routes/register/register_route.dart';
 import 'package:memories_app/routes/register/model/register_repository.dart';
@@ -17,7 +19,14 @@ import 'package:memories_app/routes/home/model/story_model.dart';
 
 // TODO: Edit this file as needed
 
-enum AppRoute { login, register, landing, storyDetail, editStory }
+enum AppRoute {
+  login,
+  register,
+  landing,
+  storyDetail,
+  editStory,
+  profile,
+}
 
 extension AppRouteExtension on AppRoute {
   void navigate(BuildContext context, {Object? arguments}) async {
@@ -90,6 +99,16 @@ extension AppRouteExtension on AppRoute {
                 child: EditStoryRoute(
                   storyModel: arguments as StoryModel,
                 ),
+              ),
+            ));
+      case AppRoute.profile:
+        Navigator.push(
+            context,
+            // ignore: always_specify_types
+            MaterialPageRoute(
+              builder: (BuildContext context) => BlocProvider<ProfileBloc>(
+                create: (BuildContext context) => ProfileBloc(),
+                child: ProfileRoute(userId: arguments as int?),
               ),
             ));
     }

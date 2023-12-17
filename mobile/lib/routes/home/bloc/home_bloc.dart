@@ -3,12 +3,14 @@ import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
 import 'package:equatable/equatable.dart';
+import 'package:memories_app/routes/app/application_context.dart';
 import 'package:memories_app/routes/home/model/home_repository.dart';
 import 'package:memories_app/routes/home/model/response/stories_response_model.dart';
 import 'package:memories_app/routes/home/model/story_model.dart';
 import 'package:memories_app/util/sp_helper.dart';
 
 part 'home_event.dart';
+
 part 'home_state.dart';
 
 class _Constants {
@@ -154,6 +156,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Future<bool> _onGetIsEditable(StoryModel story) async {
     int? currentUserId = await SPHelper.getInt(SPKeys.currentUserId);
+    ApplicationContext.currentUserId = currentUserId ?? 0;
     return story.author == currentUserId &&
         story.author != null &&
         currentUserId != null;
