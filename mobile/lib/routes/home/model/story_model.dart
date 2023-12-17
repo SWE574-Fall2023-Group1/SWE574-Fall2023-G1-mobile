@@ -36,6 +36,7 @@ class StoryModel {
   @JsonKey(name: "include_time")
   bool includeTime;
   List<int>? likes;
+  @JsonKey(includeFromJson: false, includeToJson: false)
   String? dateText;
   @JsonKey(includeFromJson: false, includeToJson: false)
   bool isEditable = false;
