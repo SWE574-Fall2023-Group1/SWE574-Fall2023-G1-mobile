@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:memories_app/routes/app/application_context.dart';
 import 'package:memories_app/routes/home/model/story_model.dart';
+import 'package:memories_app/util/router.dart';
 import 'package:memories_app/util/utils.dart';
 
 class StoryCard extends StatelessWidget {
@@ -21,15 +23,27 @@ class StoryCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
-              'By ${story.authorUsername}',
-              style: const TextStyle(
-                color: Color(0xFFAFB4B7),
-                fontSize: 14,
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.bold,
-                height: 0,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  'By ${story.authorUsername}',
+                  style: const TextStyle(
+                    color: Color(0xFFAFB4B7),
+                    fontSize: 14,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.bold,
+                    height: 0,
+                  ),
+                ),
+                if (ApplicationContext.isCurrentUser(story.author))
+                  GestureDetector(
+                    onTap: () {
+                      AppRoute.editStory.navigate(context, arguments: story);
+                    },
+                    child: const Icon(Icons.edit),
+                  ),
+              ],
             ),
             const SizedBox(height: 16),
             Row(
