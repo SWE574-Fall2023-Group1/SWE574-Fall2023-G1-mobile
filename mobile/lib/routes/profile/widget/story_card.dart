@@ -2,7 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:memories_app/routes/home/model/story_model.dart';
 import 'package:memories_app/util/utils.dart';
 
-Widget buildStoryCard(StoryModel story) => Card(
+class StoryCard extends StatelessWidget {
+  final StoryModel story;
+
+  const StoryCard({required this.story, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
       elevation: 2,
       color: Colors.white,
       shape: RoundedRectangleBorder(
@@ -112,3 +119,5 @@ Widget buildStoryCard(StoryModel story) => Card(
         ),
       ),
     );
+  }
+}

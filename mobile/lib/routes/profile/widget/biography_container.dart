@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:memories_app/routes/app/application_context.dart';
 import 'package:memories_app/routes/profile/model/profile_repository.dart';
 
 const String placeholder = "Enter your biography";
 
 class EditableBiography extends StatefulWidget {
+  final int userId;
   final String? biography;
 
-  const EditableBiography({super.key, this.biography});
+  const EditableBiography({required this.userId, this.biography, super.key});
 
   @override
   EditableBiographyState createState() => EditableBiographyState();
@@ -55,8 +57,11 @@ class EditableBiographyState extends State<EditableBiography> {
                       ),
                     )
                   : Padding(
-                      padding:
-                          const EdgeInsets.only(left: 10, top: 10, bottom: 10,),
+                      padding: const EdgeInsets.only(
+                        left: 10,
+                        top: 10,
+                        bottom: 10,
+                      ),
                       child: Text(
                         widget.biography?.isEmpty ?? true
                             ? placeholder
@@ -64,18 +69,19 @@ class EditableBiographyState extends State<EditableBiography> {
                       ),
                     ),
             ),
-            IconButton(
-              icon: Icon(_isEditing ? Icons.save : Icons.edit),
-              onPressed: () {
-                setState(() {
-                  if (_isEditing) {
-                    ProfileRepositoryImp()
-                        .updateBiography(_editingController.value.text);
-                  }
-                  _isEditing = !_isEditing;
-                });
-              },
-            ),
+            if (ApplicationContext.isCurrentUser(widget.userId))
+              IconButton(
+                icon: Icon(_isEditing ? Icons.save : Icons.edit),
+                onPressed: () {
+                  setState(() {
+                    if (_isEditing) {
+                      ProfileRepositoryImp()
+                          .updateBiography(_editingController.value.text);
+                    }
+                    _isEditing = !_isEditing;
+                  });
+                },
+              ),
           ],
         ),
       ),
