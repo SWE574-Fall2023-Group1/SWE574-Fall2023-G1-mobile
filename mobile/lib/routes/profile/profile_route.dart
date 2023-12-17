@@ -90,9 +90,8 @@ class ProfileDetailsState extends State<ProfileDetails> {
   }
 
   Future<List<StoryModel>> _loadPosts(int page) async {
-    StoriesResponseModel? responseModel;
-
-    responseModel = await ProfileRepositoryImp().getOwnStories(user.id);
+    StoriesResponseModel? responseModel =
+        await ProfileRepositoryImp().getOwnStories(user.id);
     if (responseModel.stories != null) {
       responseModel.stories?.forEach((StoryModel story) {
         story.dateText = getFormattedDate(story);
@@ -117,7 +116,7 @@ class ProfileDetailsState extends State<ProfileDetails> {
               flexibleSpace: LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
                   double top = constraints.biggest.height;
-                  bool isCollapsed = top < (kToolbarHeight + 130);
+                  bool isCollapsed = top < kToolbarHeight + 30;
                   return FlexibleSpaceBar(
                     titlePadding:
                         EdgeInsets.only(left: isCollapsed ? 48 : 0, bottom: 14),
