@@ -9,6 +9,8 @@ import 'package:memories_app/routes/story_detail/bloc/story_detail_bloc.dart';
 import 'package:memories_app/routes/story_detail/story_detail_route.dart';
 import 'package:memories_app/util/router.dart';
 import 'package:memories_app/util/utils.dart';
+import 'package:timeline_tile/timeline_tile.dart';
+import 'package:html/dom.dart' as dom;
 
 class SearchResultsRoute extends StatefulWidget {
   final List<StoryModel> stories;
@@ -20,6 +22,7 @@ class SearchResultsRoute extends StatefulWidget {
 
 class _SearchResultsRouteState extends State<SearchResultsRoute> {
   final ScrollController _scrollController = ScrollController();
+  bool reverseOrder = false;
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +45,66 @@ class _SearchResultsRouteState extends State<SearchResultsRoute> {
             ),
             Expanded(
               child: TabBarView(children: [
-                ListView(),
-                _buildStoryList(widget.stories),
+                Padding(
+                  padding: const EdgeInsets.only(left: SpaceSizes.x8),
+                  child: Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Transform.scale(
+                              scale: 0.8,
+                              child: Switch(
+                                value: reverseOrder,
+                                onChanged: (value) {
+                                  setState(() {
+                                    reverseOrder = value;
+                                  });
+                                },
+                              ),
+                            ),
+                            const Text("Descending Order")
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                          child: _buildTimeline(reverseOrder
+                              ? widget.stories.reversed.toList()
+                              : widget.stories)),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: SpaceSizes.x8),
+                  child: Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Row(
+                          children: [
+                            Transform.scale(
+                              scale: 0.8,
+                              child: Switch(
+                                value: reverseOrder,
+                                onChanged: (value) {
+                                  setState(() {
+                                    reverseOrder = value;
+                                  });
+                                },
+                              ),
+                            ),
+                            const Text("Descending Order")
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                          child: _buildStoryList(reverseOrder
+                              ? widget.stories.reversed.toList()
+                              : widget.stories)),
+                    ],
+                  ),
+                ),
               ]),
             ),
           ],
@@ -214,15 +275,15 @@ class _SearchResultsRouteState extends State<SearchResultsRoute> {
   String _getFormattedDate(StoryModel story) {
     switch (story.dateType) {
       case 'year':
-        return 'Year: ${story.year?.toString() ?? ''}';
+        return story.year?.toString() ?? '';
       case 'decade':
-        return 'Decade: ${story.decade?.toString() ?? ''}';
+        return '${story.decade?.toString() ?? ''}s';
       case 'year_interval':
-        return 'Start: ${story.startYear.toString()} \nEnd: ${story.endYear.toString()}';
+        return '${story.startYear.toString()} - ${story.endYear.toString()}';
       case 'normal_date':
         return _formatDate(story.date) ?? '';
       case 'interval_date':
-        return 'Start: ${_formatDate(story.startDate)} \nEnd: ${_formatDate(story.endDate)}';
+        return '${_formatDate(story.startDate)} - ${_formatDate(story.endDate)}';
       default:
         return '';
     }
@@ -249,5 +310,122 @@ class _SearchResultsRouteState extends State<SearchResultsRoute> {
       print('Error parsing date: $e');
       return null;
     }
+  }
+
+  Widget _buildTimeline(List<StoryModel> stories) {
+    return ListView.builder(
+      itemCount: stories.length,
+      itemBuilder: (context, index) {
+        StoryModel story = stories[index];
+        String? imageUrl = story.content!.contains("<img")
+            ? _extractImageUrl(story.content!)
+            : null;
+
+        return GestureDetector(
+          onTap: () {
+            _navigateToStoryDetail(context, story);
+          },
+          child: TimelineTile(
+            alignment: TimelineAlign.start,
+            isFirst: index == 0,
+            isLast: index == stories.length - 1,
+            indicatorStyle: const IndicatorStyle(
+              width: 20,
+              padding: EdgeInsets.symmetric(horizontal: SpaceSizes.x8),
+              color: AppColors.buttonColor,
+            ),
+            hasIndicator: true,
+            endChild: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: Column(
+                children: [
+                  const SizedBox(
+                    height: SpaceSizes.x8,
+                  ),
+                  Container(
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.all(8.0),
+                    decoration: BoxDecoration(
+                      boxShadow: const [
+                        BoxShadow(blurRadius: 6, color: Colors.grey),
+                      ],
+
+                      //borderRadius: BorderRadius.all(Radius.circular(24)),
+                      borderRadius: BorderRadius.circular(SpaceSizes.x8),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (imageUrl != null &&
+                            imageUrl.isNotEmpty &&
+                            !imageUrl.contains("34.72.72.115:8000"))
+                          Image.network(imageUrl),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                story.title ?? "",
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Expanded(child: Text("by ${story.authorUsername}")),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                "Memory Time: ${_getFormattedDate(story)}",
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                const Text(
+                                  'More',
+                                  style: TextStyle(
+                                    color: Color(0xFFAFB4B7),
+                                    fontSize: 14,
+                                    fontFamily: 'Inter',
+                                    fontWeight: FontWeight.w500,
+                                    height: 0,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                Image.asset(
+                                  'assets/home/chevrons-right.png',
+                                  height: 20,
+                                  width: 20,
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    height: SpaceSizes.x8,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  String _extractImageUrl(String htmlContent) {
+    final document = dom.Document.html(htmlContent);
+    final imgElement = document.querySelector('img');
+    return imgElement?.attributes['src'] ?? '';
   }
 }
