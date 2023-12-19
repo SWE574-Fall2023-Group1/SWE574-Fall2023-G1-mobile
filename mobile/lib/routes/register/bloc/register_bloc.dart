@@ -13,8 +13,6 @@ class _Constants {
   static const String usernameRequiredMessage = 'Username is required';
   static const String emailRequiredMessage = 'Email is required';
   static const String invalidEmailMessage = 'Email is invalid';
-  static const String usernameCharLimitMessage =
-      'Username should be between 6 and 10 characters';
   static const String passwordRequiredMessage = 'Password is required';
   static const String passwordsNotMatch = 'Passwords must be same';
   static const String offlineMessage =
@@ -49,9 +47,6 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
   String? validateUsername(String? value) {
     if (value == null || value.isEmpty) {
       return _Constants.usernameRequiredMessage;
-    }
-    if (value.length < 6 || value.length > 10) {
-      return _Constants.usernameCharLimitMessage;
     }
     return null;
   }
