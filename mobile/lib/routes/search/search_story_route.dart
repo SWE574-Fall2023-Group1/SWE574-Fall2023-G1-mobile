@@ -786,7 +786,9 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
         .then((Position position) {
       LatLng point = LatLng(position.latitude, position.longitude);
       setState(() {
+        _circleMarkers.clear();
         _addCircleMarker(point);
+        _updateCircleRadius();
       });
       _mapController.move(point, _mapController.camera.zoom + 5);
     }).catchError((dynamic e) {
@@ -852,7 +854,9 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
         placeDetails.result.geometry.location.lng,
       );
 
+      _circleMarkers.clear();
       _addCircleMarker(point);
+      _updateCircleRadius();
 
       setState(() {
         _locationController.clear();
