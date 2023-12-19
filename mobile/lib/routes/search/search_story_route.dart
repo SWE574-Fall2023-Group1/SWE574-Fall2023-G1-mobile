@@ -35,7 +35,7 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
 
   final List<Tag> _tagsSearchResults = <Tag>[];
   List<String> tags = <String>[];
-  late Tag _semanticTagSelected;
+  Tag? _semanticTagSelected;
 
   String selectedDateType = '';
   String selectedSeason = '';
@@ -159,7 +159,8 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
         ),
       );
     }, listener: (BuildContext context, SearchStoryState state) {
-      if (state is SearchStorySuccess) {
+      if (state is SearchStorySuccess && state.stories != null) {
+        AppRoute.searchResults.navigate(context, arguments: state.stories);
       } else if (state is SearchStoryFailure) {
         ShowsDialog.showAlertDialog(context, 'Oops!', state.error.toString(),
             isSearchStoryFail: true);
@@ -188,7 +189,7 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
               seasonName: selectedSeason,
               startDate: _datePickerController.text,
               startYear: _yearController.text,
-              tag: _semanticTagSelected.id,
+              tag: _semanticTagSelected?.id,
               tagLabel: _tagsLabelController.text,
               title: _titleController.text,
               year: _yearController.text,
