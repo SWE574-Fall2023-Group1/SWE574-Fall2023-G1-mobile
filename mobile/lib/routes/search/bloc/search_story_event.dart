@@ -17,8 +17,8 @@ class SearchStoryEventSearchPressed extends SearchStoryEvent {
   final String? date;
   final String? startDate;
   final String? endDate;
-  final int? decade;
-  final Marker? marker;
+  final String? decade;
+  final CircleMarker? marker;
   final int radius;
   final int? dateDiff;
 
@@ -35,7 +35,7 @@ class SearchStoryEventSearchPressed extends SearchStoryEvent {
     this.date,
     this.startDate,
     this.endDate,
-    this.decade = 1900,
+    this.decade,
     this.marker,
     this.radius = 25,
     this.dateDiff,
@@ -60,4 +60,9 @@ class SearchStoryEventSearchPressed extends SearchStoryEvent {
         radius,
         dateDiff,
       ];
+}
+
+class SearchStoryErrorPopupClosedEvent extends SearchStoryEvent {
+  @override
+  List<Object?> get props => <Object?>[];
 }

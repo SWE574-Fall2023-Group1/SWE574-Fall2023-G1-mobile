@@ -84,7 +84,7 @@ abstract class TimeValue {
 @JsonSerializable()
 class NormalYear implements TimeValue {
   String year;
-  @JsonKey(name: "season_name")
+  @JsonKey(name: "seasonName")
   String seasonName;
 
   NormalYear({
@@ -102,7 +102,7 @@ class NormalYear implements TimeValue {
 class IntervalYear implements TimeValue {
   String startYear;
   String endYear;
-  @JsonKey(name: "season_name")
+  @JsonKey(name: "seasonName")
   String seasonName;
 
   IntervalYear({

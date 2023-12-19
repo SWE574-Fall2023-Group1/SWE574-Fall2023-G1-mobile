@@ -15,6 +15,7 @@ import 'package:memories_app/routes/create_story/model/place_details_response.da
 import 'package:memories_app/routes/create_story/model/tag.dart';
 import 'package:memories_app/routes/create_story/zoom_buttons.dart';
 import 'package:memories_app/routes/search/bloc/search_story_bloc.dart';
+import 'package:memories_app/ui/shows_dialog.dart';
 import 'package:memories_app/util/router.dart';
 import 'package:memories_app/util/utils.dart';
 import 'package:http/http.dart' as http;
@@ -160,7 +161,13 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
     }, listener: (BuildContext context, SearchStoryState state) {
       if (state is SearchStorySuccess) {
       } else if (state is SearchStoryFailure) {
-      } else if (state is SearchStoryOffline) {}
+        ShowsDialog.showAlertDialog(context, 'Oops!', state.error.toString(),
+            isSearchStoryFail: true);
+      } else if (state is SearchStoryOffline) {
+        ShowsDialog.showAlertDialog(
+            context, 'Oops!', state.offlineMessage.toString(),
+            isSearchStoryFail: true);
+      }
     });
   }
 
@@ -170,31 +177,27 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         FilledButton(
-          child: const Text("Search (Timeline)"),
+          child: const Text("Search Stories"),
           onPressed: () {
-            /* BlocProvider.of<SearchStoryBloc>(context)
-                .add(const SearchStoryEventSearchPressed(
-              author: "ayhan2",
-              timeType: "Decade",
-              decade: 2020,
-              marker: null,
-              radius: 25,
+            BlocProvider.of<SearchStoryBloc>(context)
+                .add(SearchStoryEventSearchPressed(
+              author: _authorController.text,
+              date: _datePickerController.text,
+              endDate: _endDatePickerController.text,
+              endYear: _endYearController.text,
+              seasonName: selectedSeason,
+              startDate: _datePickerController.text,
+              startYear: _yearController.text,
+              tag: _semanticTagSelected.id,
+              tagLabel: _tagsLabelController.text,
+              title: _titleController.text,
+              year: _yearController.text,
+              timeType: selectedDateType,
+              decade: _selectedDecade,
+              marker: _circleMarkers.first,
+              radius: _radiusNotifier.value.toInt(),
               dateDiff: 2,
-            ));*/
-          },
-        ),
-        FilledButton(
-          child: const Text("Search (List)"),
-          onPressed: () {
-            /* BlocProvider.of<SearchStoryBloc>(context)
-                .add(const SearchStoryEventSearchPressed(
-              author: "ayhan2",
-              timeType: "Decade",
-              decade: 2020,
-              marker: null,
-              radius: 25,
-              dateDiff: 2,
-            ));*/
+            ));
           },
         ),
       ],
@@ -566,7 +569,7 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
       children: <Widget>[
         Form(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: SpaceSizes.x4),
+            padding: const EdgeInsets.only(top: SpaceSizes.x16),
             child: TextFormField(
               onChanged: (String value) {
                 placeAutocomplete(value);

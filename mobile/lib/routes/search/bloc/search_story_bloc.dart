@@ -27,6 +27,7 @@ class SearchStoryBloc extends Bloc<SearchStoryEvent, SearchStoryState> {
       : _repository = repository,
         super(const SearchStoryState()) {
     on<SearchStoryEventSearchPressed>(_searchStory);
+    on<SearchStoryErrorPopupClosedEvent>(_onErrorPopupClosed);
   }
 
   Future<void> _searchStory(SearchStoryEventSearchPressed event,
@@ -57,12 +58,14 @@ class SearchStoryBloc extends Bloc<SearchStoryEvent, SearchStoryState> {
 
   SearchStoryRequestModel _createSearchModel(
       SearchStoryEventSearchPressed event) {
+    final String dateType = mapDateTypeToValue(event.timeType!.toLowerCase());
+
     return SearchStoryRequestModel(
         title: event.title,
         author: event.author,
         tag: event.tag,
         tagLabel: event.tagLabel,
-        timeType: event.timeType,
+        timeType: dateType,
         timeValue: _setTimeModel(event),
         location: _setLocationModel(event),
         radiusDiff: event.radius,
@@ -91,7 +94,7 @@ class SearchStoryBloc extends Bloc<SearchStoryEvent, SearchStoryState> {
     }
 
     if (event.timeType == "Decade") {
-      return Decade(decade: event.decade ?? 1900);
+      return Decade(decade: extractDecade(event.decade) ?? 1900);
     }
     return null;
   }
@@ -104,6 +107,38 @@ class SearchStoryBloc extends Bloc<SearchStoryEvent, SearchStoryState> {
       ], type: "Point");
     } else {
       return null;
+    }
+  }
+
+  int? extractDecade(String? decade) {
+    if (decade == null || decade.isEmpty) {
+      return null;
+    }
+
+    // Remove trailing 's' and parse the remaining part as an integer
+    String numericPart = decade.substring(0, decade.length - 1);
+    return int.tryParse(numericPart);
+  }
+
+  void _onErrorPopupClosed(
+      SearchStoryErrorPopupClosedEvent event, Emitter<SearchStoryState> emit) {
+    emit(const SearchStoryState());
+  }
+
+  String mapDateTypeToValue(String selectedDateType) {
+    switch (selectedDateType.toLowerCase()) {
+      case "year":
+        return "year";
+      case "interval year":
+        return "year_interval";
+      case "normal date":
+        return "normal_date";
+      case "interval date":
+        return "interval_date";
+      case "decade":
+        return "decade";
+      default:
+        return "year";
     }
   }
 }

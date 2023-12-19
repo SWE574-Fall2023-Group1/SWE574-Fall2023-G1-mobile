@@ -63,26 +63,26 @@ Map<String, dynamic> _$LocationToJson(Location instance) => <String, dynamic>{
 
 NormalYear _$NormalYearFromJson(Map<String, dynamic> json) => NormalYear(
       year: json['year'] as String,
-      seasonName: json['season_name'] as String? ?? '',
+      seasonName: json['seasonName'] as String? ?? '',
     );
 
 Map<String, dynamic> _$NormalYearToJson(NormalYear instance) =>
     <String, dynamic>{
       'year': instance.year,
-      'season_name': instance.seasonName,
+      'seasonName': instance.seasonName,
     };
 
 IntervalYear _$IntervalYearFromJson(Map<String, dynamic> json) => IntervalYear(
       startYear: json['startYear'] as String,
       endYear: json['endYear'] as String,
-      seasonName: json['season_name'] as String? ?? '',
+      seasonName: json['seasonName'] as String? ?? '',
     );
 
 Map<String, dynamic> _$IntervalYearToJson(IntervalYear instance) =>
     <String, dynamic>{
       'startYear': instance.startYear,
       'endYear': instance.endYear,
-      'season_name': instance.seasonName,
+      'seasonName': instance.seasonName,
     };
 
 IntervalDate _$IntervalDateFromJson(Map<String, dynamic> json) => IntervalDate(
