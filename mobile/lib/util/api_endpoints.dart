@@ -47,5 +47,6 @@ class ApiEndpoints {
     return "user/storyGetbyAuthor/$id";
   }
 
+  static const String getRecommendations = "user/recommendations";
   static const String searchStory = "user/storySearch";
 }

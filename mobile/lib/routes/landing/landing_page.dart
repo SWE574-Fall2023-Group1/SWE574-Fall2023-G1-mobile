@@ -6,6 +6,9 @@ import 'package:memories_app/routes/home/bloc/home_bloc.dart';
 import 'package:memories_app/routes/home/home_route.dart';
 import 'package:memories_app/routes/landing/bloc/landing_bloc.dart';
 import 'package:memories_app/routes/create_story/create_story_route.dart';
+import 'package:memories_app/routes/recommendations/bloc/recommendations_bloc.dart';
+import 'package:memories_app/routes/recommendations/model/recommendations_repository.dart';
+import 'package:memories_app/routes/recommendations/recommendations_route.dart';
 import 'package:memories_app/routes/search/bloc/search_story_bloc.dart';
 import 'package:memories_app/routes/search/model/search_story_repository.dart';
 import 'package:memories_app/routes/search/search_story_route.dart';
@@ -46,6 +49,7 @@ class _LandingPageState extends State<LandingPage> {
               children: _buildBottomNavScreen(),
             ),
             bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
               items: _buildBottomBarItems(state.tabIndex),
               onTap: (int index) {
                 BlocProvider.of<LandingBloc>(context)
@@ -98,7 +102,12 @@ class _LandingPageState extends State<LandingPage> {
             SearchStoryBloc(repository: SearchStoryRepositoryImp()),
         child: const SearchStoryRoute(),
       ),
-      const Center(child: Text('Index 4: More')),
+      BlocProvider<RecommendationsBloc>(
+        create: (BuildContext context) =>
+            RecommendationsBloc(repository: RecommendationsRepositoryImp())
+              ..add(RecommendationsLoadDisplayEvent()),
+        child: const RecommendationsRoute(),
+      ),
     ];
   }
 
@@ -137,7 +146,7 @@ class _LandingPageState extends State<LandingPage> {
           "assets/landing/menu.png",
           color: selectedIndex == 4 ? AppColors.buttonColor : Colors.black,
         ),
-        label: 'More',
+        label: 'Suggested',
       ),
     ];
   }
