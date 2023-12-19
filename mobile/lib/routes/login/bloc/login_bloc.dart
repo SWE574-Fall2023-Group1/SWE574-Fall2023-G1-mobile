@@ -14,8 +14,6 @@ part 'login_state.dart';
 
 class _Constants {
   static const String usernameRequiredMessage = 'Username is required';
-  static const String usernameCharLimitMessage =
-      'Username should be between 6 and 10 characters';
   static const String passswordRequiredMessage = 'Password is required';
   static const String offlineMessage =
       'You are currently offline.\n Please check your internet connection!';
@@ -43,9 +41,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     if (value == null || value.isEmpty) {
       return _Constants.usernameRequiredMessage;
     }
-    if (value.length < 6 || value.length > 10) {
-      return _Constants.usernameCharLimitMessage;
-    }
     return ''; // Return empty if the validation is successful
   }
 
@@ -53,9 +48,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     if (value == null || value.isEmpty) {
       return _Constants.passswordRequiredMessage;
     }
-    // if (value.length != 6) {
-    //   return _Constants.passwordCharLimitMessage;
-    // }
     return ''; // Return empty if the validation is successful
   }
 
