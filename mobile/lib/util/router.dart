@@ -11,13 +11,21 @@ import 'package:memories_app/routes/login/model/login_repository.dart';
 import 'package:memories_app/routes/register/bloc/register_bloc.dart';
 import 'package:memories_app/routes/register/register_route.dart';
 import 'package:memories_app/routes/register/model/register_repository.dart';
+import 'package:memories_app/routes/search/search_results_route.dart';
 import 'package:memories_app/routes/story_detail/bloc/story_detail_bloc.dart';
 import 'package:memories_app/routes/story_detail/story_detail_route.dart';
 import 'package:memories_app/routes/home/model/story_model.dart';
 
 // TODO: Edit this file as needed
 
-enum AppRoute { login, register, landing, storyDetail, editStory }
+enum AppRoute {
+  login,
+  register,
+  landing,
+  storyDetail,
+  editStory,
+  searchResults
+}
 
 extension AppRouteExtension on AppRoute {
   void navigate(BuildContext context, {Object? arguments}) async {
@@ -90,6 +98,16 @@ extension AppRouteExtension on AppRoute {
                 child: EditStoryRoute(
                   storyModel: arguments as StoryModel,
                 ),
+              ),
+            ));
+
+      case AppRoute.searchResults:
+        Navigator.push(
+            context,
+            // ignore: always_specify_types
+            MaterialPageRoute(
+              builder: (BuildContext context) => SearchResultsRoute(
+                stories: arguments as List<StoryModel>,
               ),
             ));
     }

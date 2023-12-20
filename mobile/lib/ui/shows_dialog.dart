@@ -4,6 +4,7 @@ import 'package:memories_app/routes/create_story/bloc/create_story_bloc.dart';
 import 'package:memories_app/routes/edit_story/bloc/edit_story_bloc.dart';
 import 'package:memories_app/routes/login/bloc/login_bloc.dart';
 import 'package:memories_app/routes/register/bloc/register_bloc.dart';
+import 'package:memories_app/routes/search/bloc/search_story_bloc.dart';
 import 'package:memories_app/util/utils.dart';
 
 class ShowsDialog {
@@ -16,6 +17,7 @@ class ShowsDialog {
     bool isRegisterSuccess = false,
     bool isCreateStoryFail = false,
     bool isEditStoryFail = false,
+    bool isSearchStoryFail = false,
   }) {
     showDialog(
       context: context,
@@ -82,6 +84,10 @@ class ShowsDialog {
       if (isEditStoryFail) {
         BlocProvider.of<EditStoryBloc>(context)
             .add(EditStoryErrorPopupClosedEvent());
+      }
+      if (isSearchStoryFail) {
+        BlocProvider.of<SearchStoryBloc>(context)
+            .add(SearchStoryErrorPopupClosedEvent());
       }
     });
   }

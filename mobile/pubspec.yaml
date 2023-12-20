@@ -37,6 +37,8 @@ dependencies:
   path_provider: ^2.1.1
   dio: ^5.4.0
   http_parser: ^4.0.2
+  timeline_tile: ^2.0.0
+  html: ^0.15.4
 
 
 dev_dependencies:
