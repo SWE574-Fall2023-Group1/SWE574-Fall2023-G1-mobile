@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
 import 'package:equatable/equatable.dart';
+import 'package:intl/intl.dart';
 import 'package:memories_app/routes/app/application_context.dart';
 import 'package:memories_app/routes/home/model/home_repository.dart';
 import 'package:memories_app/routes/home/model/response/stories_response_model.dart';
@@ -142,9 +143,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       bool isMidnight =
           dateTime.hour == 0 && dateTime.minute == 0 && dateTime.second == 0;
 
-      String formattedDate = isMidnight
-          ? dateTime.toLocal().toLocal().toString().split(' ')[0]
-          : dateTime.toLocal().toLocal().toString();
+      String pattern = isMidnight ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm';
+
+      String formattedDate = DateFormat(pattern).format(dateTime.toLocal());
 
       return formattedDate;
     } catch (e) {

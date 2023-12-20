@@ -13,6 +13,7 @@ import 'package:memories_app/routes/profile/profile_route.dart';
 import 'package:memories_app/routes/register/bloc/register_bloc.dart';
 import 'package:memories_app/routes/register/register_route.dart';
 import 'package:memories_app/routes/register/model/register_repository.dart';
+import 'package:memories_app/routes/search/search_results_route.dart';
 import 'package:memories_app/routes/story_detail/bloc/story_detail_bloc.dart';
 import 'package:memories_app/routes/story_detail/story_detail_route.dart';
 import 'package:memories_app/routes/home/model/story_model.dart';
@@ -25,6 +26,7 @@ enum AppRoute {
   landing,
   storyDetail,
   editStory,
+  searchResults,
   profile,
 }
 
@@ -101,6 +103,17 @@ extension AppRouteExtension on AppRoute {
                 ),
               ),
             ));
+
+      case AppRoute.searchResults:
+        Navigator.push(
+            context,
+            // ignore: always_specify_types
+            MaterialPageRoute(
+              builder: (BuildContext context) => SearchResultsRoute(
+                stories: arguments as List<StoryModel>,
+              ),
+            ));
+
       case AppRoute.profile:
         Navigator.pushReplacement(
             context,

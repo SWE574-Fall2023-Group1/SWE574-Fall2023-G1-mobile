@@ -53,7 +53,9 @@ class EditStoryBloc extends Bloc<EditStoryEvent, EditStoryState> {
   }
 
   void _onErrorPopupClosed(
-      EditStoryErrorPopupClosedEvent event, Emitter<EditStoryState> emit) {}
+      EditStoryErrorPopupClosedEvent event, Emitter<EditStoryState> emit) {
+    emit(const EditStoryState());
+  }
 
   StoryRequestModel _createStoryModel(EditStoryUpdateStoryEvent event) {
     final String dateType = mapDateTypeToValue(event.dateType.toLowerCase());

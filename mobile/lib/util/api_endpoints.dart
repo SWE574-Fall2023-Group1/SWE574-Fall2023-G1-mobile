@@ -47,6 +47,8 @@ class ApiEndpoints {
     return "user/storyGetbyAuthor/$id";
   }
 
+  static const String searchStory = "user/storySearch";
+
   static String getUserDetails({int? userId}) {
     if (userId == null) {
       return "user/userDetails";

@@ -9,6 +9,9 @@ import 'package:memories_app/routes/create_story/create_story_route.dart';
 import 'package:memories_app/routes/recommendations/bloc/recommendations_bloc.dart';
 import 'package:memories_app/routes/recommendations/model/recommendations_repository.dart';
 import 'package:memories_app/routes/recommendations/recommendations_route.dart';
+import 'package:memories_app/routes/search/bloc/search_story_bloc.dart';
+import 'package:memories_app/routes/search/model/search_story_repository.dart';
+import 'package:memories_app/routes/search/search_story_route.dart';
 import 'package:memories_app/util/utils.dart';
 import 'package:memories_app/routes/profile/profile_route.dart';
 
@@ -94,7 +97,11 @@ class _LandingPageState extends State<LandingPage> {
       ),
       const Center(child: ProfileRoute()),
       const Placeholder(),
-      const Center(child: Text('Index 3: Search')),
+      BlocProvider<SearchStoryBloc>(
+        create: (BuildContext context) =>
+            SearchStoryBloc(repository: SearchStoryRepositoryImp()),
+        child: const SearchStoryRoute(),
+      ),
       BlocProvider<RecommendationsBloc>(
         create: (BuildContext context) =>
             RecommendationsBloc(repository: RecommendationsRepositoryImp())

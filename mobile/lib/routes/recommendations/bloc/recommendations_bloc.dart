@@ -5,6 +5,7 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:intl/intl.dart';
 import 'package:memories_app/routes/home/model/story_model.dart';
 import 'package:memories_app/routes/recommendations/model/recommendations_repository.dart';
 import 'package:memories_app/routes/recommendations/model/recommendations_response.dart';
@@ -91,15 +92,16 @@ class RecommendationsBloc
     if (dateString == null) {
       return null;
     }
+
     try {
       DateTime dateTime = DateTime.parse(dateString);
 
       bool isMidnight =
           dateTime.hour == 0 && dateTime.minute == 0 && dateTime.second == 0;
 
-      String formattedDate = isMidnight
-          ? dateTime.toLocal().toLocal().toString().split(' ')[0]
-          : dateTime.toLocal().toLocal().toString();
+      String pattern = isMidnight ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm';
+
+      String formattedDate = DateFormat(pattern).format(dateTime.toLocal());
 
       return formattedDate;
     } catch (e) {
