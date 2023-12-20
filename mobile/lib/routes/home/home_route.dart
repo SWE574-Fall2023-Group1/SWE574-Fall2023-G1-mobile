@@ -87,7 +87,7 @@ class _HomeRouteState extends State<HomeRoute>
                   padding: const EdgeInsets.only(right: 16.0),
                   child: GestureDetector(
                     onTap: () {
-                      onPressLogout(context);
+                      AppRoute.activityStream.navigate(context);
                     },
                     child: Image.asset("assets/home/vector.png"),
                   ),
