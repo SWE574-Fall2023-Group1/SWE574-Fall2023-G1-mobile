@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:memories_app/routes/app/application_context.dart';
 import 'package:memories_app/routes/story_detail/model/story_detail_repository.dart';
-import 'package:memories_app/util/sp_helper.dart';
 import 'package:memories_app/routes/story_detail/story_detail_route.dart';
 
 class LikesContainer extends StatefulWidget {
@@ -35,9 +35,9 @@ class _LikesContainerState extends State<LikesContainer> {
   }
 
   Future<void> _isInitiallyLiked() async {
-    int? currentUserId = await SPHelper.getInt(SPKeys.currentUserId);
     setState(() {
-      isHeartFilled = widget.initialLikes.contains(currentUserId);
+      isHeartFilled =
+          widget.initialLikes.contains(ApplicationContext.currentUserId);
     });
   }
 

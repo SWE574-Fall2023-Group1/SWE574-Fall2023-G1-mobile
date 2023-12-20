@@ -14,14 +14,16 @@ import 'package:memories_app/routes/story_detail/story_detail_route.dart';
 import 'package:memories_app/ui/titled_app_bar.dart';
 
 class ProfileRoute extends StatelessWidget {
-  const ProfileRoute({super.key});
+  final int? userId;
+
+  const ProfileRoute({super.key, this.userId});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: TitledAppBar.build("Profile"),
       body: FutureBuilder<UserDetailsResponseModel>(
-        future: ProfileRepositoryImp().getUserDetails(),
+        future: ProfileRepositoryImp().getUserDetails(userId),
         builder: (BuildContext context,
             AsyncSnapshot<UserDetailsResponseModel> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -81,16 +83,15 @@ class ProfileDetailsState extends State<ProfileDetails> {
                   ),
                 ));
           },
-          child: buildStoryCard(story),
+          child: StoryCard(story: story),
         );
       }).toList(),
     );
   }
 
   Future<List<StoryModel>> _loadPosts(int page) async {
-    StoriesResponseModel? responseModel;
-
-    responseModel = await ProfileRepositoryImp().getOwnStories(user.id);
+    StoriesResponseModel? responseModel =
+        await ProfileRepositoryImp().getOwnStories(user.id);
     if (responseModel.stories != null) {
       responseModel.stories?.forEach((StoryModel story) {
         story.dateText = getFormattedDate(story);
@@ -115,15 +116,15 @@ class ProfileDetailsState extends State<ProfileDetails> {
               flexibleSpace: LayoutBuilder(
                 builder: (BuildContext context, BoxConstraints constraints) {
                   double top = constraints.biggest.height;
-                  bool isCollapsed = top < (kToolbarHeight + 130);
+                  bool isCollapsed = top < kToolbarHeight + 30;
                   return FlexibleSpaceBar(
                     titlePadding:
                         EdgeInsets.only(left: isCollapsed ? 48 : 0, bottom: 14),
-                    title: isCollapsed ? collapsedHeader(user) : null,
+                    title: isCollapsed ? CollapsedHeader(user: user) : null,
                     background: !isCollapsed
-                        ? expandedHeader(
-                            user,
-                            (String? newUrl) {
+                        ? ExpandedHeader(
+                            user: user,
+                            onAvatarChange: (String? newUrl) {
                               _changeAvatar(newUrl);
                             },
                           )
@@ -135,7 +136,7 @@ class ProfileDetailsState extends State<ProfileDetails> {
             SliverList(
               delegate: SliverChildListDelegate(
                 <Widget>[
-                  EditableBiography(biography: user.biography),
+                  EditableBiography(userId: user.id, biography: user.biography),
                   FutureBuilder<List<StoryModel>>(
                     future: _loadPosts(user.id),
                     builder: (

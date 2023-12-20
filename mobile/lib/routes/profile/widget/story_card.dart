@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:memories_app/routes/app/application_context.dart';
 import 'package:memories_app/routes/home/model/story_model.dart';
+import 'package:memories_app/util/router.dart';
 import 'package:memories_app/util/utils.dart';
 
-Widget buildStoryCard(StoryModel story) => Card(
+class StoryCard extends StatelessWidget {
+  final StoryModel story;
+
+  const StoryCard({required this.story, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
       elevation: 2,
       color: Colors.white,
       shape: RoundedRectangleBorder(
@@ -14,15 +23,27 @@ Widget buildStoryCard(StoryModel story) => Card(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
-              'By ${story.authorUsername}',
-              style: const TextStyle(
-                color: Color(0xFFAFB4B7),
-                fontSize: 14,
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.bold,
-                height: 0,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  'By ${story.authorUsername}',
+                  style: const TextStyle(
+                    color: Color(0xFFAFB4B7),
+                    fontSize: 14,
+                    fontFamily: 'Inter',
+                    fontWeight: FontWeight.bold,
+                    height: 0,
+                  ),
+                ),
+                if (ApplicationContext.isCurrentUser(story.author))
+                  GestureDetector(
+                    onTap: () {
+                      AppRoute.editStory.navigate(context, arguments: story);
+                    },
+                    child: const Icon(Icons.edit),
+                  ),
+              ],
             ),
             const SizedBox(height: 16),
             Row(
@@ -112,3 +133,5 @@ Widget buildStoryCard(StoryModel story) => Card(
         ),
       ),
     );
+  }
+}

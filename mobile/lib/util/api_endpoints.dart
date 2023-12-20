@@ -1,9 +1,9 @@
 class ApiEndpoints {
   static const String login = "user/login";
   static const String register = "user/register";
-  static const String getUserDetails = "user/userDetails";
   static const String updateBiography = "user/biography";
   static const String avatar = "user/profilePhoto";
+  static const String getRecommendations = "user/recommendations";
 
   static String buildAllStoriesUrl(int page, int size) {
     return "user/allStories?page=$page&size=$size";
@@ -47,6 +47,12 @@ class ApiEndpoints {
     return "user/storyGetbyAuthor/$id";
   }
 
-  static const String getRecommendations = "user/recommendations";
   static const String searchStory = "user/storySearch";
+
+  static String getUserDetails({int? userId}) {
+    if (userId == null) {
+      return "user/userDetails";
+    }
+    return "user/userDetails/$userId";
+  }
 }

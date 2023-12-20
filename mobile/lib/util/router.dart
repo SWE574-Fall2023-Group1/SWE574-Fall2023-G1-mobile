@@ -8,6 +8,8 @@ import 'package:memories_app/routes/landing/landing_page.dart';
 import 'package:memories_app/routes/login/bloc/login_bloc.dart';
 import 'package:memories_app/routes/login/login_route.dart';
 import 'package:memories_app/routes/login/model/login_repository.dart';
+import 'package:memories_app/routes/profile/bloc/profile_bloc.dart';
+import 'package:memories_app/routes/profile/profile_route.dart';
 import 'package:memories_app/routes/register/bloc/register_bloc.dart';
 import 'package:memories_app/routes/register/register_route.dart';
 import 'package:memories_app/routes/register/model/register_repository.dart';
@@ -24,7 +26,8 @@ enum AppRoute {
   landing,
   storyDetail,
   editStory,
-  searchResults
+  searchResults,
+  profile,
 }
 
 extension AppRouteExtension on AppRoute {
@@ -108,6 +111,17 @@ extension AppRouteExtension on AppRoute {
             MaterialPageRoute(
               builder: (BuildContext context) => SearchResultsRoute(
                 stories: arguments as List<StoryModel>,
+              ),
+            ));
+
+      case AppRoute.profile:
+        Navigator.pushReplacement(
+            context,
+            // ignore: always_specify_types
+            MaterialPageRoute(
+              builder: (BuildContext context) => BlocProvider<ProfileBloc>(
+                create: (BuildContext context) => ProfileBloc(),
+                child: ProfileRoute(userId: arguments as int?),
               ),
             ));
     }

@@ -9,7 +9,7 @@ import 'package:memories_app/util/api_endpoints.dart';
 import 'dart:io';
 
 abstract class ProfileRepository {
-  Future<UserDetailsResponseModel> getUserDetails();
+  Future<UserDetailsResponseModel> getUserDetails(int? userId);
 
   Future<StoriesResponseModel> getOwnStories(int id);
 
@@ -27,9 +27,9 @@ class ProfileRepositoryImp extends ProfileRepository {
       : _networkManager = networkManager ?? NetworkManager();
 
   @override
-  Future<UserDetailsResponseModel> getUserDetails() async {
+  Future<UserDetailsResponseModel> getUserDetails(int? userId) async {
     final Result result =
-        await _networkManager.get(ApiEndpoints.getUserDetails);
+        await _networkManager.get(ApiEndpoints.getUserDetails(userId: userId));
     return UserDetailsResponseModel.fromJson(result.json);
   }
 

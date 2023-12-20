@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:memories_app/routes/app/application_context.dart';
 import 'package:memories_app/routes/story_detail/model/comment_model.dart';
 import 'package:memories_app/routes/home/model/response/comments_response_model.dart';
 import 'package:memories_app/routes/story_detail/model/request/comment_request_model.dart';
 import 'package:memories_app/routes/story_detail/model/story_detail_repository.dart';
 import 'package:memories_app/routes/story_detail/story_detail_route.dart';
 import 'package:memories_app/routes/story_detail/widget/avatar_container.dart';
-import 'package:memories_app/util/sp_helper.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class LoadComments extends StatefulWidget {
@@ -207,8 +207,7 @@ class PostCommentWidgetState extends State<PostCommentWidget> {
                   await StoryDetailRepositoryImp().postComment(
                 id: widget.storyId,
                 requestModel: CommentRequestModel(
-                  commentAuthorId:
-                      await SPHelper.getInt(SPKeys.currentUserId) as int,
+                  commentAuthorId: ApplicationContext.currentUserId,
                   storyId: widget.storyId,
                   text: _controller.text,
                 ),
