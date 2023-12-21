@@ -12,13 +12,38 @@ class ActivityStreamInitial extends ActivityStreamState {
 }
 
 class ActivityStreamDisplayState extends ActivityStreamState {
-  final List<Activity> activities;
+  final List<Activity> allActivities;
+  final List<Activity> newStories;
+  final List<Activity> likedStories;
+  final List<Activity> unlikedStories;
+  final List<Activity> followedUser;
+  final List<Activity> unfollowedUser;
+  final List<Activity> commentOnStory;
+  final List<Activity> commentStoryYouCommentedBefore;
+
   final bool showLoadingAnimation;
   const ActivityStreamDisplayState(
-      {required this.activities, required this.showLoadingAnimation});
+      {required this.allActivities,
+      required this.likedStories,
+      required this.unlikedStories,
+      required this.followedUser,
+      required this.unfollowedUser,
+      required this.commentOnStory,
+      required this.commentStoryYouCommentedBefore,
+      required this.newStories,
+      required this.showLoadingAnimation});
 
   @override
-  List<Object?> get props => <Object?>[activities, showLoadingAnimation];
+  List<Object?> get props => <Object?>[
+        likedStories,
+        unlikedStories,
+        followedUser,
+        unfollowedUser,
+        commentOnStory,
+        commentStoryYouCommentedBefore,
+        newStories,
+        showLoadingAnimation
+      ];
 
   @override
   String toString() => 'Displaying activity stream state';

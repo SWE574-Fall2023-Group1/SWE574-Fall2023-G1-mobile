@@ -2,7 +2,6 @@ import 'dart:io';
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:intl/intl.dart';
 import 'package:memories_app/routes/activity_stream/model/activity_stream_repository.dart';
 import 'package:memories_app/routes/activity_stream/model/activity_stream_response_model.dart';
 
@@ -24,6 +23,14 @@ class ActivityStreamBloc
     on<ActivityStreamLoadDisplayEvent>(_loadDisplayEvent);
   }
 
+  List<Activity> likedStories = <Activity>[];
+  List<Activity> unlikedStories = <Activity>[];
+  List<Activity> followedUser = <Activity>[];
+  List<Activity> unfollowedUser = <Activity>[];
+  List<Activity> commentOnStory = <Activity>[];
+  List<Activity> commentStoryYouCommentedBefore = <Activity>[];
+  List<Activity> newStories = <Activity>[];
+
   Future<void> _loadDisplayEvent(ActivityStreamLoadDisplayEvent event,
       Emitter<ActivityStreamState> emit) async {
     ActivityStreamResponseModel? response;
@@ -42,11 +49,47 @@ class ActivityStreamBloc
     }
 
     if (response != null) {
-      if (response.success == true && response.activity.isNotEmpty) {
+      if (response.success == true) {
+        _groupActivities(response.activity);
         emit(ActivityStreamDisplayState(
-            activities: response.activity, showLoadingAnimation: false));
+          allActivities: response.activity,
+          showLoadingAnimation: false,
+          likedStories: likedStories,
+          commentOnStory: commentOnStory,
+          commentStoryYouCommentedBefore: commentStoryYouCommentedBefore,
+          followedUser: followedUser,
+          newStories: newStories,
+          unfollowedUser: unfollowedUser,
+          unlikedStories: unlikedStories,
+        ));
       } else {
         emit(ActivityStreamFailure(error: response.msg.toString()));
+      }
+    }
+  }
+
+  void _groupActivities(List<Activity> activities) {
+    for (Activity element in activities) {
+      if (element.activityType == "new_story" && !element.viewed) {
+        newStories.add(element);
+      }
+      if (element.activityType == "story_liked" && !element.viewed) {
+        likedStories.add(element);
+      }
+      if (element.activityType == "story_unliked" && !element.viewed) {
+        unlikedStories.add(element);
+      }
+      if (element.activityType == "followed_user" && !element.viewed) {
+        followedUser.add(element);
+      }
+      if (element.activityType == "unfollowed_user" && !element.viewed) {
+        unfollowedUser.add(element);
+      }
+      if (element.activityType == "new_commented_on_story" && !element.viewed) {
+        commentOnStory.add(element);
+      }
+      if (element.activityType == "new_comment_on_comment" && !element.viewed) {
+        commentStoryYouCommentedBefore.add(element);
       }
     }
   }
