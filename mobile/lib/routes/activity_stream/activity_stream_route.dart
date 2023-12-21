@@ -278,7 +278,7 @@ class _ActivityStreamRouteState extends State<ActivityStreamRoute> {
         const Padding(
           padding: EdgeInsets.all(8.0),
           child: Text(
-            "User Created New Stories",
+            "Users Created New Stories",
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
         ),
