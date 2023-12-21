@@ -119,7 +119,7 @@ extension AppRouteExtension on AppRoute {
             ));
 
       case AppRoute.profile:
-        Navigator.pushReplacement(
+        Navigator.push(
             context,
             // ignore: always_specify_types
             MaterialPageRoute(

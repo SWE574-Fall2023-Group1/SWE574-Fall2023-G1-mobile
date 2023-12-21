@@ -107,6 +107,7 @@ class ProfileDetailsState extends State<ProfileDetails> {
         child: CustomScrollView(
           slivers: <Widget>[
             SliverAppBar(
+              automaticallyImplyLeading: false,
               expandedHeight: 220,
               floating: false,
               pinned: true,
