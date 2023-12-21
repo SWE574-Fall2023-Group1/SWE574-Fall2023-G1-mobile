@@ -107,6 +107,7 @@ class ProfileDetailsState extends State<ProfileDetails> {
         child: CustomScrollView(
           slivers: <Widget>[
             SliverAppBar(
+              automaticallyImplyLeading: false,
               expandedHeight: 220,
               floating: false,
               pinned: true,
@@ -152,7 +153,9 @@ class ProfileDetailsState extends State<ProfileDetails> {
                       if (!snapshot.hasData || snapshot.data!.isEmpty) {
                         return const Text('No stories found.');
                       }
-                      return _buildStoryList(snapshot.data!, context);
+                      return _buildStoryList(
+                          snapshot.data! + snapshot.data! + snapshot.data!,
+                          context);
                     },
                   ),
                 ],
