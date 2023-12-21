@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:memories_app/routes/activity_stream/activity_stream_route.dart';
+import 'package:memories_app/routes/activity_stream/bloc/activity_stream_bloc.dart';
+import 'package:memories_app/routes/activity_stream/model/activity_stream_repository.dart';
 import 'package:memories_app/routes/edit_story/bloc/edit_story_bloc.dart';
 import 'package:memories_app/routes/edit_story/edit_story_route.dart';
 import 'package:memories_app/routes/edit_story/model/edit_story_repository.dart';
@@ -28,6 +31,7 @@ enum AppRoute {
   editStory,
   searchResults,
   profile,
+  activityStream,
 }
 
 extension AppRouteExtension on AppRoute {
@@ -122,6 +126,20 @@ extension AppRouteExtension on AppRoute {
               builder: (BuildContext context) => BlocProvider<ProfileBloc>(
                 create: (BuildContext context) => ProfileBloc(),
                 child: ProfileRoute(userId: arguments as int?),
+              ),
+            ));
+
+      case AppRoute.activityStream:
+        Navigator.push(
+            context,
+            // ignore: always_specify_types
+            MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  BlocProvider<ActivityStreamBloc>(
+                create: (BuildContext context) => ActivityStreamBloc(
+                    repository: ActivityStreamRepositoryImp())
+                  ..add(ActivityStreamLoadDisplayEvent()),
+                child: const ActivityStreamRoute(),
               ),
             ));
     }

@@ -82,6 +82,17 @@ class _HomeRouteState extends State<HomeRoute>
                   onPressLogout(context);
                 },
               ),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 16.0),
+                  child: GestureDetector(
+                    onTap: () {
+                      AppRoute.activityStream.navigate(context);
+                    },
+                    child: Image.asset("assets/home/vector.png"),
+                  ),
+                ),
+              ],
               title: Image.asset(
                 'assets/login/logo.png',
                 height: 140,

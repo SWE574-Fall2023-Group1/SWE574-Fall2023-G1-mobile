@@ -50,6 +50,20 @@ class NetworkManager {
     return _createResponse(response);
   }
 
+  Future<dynamic> patch(String endpoint) async {
+    if (!await _isConnectedToInternet()) {
+      throw const SocketException('');
+    }
+
+    Map<String, String> customHeaders = await _constructHeaders();
+    final http.Response response = await http.patch(
+      Uri.parse('$baseUrl/$endpoint'),
+      headers: customHeaders,
+    );
+
+    return _createResponse(response);
+  }
+
   Future<dynamic> post(String endpoint, {Object? body}) async {
     if (!await _isConnectedToInternet()) {
       throw const SocketException('');
