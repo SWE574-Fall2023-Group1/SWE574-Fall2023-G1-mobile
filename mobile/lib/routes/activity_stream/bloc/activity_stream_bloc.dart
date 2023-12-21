@@ -21,6 +21,7 @@ class ActivityStreamBloc
       : _repository = repository,
         super(const ActivityStreamInitial()) {
     on<ActivityStreamLoadDisplayEvent>(_loadDisplayEvent);
+    on<ActivityStreamOnPressActivityEvent>(_viewActivityEvent);
   }
 
   List<Activity> likedStories = <Activity>[];
@@ -92,5 +93,10 @@ class ActivityStreamBloc
         commentStoryYouCommentedBefore.add(element);
       }
     }
+  }
+
+  Future<void> _viewActivityEvent(ActivityStreamOnPressActivityEvent event,
+      Emitter<ActivityStreamState> emit) async {
+    await _repository.viewActivity(event.activityId);
   }
 }

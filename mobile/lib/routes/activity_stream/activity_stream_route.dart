@@ -95,6 +95,9 @@ class _ActivityStreamRouteState extends State<ActivityStreamRoute> {
               onTap: () {
                 AppRoute.profile
                     .navigate(context, arguments: activity.targetUser);
+                BlocProvider.of<ActivityStreamBloc>(context).add(
+                    ActivityStreamOnPressActivityEvent(
+                        activityId: activity.id));
               },
               child: ListTile(
                 title: Text("${activity.targetUserUsername} followed you!"),
@@ -131,6 +134,9 @@ class _ActivityStreamRouteState extends State<ActivityStreamRoute> {
               onTap: () {
                 AppRoute.profile
                     .navigate(context, arguments: activity.targetUser);
+                BlocProvider.of<ActivityStreamBloc>(context).add(
+                    ActivityStreamOnPressActivityEvent(
+                        activityId: activity.id));
               },
               child: ListTile(
                 title: Text("${activity.targetUserUsername} unfollowed you!"),
@@ -167,6 +173,9 @@ class _ActivityStreamRouteState extends State<ActivityStreamRoute> {
               onTap: () {
                 AppRoute.profile
                     .navigate(context, arguments: activity.targetUser);
+                BlocProvider.of<ActivityStreamBloc>(context).add(
+                    ActivityStreamOnPressActivityEvent(
+                        activityId: activity.id));
               },
               child: ListTile(
                 title: Text(
@@ -205,6 +214,9 @@ class _ActivityStreamRouteState extends State<ActivityStreamRoute> {
               onTap: () {
                 AppRoute.profile
                     .navigate(context, arguments: activity.targetUser);
+                BlocProvider.of<ActivityStreamBloc>(context).add(
+                    ActivityStreamOnPressActivityEvent(
+                        activityId: activity.id));
               },
               child: ListTile(
                 title: Text(
@@ -242,6 +254,9 @@ class _ActivityStreamRouteState extends State<ActivityStreamRoute> {
               onTap: () {
                 AppRoute.profile
                     .navigate(context, arguments: activity.targetUser);
+                BlocProvider.of<ActivityStreamBloc>(context).add(
+                    ActivityStreamOnPressActivityEvent(
+                        activityId: activity.id));
               },
               child: ListTile(
                 title: Text("${activity.targetUserUsername} liked your story!"),
@@ -278,6 +293,9 @@ class _ActivityStreamRouteState extends State<ActivityStreamRoute> {
               onTap: () {
                 AppRoute.profile
                     .navigate(context, arguments: activity.targetUser);
+                BlocProvider.of<ActivityStreamBloc>(context).add(
+                    ActivityStreamOnPressActivityEvent(
+                        activityId: activity.id));
               },
               child: ListTile(
                 title:
