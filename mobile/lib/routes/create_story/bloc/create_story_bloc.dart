@@ -59,7 +59,7 @@ class CreateStoryBloc extends Bloc<CreateStoryEvent, CreateStoryState> {
       title: event.title,
       content: event.content,
       storyTags: event.storyTags,
-      locationIds: _createLocationId(
+      locationIds: createLocationId(
           event.markersForPoint,
           event.circleMarkers,
           event.polygons,
@@ -96,7 +96,7 @@ class CreateStoryBloc extends Bloc<CreateStoryEvent, CreateStoryState> {
             event.endDate!.contains(" "));
   }
 
-  List<LocationId> _createLocationId(
+  List<LocationId> createLocationId(
       List<Marker>? markersForPoint,
       List<CircleMarker>? circleMarkers,
       List<Polygon>? polygons,
@@ -106,24 +106,24 @@ class CreateStoryBloc extends Bloc<CreateStoryEvent, CreateStoryState> {
       List<String>? polylineAdresses) {
     List<LocationId> locationIds = [];
     if (markersForPoint != null && markersForPoint.isNotEmpty) {
-      _createPointLocations(markersForPoint, pointAdresses, locationIds);
+      createPointLocations(markersForPoint, pointAdresses, locationIds);
     }
 
     if (circleMarkers != null && circleMarkers.isNotEmpty) {
-      _createCircleLocations(circleMarkers, circleAdresses, locationIds);
+      createCircleLocations(circleMarkers, circleAdresses, locationIds);
     }
     if (polygons != null && polygons.isNotEmpty) {
-      _createPolygonLocations(polygons, locationIds);
+      createPolygonLocations(polygons, locationIds);
     }
 
     if (polyLines != null && polyLines.isNotEmpty) {
-      _createPolylineLocations(polyLines, polylineAdresses, locationIds);
+      createPolylineLocations(polyLines, polylineAdresses, locationIds);
     }
 
     return locationIds;
   }
 
-  void _createPolylineLocations(List<Polyline> polyLines,
+  void createPolylineLocations(List<Polyline> polyLines,
       List<String>? polylineAdresses, List<LocationId> locationIds) {
     for (int i = 0; i < polyLines.length; i++) {
       List<List<double>> coordinates = [];
@@ -146,7 +146,7 @@ class CreateStoryBloc extends Bloc<CreateStoryEvent, CreateStoryState> {
     }
   }
 
-  void _createPolygonLocations(
+  void createPolygonLocations(
       List<Polygon> polygons, List<LocationId> locationIds) {
     for (int i = 0; i < polygons.length; i++) {
       List<List<List<double>>> coordinates = [];
@@ -159,7 +159,6 @@ class CreateStoryBloc extends Bloc<CreateStoryEvent, CreateStoryState> {
           firstPoint.longitude,
           firstPoint.latitude
         ];
-        singlePolygon.add(firstCoordinates);
 
         for (LatLng point in polygons[i].points) {
           List<double> coordinatesList = [point.longitude, point.latitude];
@@ -181,7 +180,7 @@ class CreateStoryBloc extends Bloc<CreateStoryEvent, CreateStoryState> {
     }
   }
 
-  void _createCircleLocations(List<CircleMarker> circleMarkers,
+  void createCircleLocations(List<CircleMarker> circleMarkers,
       List<String>? circleAdresses, List<LocationId> locationIds) {
     for (int i = 0; i < circleMarkers.length; i++) {
       LocationId circleLocation = LocationId(
@@ -200,7 +199,7 @@ class CreateStoryBloc extends Bloc<CreateStoryEvent, CreateStoryState> {
     }
   }
 
-  void _createPointLocations(List<Marker> markersForPoint,
+  void createPointLocations(List<Marker> markersForPoint,
       List<String>? pointAdresses, List<LocationId> locationIds) {
     for (int i = 0; i < markersForPoint.length; i++) {
       LocationId pointLocation = LocationId(
@@ -232,6 +231,23 @@ class CreateStoryBloc extends Bloc<CreateStoryEvent, CreateStoryState> {
     String numericPart = decade.substring(0, decade.length - 1);
     return int.tryParse(numericPart);
   }
+
+  String mapDateTypeToValue(String selectedDateType) {
+    switch (selectedDateType.toLowerCase()) {
+      case "year":
+        return "year";
+      case "interval year":
+        return "year_interval";
+      case "normal date":
+        return "normal_date";
+      case "interval date":
+        return "interval_date";
+      case "decade":
+        return "decade";
+      default:
+        return "year";
+    }
+  }
 }
 
 enum StoryDateType {
@@ -240,21 +256,4 @@ enum StoryDateType {
   normalDate,
   intervalDate,
   decade,
-}
-
-String mapDateTypeToValue(String selectedDateType) {
-  switch (selectedDateType.toLowerCase()) {
-    case "year":
-      return "year";
-    case "interval year":
-      return "year_interval";
-    case "normal date":
-      return "normal_date";
-    case "interval date":
-      return "interval_date";
-    case "decade":
-      return "decade";
-    default:
-      return "year";
-  }
 }
