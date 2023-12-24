@@ -37,5 +37,6 @@ jobs:
           make
           make test
           sudo apt-get update -qq -y && sudo apt-get install -qq -y lcov
-          lcov --remove mobile/coverage/lcov.info 'mobile/lib/network/*' -o mobile/coverage/new_lcov.info
-          genhtml mobile/coverage/new_lcov.info --output=mobile/coverage
+          cd mobile
+          lcov --remove coverage/lcov.info 'lib/network/*' -o coverage/new_lcov.info
+          genhtml coverage/new_lcov.info --output=coverage
