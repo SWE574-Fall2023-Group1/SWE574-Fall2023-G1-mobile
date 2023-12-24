@@ -58,4 +58,8 @@ class ApiEndpoints {
   static String getActivitiesById(int activityId) {
     return "user/activities/$activityId";
   }
+
+  static String followUser(int userId) {
+    return "user/followByUser/$userId";
+  }
 }
