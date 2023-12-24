@@ -8,12 +8,14 @@ on:
       - dev
     paths:
       - 'mobile/**'
+      - '.github/workflows/build_and_upload_apk.yml'
   pull_request:
     branches:
       - main
       - dev
     paths:
       - 'mobile/**'
+      - '.github/workflows/build_and_upload_apk.yml'
 
 jobs:
   build_upload_apk:

@@ -1,12 +1,14 @@
 name: Test Flutter
 
 on:
+  workflow_dispatch:
   pull_request:
     branches:
       - main
       - dev
     paths:
       - 'mobile/**'
+      - '.github/workflows/test_apk.yml'
 
 jobs:
   test_flutter:
