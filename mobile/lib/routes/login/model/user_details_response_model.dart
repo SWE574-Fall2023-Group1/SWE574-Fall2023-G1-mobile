@@ -25,4 +25,27 @@ class UserDetailsResponseModel {
       profilePhoto: json['profile_photo'] as String?,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'id': id,
+      'username': username,
+      'email': email,
+      'biography': biography,
+      'followers': followers,
+      'profile_photo': profilePhoto,
+    };
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) {
+      return true;
+    }
+
+    return other is UserDetailsResponseModel && other.id == id;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
 }

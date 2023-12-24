@@ -21,7 +21,7 @@ class AddProfilePhotoResponseModel extends BaseResponseModel {
   }
 
   Map<String, dynamic> toJson() {
-    return {
+    return <String, dynamic>{
       'profile_photo': profilePhoto,
       'photo_url': photoUrl,
       'success': success,
