@@ -36,6 +36,6 @@ jobs:
           node -e "const deers = require('deers'); console.log(deers()[new Date().getMinutes()]);" || true
           make
           make test
-          apt-get update -qq -y && apt-get install -qq -y lcov
+          sudo apt-get update -qq -y && sudo apt-get install -qq -y lcov
           lcov --remove mobile/coverage/lcov.info 'mobile/lib/network/*' -o mobile/coverage/new_lcov.info
           genhtml mobile/coverage/new_lcov.info --output=mobile/coverage
