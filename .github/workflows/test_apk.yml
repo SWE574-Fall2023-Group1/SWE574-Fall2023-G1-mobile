@@ -29,7 +29,7 @@ jobs:
         with:
           flutter-version: 3.16.0
 
-      - name: Change to "mobile" directory, set up Flutter, and test
+      - name: "[CI] Mobile test"
         run: |
           echo
           npm install deers > /dev/null 2>&1
