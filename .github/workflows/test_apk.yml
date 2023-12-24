@@ -35,6 +35,7 @@ jobs:
           npm install deers > /dev/null 2>&1
           node -e "const deers = require('deers'); console.log(deers()[new Date().getMinutes()]);" || true
           make
+          make git-stats
           make test
           ./hack/lcov-coverage.sh
 

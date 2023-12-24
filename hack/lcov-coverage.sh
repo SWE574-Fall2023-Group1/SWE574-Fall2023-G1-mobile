@@ -12,6 +12,9 @@ lcov \
         'lib/routes/login/bloc/*_event.dart' \
         'lib/routes/login/bloc/*_state.dart' \
         'lib/routes/login/model/*' \
+        'lib/routes/register/bloc/*_event.dart' \
+        'lib/routes/register/bloc/*_state.dart' \
+        'lib/routes/register/model/*' \
         'lib/util/*'
 genhtml coverage/lcov_group1.info \
     --output=coverage \
