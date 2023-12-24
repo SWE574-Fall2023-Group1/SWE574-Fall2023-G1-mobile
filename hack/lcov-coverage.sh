@@ -2,15 +2,19 @@
 
 set -euxo pipefail
 
-sudo apt-get update -qq -y && sudo apt-get install -qq -y lcov
+sudo apt-get update -qqy
+sudo apt-get install -qqy lcov > /dev/null
 cd mobile
 lcov \
     --remove coverage/lcov.info \
-        'util/*' \
+    -o coverage/lcov_group1.info \
         'lib/network/*' \
-        'routes/login/bloc/*_event.dart' \
-        'routes/login/bloc/*_state.dart' \
-        'routes/login/model/*' \
-    -o coverage/lcov_group1.info
-genhtml coverage/lcov_group1.info --output=coverage
+        'lib/routes/login/bloc/*_event.dart' \
+        'lib/routes/login/bloc/*_state.dart' \
+        'lib/routes/login/model/*' \
+        'lib/util/*'
+genhtml coverage/lcov_group1.info \
+    --output=coverage \
+    --legend \
+    --title "SWE574 - Fall2023 - Group1 - Mobile Test Coverage"
 cd ..
