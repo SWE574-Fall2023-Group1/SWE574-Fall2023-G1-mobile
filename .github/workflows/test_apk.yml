@@ -36,10 +36,7 @@ jobs:
           node -e "const deers = require('deers'); console.log(deers()[new Date().getMinutes()]);" || true
           make
           make test
-          sudo apt-get update -qq -y && sudo apt-get install -qq -y lcov
-          cd mobile
-          lcov --remove coverage/lcov.info 'lib/network/*' -o coverage/new_lcov.info
-          genhtml coverage/new_lcov.info --output=coverage
+          ./hack/lcov-coverage.sh
 
       - name: Upload test coverage
         uses: actions/upload-artifact@v3
