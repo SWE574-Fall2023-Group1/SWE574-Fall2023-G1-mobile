@@ -41,8 +41,8 @@ jobs:
           lcov --remove coverage/lcov.info 'lib/network/*' -o coverage/new_lcov.info
           genhtml coverage/new_lcov.info --output=coverage
 
-          - name: Upload test coverage
-            uses: actions/upload-artifact@v3
-            with:
-              name: test-coverage
-              path: mobile/coverage
+      - name: Upload test coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-coverage
+          path: mobile/coverage
