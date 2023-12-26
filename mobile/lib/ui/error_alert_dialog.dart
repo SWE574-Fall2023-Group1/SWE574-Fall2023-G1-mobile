@@ -7,7 +7,7 @@ void showErrorDialog(BuildContext context, String errorMessage) => showDialog(
           title: const Text('Error'),
           content: Text(errorMessage),
           actions: <Widget>[
-            OutlinedButton(
+            TextButton(
               child: const Text('OK'),
               onPressed: () {
                 Navigator.of(context).pop();
