@@ -4,7 +4,7 @@ import 'package:memories_app/routes/app/model/response/base_response_model.dart'
 import 'package:memories_app/routes/home/model/response/stories_response_model.dart';
 import 'package:memories_app/routes/login/model/user_details_response_model.dart';
 import 'package:memories_app/routes/profile/model/request/update_biography_request_model.dart';
-import 'package:memories_app/routes/profile/model/response/change_avatar_response_model.dart';
+import 'package:memories_app/routes/profile/model/response/add_profile_photo_response_model.dart';
 import 'package:memories_app/util/api_endpoints.dart';
 import 'dart:io';
 

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:memories_app/routes/app/application_context.dart';
 import 'package:memories_app/routes/login/model/user_details_response_model.dart';
+import 'package:memories_app/routes/profile/model/response/add_profile_photo_response_model.dart';
 import 'package:memories_app/routes/profile/widget/follow_button.dart';
 import 'package:memories_app/routes/profile/widget/profile_avatar.dart';
 
 class ExpandedHeader extends StatelessWidget {
   final UserDetailsResponseModel user;
-  final Function(String?) onAvatarChange;
+  final Function(AddProfilePhotoResponseModel?) onAvatarChange;
 
   const ExpandedHeader({
     required this.user,
