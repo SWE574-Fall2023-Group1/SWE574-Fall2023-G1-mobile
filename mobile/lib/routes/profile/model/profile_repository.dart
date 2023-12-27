@@ -64,9 +64,9 @@ class ProfileRepositoryImp extends ProfileRepository {
   }
 
   @override
-  Future<BaseResponseModel> deleteAvatar() async {
+  Future<AddProfilePhotoResponseModel> deleteAvatar() async {
     final Result result = await _networkManager.delete(ApiEndpoints.avatar);
-    return BaseResponseModel.fromJson(result.json);
+    return AddProfilePhotoResponseModel.fromJson(result.json);
   }
 
   @override

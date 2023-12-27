@@ -8,7 +8,7 @@ class ProfileAvatar extends StatelessWidget {
   final int userId;
   final String? url;
   final double radius;
-  final Function(AddProfilePhotoResponseModel?) onAvatarChange;
+  final Function(AddProfilePhotoResponseModel) onAvatarChange;
 
   const ProfileAvatar({
     required this.userId,

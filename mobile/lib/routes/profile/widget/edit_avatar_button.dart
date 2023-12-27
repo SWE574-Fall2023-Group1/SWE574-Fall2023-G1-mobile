@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 class EditAvatarButton extends StatelessWidget {
-  final Function(AddProfilePhotoResponseModel?) onAvatarChange;
+  final Function(AddProfilePhotoResponseModel) onAvatarChange;
 
   const EditAvatarButton({required this.onAvatarChange, super.key});
 
@@ -52,10 +52,11 @@ class EditAvatarButton extends StatelessWidget {
                         ),
                       ),
                       InkWell(
-                        onTap: () {
+                        onTap: () async {
                           Navigator.of(context).pop();
-                          ProfileRepositoryImp().deleteAvatar();
-                          onAvatarChange(null);
+                          AddProfilePhotoResponseModel result =
+                              await ProfileRepositoryImp().deleteAvatar();
+                          onAvatarChange(result);
                         },
                         child: const Padding(
                           padding: EdgeInsets.all(8),

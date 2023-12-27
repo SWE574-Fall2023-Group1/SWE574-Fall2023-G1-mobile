@@ -61,11 +61,8 @@ class ProfileDetailsState extends State<ProfileDetails> {
     user = widget.user;
   }
 
-  void _changeAvatar(AddProfilePhotoResponseModel? responseModel) {
-    if (responseModel == null) {
-      return;
-    }
-    if (responseModel.success == true) {
+  void _changeAvatar(AddProfilePhotoResponseModel responseModel) {
+    if (responseModel.success) {
       setState(() {
         user.profilePhoto = responseModel.profilePhoto;
       });
@@ -135,7 +132,7 @@ class ProfileDetailsState extends State<ProfileDetails> {
                         ? ExpandedHeader(
                             user: user,
                             onAvatarChange:
-                                (AddProfilePhotoResponseModel? responseModel) {
+                                (AddProfilePhotoResponseModel responseModel) {
                               _changeAvatar(responseModel);
                             },
                           )

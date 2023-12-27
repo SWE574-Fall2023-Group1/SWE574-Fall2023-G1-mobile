@@ -7,7 +7,7 @@ import 'package:memories_app/routes/profile/widget/profile_avatar.dart';
 
 class ExpandedHeader extends StatelessWidget {
   final UserDetailsResponseModel user;
-  final Function(AddProfilePhotoResponseModel?) onAvatarChange;
+  final Function(AddProfilePhotoResponseModel) onAvatarChange;
 
   const ExpandedHeader({
     required this.user,
