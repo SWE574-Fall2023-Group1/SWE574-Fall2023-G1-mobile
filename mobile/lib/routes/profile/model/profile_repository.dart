@@ -18,6 +18,8 @@ abstract class ProfileRepository {
   Future<AddProfilePhotoResponseModel> addAvatar(File content);
 
   Future<BaseResponseModel> deleteAvatar();
+
+  Future<BaseResponseModel> followUser(int userId);
 }
 
 class ProfileRepositoryImp extends ProfileRepository {
@@ -64,6 +66,13 @@ class ProfileRepositoryImp extends ProfileRepository {
   @override
   Future<BaseResponseModel> deleteAvatar() async {
     final Result result = await _networkManager.delete(ApiEndpoints.avatar);
+    return BaseResponseModel.fromJson(result.json);
+  }
+
+  @override
+  Future<BaseResponseModel> followUser(int userId) async {
+    final Result result =
+        await _networkManager.post(ApiEndpoints.followUser(userId));
     return BaseResponseModel.fromJson(result.json);
   }
 }

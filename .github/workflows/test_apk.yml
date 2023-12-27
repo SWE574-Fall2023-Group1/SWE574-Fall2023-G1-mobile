@@ -1,12 +1,14 @@
 name: Test Flutter
 
 on:
+  workflow_dispatch:
   pull_request:
     branches:
       - main
       - dev
     paths:
       - 'mobile/**'
+      - '.github/workflows/test_apk.yml'
 
 jobs:
   test_flutter:
@@ -15,6 +17,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Java
         uses: actions/setup-java@v3
@@ -27,10 +31,18 @@ jobs:
         with:
           flutter-version: 3.16.0
 
-      - name: Change to "mobile" directory, set up Flutter, and test
+      - name: "[CI] Mobile test"
         run: |
           echo
           npm install deers > /dev/null 2>&1
           node -e "const deers = require('deers'); console.log(deers()[new Date().getMinutes()]);" || true
           make
+          make git-stats
           make test
+          ./hack/lcov-coverage.sh
+
+      - name: Upload test coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-coverage
+          path: mobile/coverage
