@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:memories_app/routes/app/application_context.dart';
+import 'package:memories_app/routes/profile/model/response/add_profile_photo_response_model.dart';
 import 'package:memories_app/routes/profile/widget/cached_avatar.dart';
 import 'package:memories_app/routes/profile/widget/edit_avatar_button.dart';
 
@@ -7,7 +8,7 @@ class ProfileAvatar extends StatelessWidget {
   final int userId;
   final String? url;
   final double radius;
-  final Function(String?) onAvatarChange;
+  final Function(AddProfilePhotoResponseModel) onAvatarChange;
 
   const ProfileAvatar({
     required this.userId,
