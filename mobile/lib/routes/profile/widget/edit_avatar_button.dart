@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:memories_app/routes/profile/model/profile_repository.dart';
-import 'package:memories_app/routes/profile/model/response/change_avatar_response_model.dart';
+import 'package:memories_app/routes/profile/model/response/add_profile_photo_response_model.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 class EditAvatarButton extends StatelessWidget {
-  final Function(String?) onAvatarChange;
+  final Function(AddProfilePhotoResponseModel) onAvatarChange;
 
   const EditAvatarButton({required this.onAvatarChange, super.key});
 
@@ -31,7 +31,7 @@ class EditAvatarButton extends StatelessWidget {
                               await ProfileRepositoryImp().addAvatar(
                             await pickImage(ImageSource.camera),
                           );
-                          onAvatarChange(result.profilePhoto);
+                          onAvatarChange(result);
                         },
                         child: const Padding(
                           padding: EdgeInsets.all(8),
@@ -44,7 +44,7 @@ class EditAvatarButton extends StatelessWidget {
                           AddProfilePhotoResponseModel result =
                               await ProfileRepositoryImp().addAvatar(
                                   await pickImage(ImageSource.gallery));
-                          onAvatarChange(result.profilePhoto);
+                          onAvatarChange(result);
                         },
                         child: const Padding(
                           padding: EdgeInsets.all(8),
@@ -52,10 +52,11 @@ class EditAvatarButton extends StatelessWidget {
                         ),
                       ),
                       InkWell(
-                        onTap: () {
+                        onTap: () async {
                           Navigator.of(context).pop();
-                          ProfileRepositoryImp().deleteAvatar();
-                          onAvatarChange(null);
+                          AddProfilePhotoResponseModel result =
+                              await ProfileRepositoryImp().deleteAvatar();
+                          onAvatarChange(result);
                         },
                         child: const Padding(
                           padding: EdgeInsets.all(8),
