@@ -36,4 +36,6 @@ lcov \
 
 genhtml coverage/lcov_group1.info -o coverage/html --title "SWE574 - Fall2023 - Group1 - Mobile Test Coverage"
 
+open coverage/html/index.html
+
 cd ..
