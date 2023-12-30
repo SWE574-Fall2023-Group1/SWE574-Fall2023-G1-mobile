@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:memories_app/network/network_manager.dart';
+import 'package:memories_app/routes/home/model/response/stories_response_model.dart';
+import 'package:memories_app/routes/home/model/story_model.dart';
 import 'package:memories_app/routes/login/model/user_details_response_model.dart';
 import 'package:memories_app/routes/profile/model/profile_repository.dart';
 import 'package:memories_app/util/api_endpoints.dart';
@@ -40,7 +42,7 @@ void main() {
           .thenAnswer((_) async => Result(mockJson, 200));
 
       // Call getUserDetails
-      UserDetailsResponseModel userDetails =
+      UserDetailsResponseModel responseModel =
           await profileRepository.getUserDetails(testUserId);
 
       // Verify that the NetworkManager's get method was called with the correct URL
@@ -48,7 +50,39 @@ void main() {
           .get(ApiEndpoints.getUserDetails(userId: testUserId))).called(1);
 
       // Check if the returned object is an instance of UserDetailsResponseModel
-      expect(userDetails, equals(mockResponseModel));
+      expect(responseModel, equals(mockResponseModel));
+    });
+
+    test(
+        'getOwnStories calls correct endpoint and returns StoriesResponseModel',
+        () async {
+      int testUserId = 21;
+      StoriesResponseModel mockResponseModel = StoriesResponseModel(
+        stories: <StoryModel>[],
+        hasNext: null,
+        hasPrev: null,
+        nextPage: null,
+        prevPage: null,
+        totalPages: null,
+      );
+
+      // Convert StoriesResponseModel to a Map<String, dynamic>
+      Map<String, dynamic> mockJson = mockResponseModel.toJson();
+
+      // Setup mock response for NetworkManager
+      when(() => mockNetworkManager.get(any()))
+          .thenAnswer((_) async => Result(mockJson, 200));
+
+      // Call getOwnStories
+      StoriesResponseModel responseModel =
+          await profileRepository.getOwnStories(testUserId);
+
+      // Verify that the NetworkManager's get method was called with the correct URL
+      verify(() => mockNetworkManager
+          .get(ApiEndpoints.getStoriesByAuthorId(testUserId))).called(1);
+
+      // Check if the returned object is an instance of UserDetailsResponseModel
+      expect(mockResponseModel.runtimeType, equals(responseModel.runtimeType));
     });
   });
 }
