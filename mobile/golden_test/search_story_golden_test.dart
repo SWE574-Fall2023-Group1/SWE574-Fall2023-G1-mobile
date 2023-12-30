@@ -93,7 +93,7 @@ void main() {
     await loadAppFonts();
   });
 
-  testGoldens('CreateStory initial golden test', (WidgetTester tester) async {
+  testGoldens('SearchStory initial golden test', (WidgetTester tester) async {
     final DeviceBuilder builder = DeviceBuilder()
       ..overrideDevicesForAllScenarios(devices: TestDevices.devices)
       ..addScenario(
