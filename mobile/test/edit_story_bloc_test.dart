@@ -1,28 +1,27 @@
-// Import the necessary packages
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:memories_app/routes/create_story/bloc/create_story_bloc.dart';
+import 'package:memories_app/routes/edit_story/bloc/edit_story_bloc.dart';
+import 'package:memories_app/routes/edit_story/model/edit_story_repository.dart';
+import 'package:memories_app/routes/edit_story/model/edit_story_response_model.dart';
 import 'package:memories_app/routes/story_detail/model/tag_model.dart';
-import 'package:memories_app/routes/create_story/create_story_repository.dart';
 import 'package:memories_app/routes/create_story/model/story_request_model.dart';
-import 'package:memories_app/routes/create_story/model/create_story_response_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _Constants {
-  static final CreateStoryResponseModel responseSuccess =
-      CreateStoryResponseModel(
+  static final EditStoryResponseModel responseSuccess = EditStoryResponseModel(
     success: true,
     msg: 'Story ok',
   );
-  static final CreateStoryResponseModel responseFailure =
-      CreateStoryResponseModel(
-          success: false, msg: 'One of the required fields is empty');
 
-  static final CreateStoryCreateStoryEvent createStorySuccessEvent =
-      CreateStoryCreateStoryEvent(
+  static final EditStoryResponseModel responseFailure = EditStoryResponseModel(
+      success: false, msg: 'One of the required fields is empty');
+
+  static final EditStoryUpdateStoryEvent updateStorySuccessEvent =
+      EditStoryUpdateStoryEvent(
+          id: 123456,
           title: 'test',
           content: '<p>test</p>',
           storyTags: <TagModel>[
@@ -40,8 +39,9 @@ class _Constants {
             )
           ]);
 
-  static final CreateStoryCreateStoryEvent createStoryFailureEvent =
-      CreateStoryCreateStoryEvent(
+  static final EditStoryUpdateStoryEvent updateStoryFailureEvent =
+      EditStoryUpdateStoryEvent(
+    id: 123456,
     title: '',
     content: '',
     storyTags: <TagModel>[
@@ -94,10 +94,10 @@ class _Constants {
   ];
 }
 
-// Create a mock repository
-class MockCreateStoryRepository extends CreateStoryRepository {
+class MockEditStoryRepository extends EditStoryRepository {
   @override
-  Future<CreateStoryResponseModel> createStory(StoryRequestModel model) async {
+  Future<EditStoryResponseModel> editStory(
+      StoryRequestModel model, int storyId) async {
     if (model.title.isNotEmpty &&
         model.content.isNotEmpty &&
         model.storyTags != null &&
@@ -112,50 +112,44 @@ class MockCreateStoryRepository extends CreateStoryRepository {
 }
 
 void main() {
-  SharedPreferences.setMockInitialValues(<String, Object>{});
-  late CreateStoryBloc createStoryBloc;
-  late CreateStoryRepository createStoryInterface;
+  SharedPreferences.setMockInitialValues({});
+  late EditStoryBloc editStoryBloc;
+  late EditStoryRepository editStoryInterface;
 
   setUp(() {
-    createStoryInterface = MockCreateStoryRepository();
-    createStoryBloc = CreateStoryBloc(repository: createStoryInterface);
+    editStoryInterface = MockEditStoryRepository();
+    editStoryBloc = EditStoryBloc(repository: editStoryInterface);
   });
 
-  blocTest<CreateStoryBloc, CreateStoryState>(
-    'emits [CreateStorySuccess] when CreateStoryCreateStoryEvent is added.',
-    build: () => createStoryBloc,
-    act: (CreateStoryBloc bloc) {
-      return bloc.add(_Constants.createStorySuccessEvent);
-    },
-    expect: () => <TypeMatcher<CreateStorySuccess>>[isA<CreateStorySuccess>()],
-  );
+  blocTest<EditStoryBloc, EditStoryState>(
+      'emits [EditStorySuccess] when EditStoryUpdateStoryEvent is added.',
+      build: () => editStoryBloc,
+      act: (EditStoryBloc bloc) => bloc.add(_Constants.updateStorySuccessEvent),
+      expect: () => <TypeMatcher<EditStorySuccess>>[isA<EditStorySuccess>()]);
 
-  blocTest<CreateStoryBloc, CreateStoryState>(
-    'emits [CreateStoryFailure] when CreateStoryCreateStoryEvent is added.',
-    build: () => createStoryBloc,
-    act: (CreateStoryBloc bloc) => bloc.add(_Constants.createStoryFailureEvent),
-    expect: () => <TypeMatcher<CreateStoryFailure>>[isA<CreateStoryFailure>()],
-  );
+  blocTest<EditStoryBloc, EditStoryState>(
+      'emits [EditStoryFailure] when EditStoryUpdateStoryEvent is added.',
+      build: () => editStoryBloc,
+      act: (EditStoryBloc bloc) => bloc.add(_Constants.updateStoryFailureEvent),
+      expect: () => <TypeMatcher<EditStoryFailure>>[isA<EditStoryFailure>()]);
 
-  blocTest<CreateStoryBloc, CreateStoryState>(
-    'emits [CreateStoryState] when CreateStoryErrorPopupClosedEvent is added.',
-    build: () => createStoryBloc,
-    act: (CreateStoryBloc bloc) {
-      return bloc.add(CreateStoryErrorPopupClosedEvent());
-    },
-    expect: () => <TypeMatcher<CreateStoryState>>[isA<CreateStoryState>()],
-  );
+  blocTest<EditStoryBloc, EditStoryState>(
+      'emits [EditStoryState] when '
+      'EditStoryErrorPopupClosedEvent is added.',
+      build: () => editStoryBloc,
+      act: (EditStoryBloc bloc) => bloc.add(EditStoryErrorPopupClosedEvent()),
+      expect: () => <TypeMatcher<EditStoryState>>[isA<EditStoryState>()]);
 
   test('mapDateTypeToValue returns correct value', () {
-    expect(createStoryBloc.mapDateTypeToValue("year"), equals("year"));
-    expect(createStoryBloc.mapDateTypeToValue("interval year"),
+    expect(editStoryBloc.mapDateTypeToValue("year"), equals("year"));
+    expect(editStoryBloc.mapDateTypeToValue("interval year"),
         equals("year_interval"));
-    expect(createStoryBloc.mapDateTypeToValue("normal date"),
-        equals("normal_date"));
-    expect(createStoryBloc.mapDateTypeToValue("interval date"),
+    expect(
+        editStoryBloc.mapDateTypeToValue("normal date"), equals("normal_date"));
+    expect(editStoryBloc.mapDateTypeToValue("interval date"),
         equals("interval_date"));
-    expect(createStoryBloc.mapDateTypeToValue("decade"), equals("decade"));
-    expect(createStoryBloc.mapDateTypeToValue("random"),
+    expect(editStoryBloc.mapDateTypeToValue("decade"), equals("decade"));
+    expect(editStoryBloc.mapDateTypeToValue("random"),
         equals("year")); // default case
   });
 
@@ -163,7 +157,7 @@ void main() {
     List<String>? polylineAddresses = <String>["Address 1"];
     List<LocationId> locationIds = <LocationId>[];
 
-    createStoryBloc.createPolylineLocations(
+    editStoryBloc.createPolylineLocations(
         _Constants.polyLines, polylineAddresses, locationIds);
 
     expect(locationIds.length, equals(1));
@@ -174,7 +168,7 @@ void main() {
   test('createPolygonLocations adds correct LocationId to locationIds', () {
     List<LocationId> locationIds = <LocationId>[];
 
-    createStoryBloc.createPolygonLocations(_Constants.polygons, locationIds);
+    editStoryBloc.createPolygonLocations(_Constants.polygons, locationIds);
 
     expect(locationIds.length, equals(1));
     expect(locationIds[0].name, equals("Polygon 1"));
@@ -187,7 +181,7 @@ void main() {
     List<String>? circleAddresses = <String>["Address 1"];
     List<LocationId> locationIds = <LocationId>[];
 
-    createStoryBloc.createCircleLocations(
+    editStoryBloc.createCircleLocations(
         _Constants.circleMarkers, circleAddresses, locationIds);
 
     expect(locationIds.length, equals(1));
@@ -200,7 +194,7 @@ void main() {
   test('createPointLocations adds correct LocationId to locationIds', () {
     List<LocationId> locationIds = <LocationId>[];
 
-    createStoryBloc.createPointLocations(
+    editStoryBloc.createPointLocations(
         _Constants.markersForPoint, _Constants.pointAdresses, locationIds);
 
     expect(locationIds.length, equals(1));
@@ -210,7 +204,7 @@ void main() {
   });
 
   test('createLocationId returns correct LocationId list', () {
-    List<LocationId> locationIds = createStoryBloc.createLocationId(
+    List<LocationId> locationIds = editStoryBloc.createLocationId(
         _Constants.markersForPoint,
         _Constants.circleMarkers,
         _Constants.polygons,
@@ -225,19 +219,19 @@ void main() {
   group('Decade Extraction Tests', () {
     test('extractDecade returns null when decade is null', () {
       String? decade;
-      int? result = createStoryBloc.extractDecade(decade);
+      int? result = editStoryBloc.extractDecade(decade);
       expect(result, isNull);
     });
 
     test('extractDecade returns null when decade is empty', () {
       String? decade = '';
-      int? result = createStoryBloc.extractDecade(decade);
+      int? result = editStoryBloc.extractDecade(decade);
       expect(result, isNull);
     });
 
     test('extractDecade returns null when decade ends with "s"', () {
       String? decade = '1980s';
-      int? result = createStoryBloc.extractDecade(decade);
+      int? result = editStoryBloc.extractDecade(decade);
       expect(result, 1980);
     });
   });
