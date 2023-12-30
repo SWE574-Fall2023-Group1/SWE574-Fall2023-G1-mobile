@@ -4,6 +4,7 @@ import 'package:memories_app/routes/home/model/response/stories_response_model.d
 import 'package:memories_app/routes/home/model/story_model.dart';
 import 'package:memories_app/routes/login/model/user_details_response_model.dart';
 import 'package:memories_app/routes/profile/model/profile_repository.dart';
+import 'package:memories_app/routes/profile/model/response/add_profile_photo_response_model.dart';
 import 'package:memories_app/routes/profile/util/date_util.dart';
 import 'package:memories_app/routes/profile/widget/biography_container.dart';
 import 'package:memories_app/routes/profile/widget/collapsed_header.dart';
@@ -11,6 +12,7 @@ import 'package:memories_app/routes/profile/widget/expanded_header.dart';
 import 'package:memories_app/routes/profile/widget/story_card.dart';
 import 'package:memories_app/routes/story_detail/bloc/story_detail_bloc.dart';
 import 'package:memories_app/routes/story_detail/story_detail_route.dart';
+import 'package:memories_app/ui/error_alert_dialog.dart';
 import 'package:memories_app/ui/titled_app_bar.dart';
 
 class ProfileRoute extends StatelessWidget {
@@ -59,10 +61,14 @@ class ProfileDetailsState extends State<ProfileDetails> {
     user = widget.user;
   }
 
-  void _changeAvatar(String? url) {
-    setState(() {
-      user.profilePhoto = url;
-    });
+  void _changeAvatar(AddProfilePhotoResponseModel responseModel) {
+    if (responseModel.success) {
+      setState(() {
+        user.profilePhoto = responseModel.profilePhoto;
+      });
+    } else {
+      showErrorDialog(context, responseModel.msg);
+    }
   }
 
   // ignore_for_file: always_specify_types
@@ -125,8 +131,9 @@ class ProfileDetailsState extends State<ProfileDetails> {
                     background: !isCollapsed
                         ? ExpandedHeader(
                             user: user,
-                            onAvatarChange: (String? newUrl) {
-                              _changeAvatar(newUrl);
+                            onAvatarChange:
+                                (AddProfilePhotoResponseModel responseModel) {
+                              _changeAvatar(responseModel);
                             },
                           )
                         : null,

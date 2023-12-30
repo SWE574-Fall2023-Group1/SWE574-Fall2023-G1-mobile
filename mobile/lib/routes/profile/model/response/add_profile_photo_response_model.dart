@@ -1,8 +1,8 @@
 import 'package:memories_app/routes/app/model/response/base_response_model.dart';
 
 class AddProfilePhotoResponseModel extends BaseResponseModel {
-  final String profilePhoto;
-  final String photoUrl;
+  final String? profilePhoto;
+  final String? photoUrl;
 
   AddProfilePhotoResponseModel({
     required this.profilePhoto,
@@ -13,8 +13,8 @@ class AddProfilePhotoResponseModel extends BaseResponseModel {
 
   factory AddProfilePhotoResponseModel.fromJson(Map<String, dynamic> json) {
     return AddProfilePhotoResponseModel(
-      profilePhoto: json['profile_photo'] as String,
-      photoUrl: json['photo_url'] as String,
+      profilePhoto: json['profile_photo'] as String?,
+      photoUrl: json['photo_url'] as String?,
       success: json['success'] as bool,
       msg: json['msg'] as String,
     );

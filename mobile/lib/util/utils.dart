@@ -21,6 +21,7 @@ class WidgetKeys {
   static const Key emailFieldKey = Key('register_email_field');
   static const Key passwordAgainFieldKey = Key('register_password_again_field');
   static const Key registerButtonKey = Key('register_button');
+  static const Key searchResultsListModeKey = Key('search_results_list_mode');
 }
 
 class AppColors {
@@ -44,7 +45,7 @@ class FontSizes {
 
 class TestDevices {
   static const Device iphoneSE =
-      Device(name: 'iPhone SE', size: Size(375, 667));
+      Device(name: 'iPhone SE', size: Size(380, 667));
   static const Device iphone14 =
       Device(name: 'iPhone 14', size: Size(390, 844));
   static const Device iphone14ProMax =

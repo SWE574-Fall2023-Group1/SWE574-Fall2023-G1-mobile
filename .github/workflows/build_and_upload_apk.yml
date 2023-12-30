@@ -8,12 +8,14 @@ on:
       - dev
     paths:
       - 'mobile/**'
+      - '.github/workflows/build_and_upload_apk.yml'
   pull_request:
     branches:
       - main
       - dev
     paths:
       - 'mobile/**'
+      - '.github/workflows/build_and_upload_apk.yml'
 
 jobs:
   build_upload_apk:
@@ -22,6 +24,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Java
         uses: actions/setup-java@v3
@@ -34,17 +38,17 @@ jobs:
         with:
           flutter-version: 3.16.0
 
-      - name: Change to "mobile" directory, set up Flutter, and build APK
+      - name: "[CD] Mobile build and deploy APK"
         run: |
           echo
           npm install deers > /dev/null 2>&1
           node -e "const deers = require('deers'); console.log(deers()[new Date().getMinutes()]);" || true
           make
+          make git-stats
           cd mobile
           flutter --version
           flutter pub get
           flutter test
-          flutter test golden_test/ --update-goldens
           flutter build apk --release
 
       - name: Upload APK

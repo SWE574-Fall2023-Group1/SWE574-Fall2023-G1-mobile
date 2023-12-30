@@ -59,7 +59,7 @@ class RecommendationsBloc
         response.recommendations!
             .forEach((Recommendation recommendation) async {
           recommendation.story!.dateText =
-              _getFormattedDate(recommendation.story!);
+              getFormattedDate(recommendation.story!);
         });
 
         emit(RecommendationsDisplayState(
@@ -71,7 +71,7 @@ class RecommendationsBloc
     }
   }
 
-  String _getFormattedDate(StoryModel story) {
+  String getFormattedDate(StoryModel story) {
     switch (story.dateType) {
       case 'year':
         return 'Year: ${story.year?.toString() ?? ''}';
@@ -80,15 +80,15 @@ class RecommendationsBloc
       case 'year_interval':
         return 'Start: ${story.startYear.toString()} \nEnd: ${story.endYear.toString()}';
       case 'normal_date':
-        return _formatDate(story.date) ?? '';
+        return formatDate(story.date) ?? '';
       case 'interval_date':
-        return 'Start: ${_formatDate(story.startDate)} \nEnd: ${_formatDate(story.endDate)}';
+        return 'Start: ${formatDate(story.startDate)} \nEnd: ${formatDate(story.endDate)}';
       default:
         return '';
     }
   }
 
-  String? _formatDate(String? dateString) {
+  String? formatDate(String? dateString) {
     if (dateString == null) {
       return null;
     }
