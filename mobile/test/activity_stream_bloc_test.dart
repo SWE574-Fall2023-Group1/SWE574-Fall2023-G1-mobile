@@ -1,5 +1,4 @@
 import 'package:bloc_test/bloc_test.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:memories_app/network/model/response_model.dart';
 import 'package:memories_app/routes/activity_stream/bloc/activity_stream_bloc.dart';
