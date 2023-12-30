@@ -13,8 +13,7 @@ abstract class HomeRepository {
 class HomeRepositoryImp extends HomeRepository {
   final NetworkManager _networkManager;
 
-  HomeRepositoryImp({NetworkManager? networkManager})
-      : _networkManager = networkManager ?? NetworkManager();
+  HomeRepositoryImp({NetworkManager? networkManager}) : _networkManager = networkManager ?? NetworkManager();
 
   @override
   Future<StoriesResponseModel> getUserStories(

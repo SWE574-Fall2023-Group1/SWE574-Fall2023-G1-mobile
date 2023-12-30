@@ -25,8 +25,7 @@ abstract class ProfileRepository {
 class ProfileRepositoryImp extends ProfileRepository {
   final NetworkManager _networkManager;
 
-  ProfileRepositoryImp({NetworkManager? networkManager})
-      : _networkManager = networkManager ?? NetworkManager();
+  ProfileRepositoryImp({NetworkManager? networkManager}) : _networkManager = networkManager ?? NetworkManager();
 
   @override
   Future<UserDetailsResponseModel> getUserDetails(int? userId) async {

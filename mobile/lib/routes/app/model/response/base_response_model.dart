@@ -13,4 +13,11 @@ class BaseResponseModel {
       msg: json['msg'] as String,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'success': success,
+      'msg': msg,
+    };
+  }
 }
