@@ -12,9 +12,9 @@ lcov \
   'lib/routes/login/bloc/*_event.dart' \
   'lib/routes/login/bloc/*_state.dart' \
   'lib/routes/login/model/*' \
-  'lib/routes/register/bloc/*_event.dart' \
-  'lib/routes/register/bloc/*_state.dart' \
-  'lib/routes/register/model/*' \
+  'lib/routes/register/bloc/*' \
+  'lib/routes/register/model/*model*.dart' \
+  'lib/routes/register/register_route.dart' \
   'lib/util/*' \
   'lib/routes/profile/bloc/*' \
   'lib/routes/profile/model/request/*' \
@@ -27,7 +27,7 @@ lcov \
   'lib/routes/story_detail/model/request/*' \
   'lib/routes/story_detail/model/*model*.dart' \
   'lib/routes/story_detail/widget/*' \
-  'lib/routes/story_detail/story_detail_route.dart' \
+  'lib/routes/story_detail/story_detail_route.dart'
 
 genhtml coverage/lcov_group1.info \
   --output=coverage \
