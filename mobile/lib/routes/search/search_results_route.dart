@@ -40,7 +40,9 @@ class _SearchResultsRouteState extends State<SearchResultsRoute> {
               dividerColor: AppColors.buttonColor,
               tabs: <Widget>[
                 Tab(text: 'Results as a Timeline'),
-                Tab(text: 'Results as a List'),
+                Tab(
+                    key: WidgetKeys.searchResultsListModeKey,
+                    text: 'Results as a List'),
               ],
             ),
             Expanded(
