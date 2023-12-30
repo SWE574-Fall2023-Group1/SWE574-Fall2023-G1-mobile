@@ -23,6 +23,11 @@ lcov \
   'lib/routes/profile/profile_route.dart' \
   'lib/routes/home/model/response/*' \
   'lib/routes/home/model/*_model.dart' \
+  'lib/routes/story_detail/bloc/*' \
+  'lib/routes/story_detail/model/request/*' \
+  'lib/routes/story_detail/model/request/*_model.dart' \
+  'lib/routes/story_detail/widget/*' \
+  'lib/routes/story_detail/story_detail_route.dart'
 
 genhtml coverage/lcov_group1.info \
   --output=coverage \
