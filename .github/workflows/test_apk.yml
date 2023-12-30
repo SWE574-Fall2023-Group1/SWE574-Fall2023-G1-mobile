@@ -9,6 +9,7 @@ on:
     paths:
       - 'mobile/**'
       - '.github/workflows/test_apk.yml'
+      - 'hack/lcov-coverage.sh'
 
 jobs:
   test_flutter:
