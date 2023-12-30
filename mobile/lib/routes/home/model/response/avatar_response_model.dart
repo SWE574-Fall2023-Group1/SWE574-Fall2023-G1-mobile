@@ -8,4 +8,10 @@ class AvatarResponseModel {
       url: json['photo_url'] as String?,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'photo_url': url,
+    };
+  }
 }

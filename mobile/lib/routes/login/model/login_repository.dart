@@ -26,7 +26,7 @@ class LoginRepositoryImp extends LoginRepository {
   @override
   Future<UserDetailsResponseModel> getUserDetails() async {
     final Result result =
-        await _networkManager.get(ApiEndpoints.getUserDetails);
+        await _networkManager.get(ApiEndpoints.getUserDetails());
     return UserDetailsResponseModel.fromJson(result.json);
   }
 }

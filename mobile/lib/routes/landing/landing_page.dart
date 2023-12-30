@@ -6,10 +6,18 @@ import 'package:memories_app/routes/home/bloc/home_bloc.dart';
 import 'package:memories_app/routes/home/home_route.dart';
 import 'package:memories_app/routes/landing/bloc/landing_bloc.dart';
 import 'package:memories_app/routes/create_story/create_story_route.dart';
+import 'package:memories_app/routes/recommendations/bloc/recommendations_bloc.dart';
+import 'package:memories_app/routes/recommendations/model/recommendations_repository.dart';
+import 'package:memories_app/routes/recommendations/recommendations_route.dart';
+import 'package:memories_app/routes/search/bloc/search_story_bloc.dart';
+import 'package:memories_app/routes/search/model/search_story_repository.dart';
+import 'package:memories_app/routes/search/search_story_route.dart';
 import 'package:memories_app/util/utils.dart';
+import 'package:memories_app/routes/profile/profile_route.dart';
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
+
   static const String routeName = '/landing';
 
   @override
@@ -41,6 +49,7 @@ class _LandingPageState extends State<LandingPage> {
               children: _buildBottomNavScreen(),
             ),
             bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
               items: _buildBottomBarItems(state.tabIndex),
               onTap: (int index) {
                 BlocProvider.of<LandingBloc>(context)
@@ -86,10 +95,19 @@ class _LandingPageState extends State<LandingPage> {
             HomeBloc()..add(HomeLoadDisplayEvent()),
         child: const HomeRoute(),
       ),
-      const Center(child: Text('Index 1: Profile')),
+      const Center(child: ProfileRoute()),
       const Placeholder(),
-      const Center(child: Text('Index 3: Search')),
-      const Center(child: Text('Index 4: More')),
+      BlocProvider<SearchStoryBloc>(
+        create: (BuildContext context) =>
+            SearchStoryBloc(repository: SearchStoryRepositoryImp()),
+        child: const SearchStoryRoute(),
+      ),
+      BlocProvider<RecommendationsBloc>(
+        create: (BuildContext context) =>
+            RecommendationsBloc(repository: RecommendationsRepositoryImp())
+              ..add(RecommendationsLoadDisplayEvent()),
+        child: const RecommendationsRoute(),
+      ),
     ];
   }
 
@@ -128,7 +146,7 @@ class _LandingPageState extends State<LandingPage> {
           "assets/landing/menu.png",
           color: selectedIndex == 4 ? AppColors.buttonColor : Colors.black,
         ),
-        label: 'More',
+        label: 'Suggested',
       ),
     ];
   }

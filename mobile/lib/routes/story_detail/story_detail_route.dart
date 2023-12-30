@@ -7,11 +7,13 @@ import 'package:memories_app/routes/story_detail/bloc/story_detail_state.dart';
 import 'package:memories_app/routes/story_detail/model/story_detail_repository.dart';
 import 'package:memories_app/routes/story_detail/widget/comments_container.dart';
 import 'package:memories_app/routes/story_detail/widget/likes_container.dart';
+import 'package:memories_app/routes/story_detail/widget/link_button.dart';
 import 'package:memories_app/routes/story_detail/widget/story_location_container.dart';
 import 'package:memories_app/routes/story_detail/widget/story_date_container.dart';
 import 'package:memories_app/routes/story_detail/widget/story_detail_app_bar.dart';
 import 'package:memories_app/routes/story_detail/widget/story_tag_chips.dart';
 import 'package:memories_app/ui/date_text_view.dart';
+import 'package:memories_app/util/router.dart';
 
 bool shouldRefreshStories = false;
 
@@ -84,15 +86,11 @@ class ShowPostDetail extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            Text(
-              'By: ${story.authorUsername}',
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 14,
-                fontFamily: 'Inter',
-                fontWeight: FontWeight.w700,
-                height: 0,
-              ),
+            LinkButton(
+              text: 'By: ${story.authorUsername}',
+              onPressed: () {
+                AppRoute.profile.navigate(context, arguments: story.author);
+              },
             ),
             Card(
               margin: const EdgeInsets.symmetric(vertical: 25, horizontal: 8),

@@ -10,17 +10,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class _Constants {
   static const String username = 'ayhanc';
-  static const String invalidUsername = 'ayhan';
+  static const String invalidUsername = '';
   static const String successPassword = '123456';
   static const String failPassword = '123457';
-  static const String invalidPassword = '12345';
 
-  static const String usernameCharLimitMessage =
-      'Username should be between 6 and 10 characters';
   static const String usernameRequiredMessage = 'Username is required';
-
-  static const String passwordCharLimitMessage =
-      'Password should be 6 characters';
   static const String passswordRequiredMessage = 'Password is required';
 
   static final LoginResponseModel responseSuccess = LoginResponseModel(
@@ -49,6 +43,7 @@ class MockLoginRepository extends LoginRepository {
         id: 1,
         username: "John Doe",
         email: "john.doe@example.com",
+        followers: <dynamic>[2],
       ),
     );
   }
@@ -142,7 +137,7 @@ void main() {
     expect(loginBloc.validateUsername(null),
         equals(_Constants.usernameRequiredMessage));
     expect(loginBloc.validateUsername(_Constants.invalidUsername),
-        equals(_Constants.usernameCharLimitMessage));
+        equals(_Constants.usernameRequiredMessage));
     expect(loginBloc.validateUsername(_Constants.username), equals(''));
   });
 

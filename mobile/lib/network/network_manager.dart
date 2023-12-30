@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:memories_app/util/sp_helper.dart';
@@ -38,23 +39,36 @@ class NetworkManager {
   Future<dynamic> get(String endpoint) async {
     if (!await _isConnectedToInternet()) {
       throw const SocketException('');
-    } else {
-      Map<String, String> customHeaders = await _constructHeaders();
-      final http.Response response = await http.get(
-        Uri.parse('$baseUrl/$endpoint'),
-        headers: customHeaders,
-      );
-
-      return _createResponse(response);
     }
+
+    Map<String, String> customHeaders = await _constructHeaders();
+    final http.Response response = await http.get(
+      Uri.parse('$baseUrl/$endpoint'),
+      headers: customHeaders,
+    );
+
+    return _createResponse(response);
+  }
+
+  Future<dynamic> patch(String endpoint) async {
+    if (!await _isConnectedToInternet()) {
+      throw const SocketException('');
+    }
+
+    Map<String, String> customHeaders = await _constructHeaders();
+    final http.Response response = await http.patch(
+      Uri.parse('$baseUrl/$endpoint'),
+      headers: customHeaders,
+    );
+
+    return _createResponse(response);
   }
 
   Future<dynamic> post(String endpoint, {Object? body}) async {
     if (!await _isConnectedToInternet()) {
       throw const SocketException('');
     }
-    String test = jsonEncode(body);
-    debugPrint(test);
+    debugPrint("Request: ${jsonEncode(body)}");
 
     Map<String, String> customHeaders = await _constructHeaders();
     final http.Response response = await http.post(
@@ -62,7 +76,63 @@ class NetworkManager {
         body: jsonEncode(body),
         headers: customHeaders);
 
+    debugPrint(response.body);
+
     return _createResponse(response);
+  }
+
+  Future<dynamic> put(String endpoint, {Object? body}) async {
+    if (!await _isConnectedToInternet()) {
+      throw const SocketException('');
+    }
+    debugPrint("Request: ${jsonEncode(body)}");
+
+    Map<String, String> customHeaders = await _constructHeaders();
+    final http.Response response = await http.put(
+        Uri.parse('$baseUrl/$endpoint'),
+        body: jsonEncode(body),
+        headers: customHeaders);
+
+    debugPrint(response.body);
+
+    return _createResponse(response);
+  }
+
+  Future<dynamic> putFile(String endpoint, {required FormData formData}) async {
+    if (!await _isConnectedToInternet()) {
+      throw const SocketException('');
+    }
+
+    Map<String, String> customHeaders = await _constructHeaders();
+    customHeaders["Content-Type"] = "multipart/form-data";
+    Response<Map<String, dynamic>> response = await Dio().put(
+      '$baseUrl/$endpoint',
+      data: formData,
+      options: Options(
+        headers: customHeaders,
+        followRedirects: false,
+        validateStatus: (int? status) {
+          return status! < 500;
+        },
+      ),
+    );
+    return _createResponse(
+      http.Response(response.toString(), response.statusCode!),
+    );
+  }
+
+  Future<dynamic> delete(String endpoint) async {
+    if (!await _isConnectedToInternet()) {
+      throw const SocketException('');
+    } else {
+      Map<String, String> customHeaders = await _constructHeaders();
+      final http.Response response = await http.delete(
+        Uri.parse('$baseUrl/$endpoint'),
+        headers: customHeaders,
+      );
+
+      return _createResponse(response);
+    }
   }
 
   Future<Map<String, String>> _constructHeaders() async {
@@ -81,6 +151,7 @@ class NetworkManager {
     try {
       final String responseString = utf8Decoder.convert(response.bodyBytes);
       responseJson = json.decode(responseString) as Map<String, dynamic>;
+      debugPrint("Response: $responseString");
     } on Exception {
       responseJson = <String, dynamic>{};
     }

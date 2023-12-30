@@ -11,7 +11,7 @@ class StoryDetailAppBar {
           Navigator.pop(context, shouldRefreshStories);
         },
         child: const Icon(
-          Icons.chevron_left,
+          Icons.arrow_back,
           color: Colors.black,
         ),
       ),

@@ -3,12 +3,15 @@ import 'dart:io';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'dart:async';
 import 'package:equatable/equatable.dart';
+import 'package:intl/intl.dart';
+import 'package:memories_app/routes/app/application_context.dart';
 import 'package:memories_app/routes/home/model/home_repository.dart';
 import 'package:memories_app/routes/home/model/response/stories_response_model.dart';
 import 'package:memories_app/routes/home/model/story_model.dart';
 import 'package:memories_app/util/sp_helper.dart';
 
 part 'home_event.dart';
+
 part 'home_state.dart';
 
 class _Constants {
@@ -56,8 +59,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     responseModel = await HomeRepositoryImp()
         .getAllStoriesWithOwnUrl(page: page, size: _Constants.size);
     if (responseModel.stories != null) {
-      responseModel.stories?.forEach((StoryModel story) {
+      responseModel.stories?.forEach((StoryModel story) async {
         story.dateText = _getFormattedDate(story);
+        story.isEditable = await _onGetIsEditable(story);
       });
     }
     return responseModel.stories ?? <StoryModel>[];
@@ -139,9 +143,9 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       bool isMidnight =
           dateTime.hour == 0 && dateTime.minute == 0 && dateTime.second == 0;
 
-      String formattedDate = isMidnight
-          ? dateTime.toLocal().toLocal().toString().split(' ')[0]
-          : dateTime.toLocal().toLocal().toString();
+      String pattern = isMidnight ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm';
+
+      String formattedDate = DateFormat(pattern).format(dateTime.toLocal());
 
       return formattedDate;
     } catch (e) {
@@ -149,5 +153,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       print('Error parsing date: $e');
       return null;
     }
+  }
+
+  Future<bool> _onGetIsEditable(StoryModel story) async {
+    int? currentUserId = await SPHelper.getInt(SPKeys.currentUserId);
+    ApplicationContext.currentUserId = currentUserId ?? 0;
+    return story.author == currentUserId &&
+        story.author != null &&
+        currentUserId != null;
   }
 }

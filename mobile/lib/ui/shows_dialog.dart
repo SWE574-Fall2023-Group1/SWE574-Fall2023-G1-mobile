@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:memories_app/routes/create_story/bloc/create_story_bloc.dart';
+import 'package:memories_app/routes/edit_story/bloc/edit_story_bloc.dart';
 import 'package:memories_app/routes/login/bloc/login_bloc.dart';
 import 'package:memories_app/routes/register/bloc/register_bloc.dart';
+import 'package:memories_app/routes/search/bloc/search_story_bloc.dart';
 import 'package:memories_app/util/utils.dart';
 
 class ShowsDialog {
@@ -14,6 +16,8 @@ class ShowsDialog {
     bool isRegisterFail = false,
     bool isRegisterSuccess = false,
     bool isCreateStoryFail = false,
+    bool isEditStoryFail = false,
+    bool isSearchStoryFail = false,
   }) {
     showDialog(
       context: context,
@@ -66,7 +70,6 @@ class ShowsDialog {
         BlocProvider.of<LoginBloc>(context).add(LoginErrorPopupClosedEvent());
       }
       if (isRegisterFail) {
-        //TODO: Add RegisterErrorPopupClosedEvent here
         BlocProvider.of<RegisterBloc>(context)
             .add(RegisterErrorPopupClosedEvent());
       }
@@ -77,6 +80,14 @@ class ShowsDialog {
       if (isCreateStoryFail) {
         BlocProvider.of<CreateStoryBloc>(context)
             .add(CreateStoryErrorPopupClosedEvent());
+      }
+      if (isEditStoryFail) {
+        BlocProvider.of<EditStoryBloc>(context)
+            .add(EditStoryErrorPopupClosedEvent());
+      }
+      if (isSearchStoryFail) {
+        BlocProvider.of<SearchStoryBloc>(context)
+            .add(SearchStoryErrorPopupClosedEvent());
       }
     });
   }
