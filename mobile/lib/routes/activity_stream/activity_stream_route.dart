@@ -90,6 +90,10 @@ class _ActivityStreamRouteState extends State<ActivityStreamRoute> {
         return Icons.person_remove;
       case 'new_story':
         return Icons.create;
+      case 'new_commented_on_story':
+        return Icons.comment;
+      case 'new_comment_on_comment':
+        return Icons.comment;
       default:
         return Icons.info;
     }
@@ -107,6 +111,10 @@ class _ActivityStreamRouteState extends State<ActivityStreamRoute> {
         return 'Unfollowed you';
       case 'new_story':
         return 'Created a new story: "${activity.targetStoryTitle}"';
+      case 'new_commented_on_story':
+        return 'Commented on "${activity.targetStoryTitle}"';
+      case 'new_comment_on_comment':
+        return 'Commented on "${activity.targetStoryTitle}"';
       default:
         return 'Unknown activity';
     }
