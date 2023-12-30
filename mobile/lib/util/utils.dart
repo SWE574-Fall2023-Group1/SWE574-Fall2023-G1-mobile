@@ -21,6 +21,7 @@ class WidgetKeys {
   static const Key emailFieldKey = Key('register_email_field');
   static const Key passwordAgainFieldKey = Key('register_password_again_field');
   static const Key registerButtonKey = Key('register_button');
+  static const Key searchResultsListModeKey = Key('search_results_list_mode');
 }
 
 class AppColors {
