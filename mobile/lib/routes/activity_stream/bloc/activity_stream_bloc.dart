@@ -51,7 +51,7 @@ class ActivityStreamBloc
 
     if (response != null) {
       if (response.success == true) {
-        _groupActivities(response.activity);
+        groupActivities(response.activity);
         emit(ActivityStreamDisplayState(
           allActivities: response.activity,
           showLoadingAnimation: false,
@@ -69,7 +69,7 @@ class ActivityStreamBloc
     }
   }
 
-  void _groupActivities(List<Activity> activities) {
+  void groupActivities(List<Activity> activities) {
     for (Activity element in activities) {
       if (element.activityType == "new_story" && !element.viewed) {
         newStories.add(element);
