@@ -1,13 +1,12 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
-set -euxo pipefail
+cd ../mobile || return
 
-sudo apt-get update -qqy
-sudo apt-get install -qqy lcov >/dev/null
-cd mobile
+flutter test --coverage
+
 lcov \
   --remove coverage/lcov.info \
-  -o coverage/lcov_group1.info \
+  -o coverage/lcov.info \
   'lib/network/*' \
   'lib/util/*' \
   'lib/routes/*/bloc/*_event.dart' \
@@ -35,8 +34,8 @@ lcov \
   'lib/routes/create_story/model/*' \
   'lib/routes/create_story/create_story_repository.dart'
 
-genhtml coverage/lcov_group1.info \
-  --output=coverage \
-  --legend \
-  --title "SWE574 - Fall2023 - Group1 - Mobile Test Coverage"
+genhtml coverage/lcov.info -o coverage/html --title "SWE574 - Fall2023 - Group1 - Mobile Test Coverage"
+
+open coverage/html/index.html
+
 cd ..
