@@ -112,4 +112,3 @@ class _ActivityStreamRouteState extends State<ActivityStreamRoute> {
     }
   }
 }
-
