@@ -31,4 +31,15 @@ class CommentResponseModel {
       totalPages: json['total_pages'] as int,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return <String, dynamic>{
+      'comments': comments,
+      'has_next': hasNext,
+      'has_prev': hasPrev,
+      'next_page': nextPage,
+      'prev_page': prevPage,
+      'total_pages': totalPages,
+    };
+  }
 }

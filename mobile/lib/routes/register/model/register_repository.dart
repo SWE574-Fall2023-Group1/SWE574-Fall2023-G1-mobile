@@ -10,8 +10,7 @@ abstract class RegisterRepository {
 class RegisterRepositoryImp extends RegisterRepository {
   final NetworkManager _networkManager;
 
-  RegisterRepositoryImp({NetworkManager? networkManager})
-      : _networkManager = networkManager ?? NetworkManager();
+  RegisterRepositoryImp({NetworkManager? networkManager}) : _networkManager = networkManager ?? NetworkManager();
 
   @override
   Future<RegisterResponseModel> register(RegisterRequestModel model) async {

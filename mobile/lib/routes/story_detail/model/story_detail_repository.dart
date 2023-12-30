@@ -23,8 +23,7 @@ abstract class StoryDetailRepository {
 class StoryDetailRepositoryImp extends StoryDetailRepository {
   final NetworkManager _networkManager;
 
-  StoryDetailRepositoryImp({NetworkManager? networkManager})
-      : _networkManager = networkManager ?? NetworkManager();
+  StoryDetailRepositoryImp({NetworkManager? networkManager}) : _networkManager = networkManager ?? NetworkManager();
 
   @override
   Future<StoryModel> getStoryById({required int id}) async {
