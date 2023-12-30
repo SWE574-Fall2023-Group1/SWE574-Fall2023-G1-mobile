@@ -20,7 +20,9 @@ lcov \
   'lib/routes/profile/model/request/*' \
   'lib/routes/profile/model/response/*' \
   'lib/routes/profile/widget' \
-  'lib/routes/profile/profile_route.dart'
+  'lib/routes/profile/profile_route.dart' \
+  'lib/routes/home/model/response/*' \
+  'lib/routes/home/model/*_model.dart' \
 
 genhtml coverage/lcov_group1.info \
   --output=coverage \
