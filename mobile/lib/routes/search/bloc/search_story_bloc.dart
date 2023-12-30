@@ -32,7 +32,7 @@ class SearchStoryBloc extends Bloc<SearchStoryEvent, SearchStoryState> {
 
   Future<void> _searchStory(SearchStoryEventSearchPressed event,
       Emitter<SearchStoryState> emit) async {
-    final SearchStoryRequestModel model = _createSearchModel(event);
+    final SearchStoryRequestModel model = createSearchModel(event);
     SearchStoryResponseModel? response;
 
     try {
@@ -56,7 +56,7 @@ class SearchStoryBloc extends Bloc<SearchStoryEvent, SearchStoryState> {
     }
   }
 
-  SearchStoryRequestModel _createSearchModel(
+  SearchStoryRequestModel createSearchModel(
       SearchStoryEventSearchPressed event) {
     final String dateType = mapDateTypeToValue(event.timeType!.toLowerCase());
 
@@ -66,13 +66,13 @@ class SearchStoryBloc extends Bloc<SearchStoryEvent, SearchStoryState> {
         tag: event.tag,
         tagLabel: event.tagLabel,
         timeType: dateType,
-        timeValue: _setTimeModel(event),
-        location: _setLocationModel(event),
+        timeValue: setTimeModel(event),
+        location: setLocationModel(event),
         radiusDiff: event.radius,
         dateDiff: event.dateDiff);
   }
 
-  TimeValue? _setTimeModel(SearchStoryEventSearchPressed event) {
+  TimeValue? setTimeModel(SearchStoryEventSearchPressed event) {
     if (event.timeType == "Year") {
       return NormalYear(
           year: event.year ?? "", seasonName: event.seasonName ?? "");
@@ -99,7 +99,7 @@ class SearchStoryBloc extends Bloc<SearchStoryEvent, SearchStoryState> {
     return null;
   }
 
-  Location? _setLocationModel(SearchStoryEventSearchPressed event) {
+  Location? setLocationModel(SearchStoryEventSearchPressed event) {
     if (event.marker != null) {
       return Location(coordinates: <double>[
         event.marker!.point.longitude,
