@@ -44,7 +44,7 @@ class FontSizes {
 
 class TestDevices {
   static const Device iphoneSE =
-      Device(name: 'iPhone SE', size: Size(375, 667));
+      Device(name: 'iPhone SE', size: Size(380, 667));
   static const Device iphone14 =
       Device(name: 'iPhone 14', size: Size(390, 844));
   static const Device iphone14ProMax =
