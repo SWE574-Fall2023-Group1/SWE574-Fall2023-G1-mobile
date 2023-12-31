@@ -45,6 +45,138 @@ class _Constants {
     year: null,
   );
 
+  static final StoryModel storyWithDateTypeYear = StoryModel(
+    startYear: null,
+    endYear: null,
+    date: null,
+    creationDate: DateTime.now(),
+    startDate: null,
+    endDate: null,
+    decade: null,
+    includeTime: false,
+    id: 123456,
+    author: 123456,
+    authorUsername: 'test',
+    seasonName: null,
+    title: 'test',
+    content: '<p>test</p>',
+    storyTags: <TagModel>[
+      TagModel(
+          name: 'test',
+          label: 'test',
+          wikidataId: '123456',
+          description: 'test')
+    ],
+    dateType: 'year',
+    locations: <LocationModel>[
+      LocationModel(
+          name: 'test',
+          point: locationModel.PointLocation(
+              type: "point", coordinates: <double>[1.0, 1.0]))
+    ],
+    likes: null,
+    year: 2023,
+  );
+
+  static final StoryModel storyWithDateTypeYearInterval = StoryModel(
+    startYear: 2023,
+    endYear: 2024,
+    date: null,
+    creationDate: DateTime.now(),
+    startDate: null,
+    endDate: null,
+    decade: null,
+    includeTime: false,
+    id: 123456,
+    author: 123456,
+    authorUsername: 'test',
+    seasonName: null,
+    title: 'test',
+    content: '<p>test</p>',
+    storyTags: <TagModel>[
+      TagModel(
+          name: 'test',
+          label: 'test',
+          wikidataId: '123456',
+          description: 'test')
+    ],
+    dateType: 'year_interval',
+    locations: <LocationModel>[
+      LocationModel(
+          name: 'test',
+          point: locationModel.PointLocation(
+              type: "point", coordinates: <double>[1.0, 1.0]))
+    ],
+    likes: null,
+    year: null,
+  );
+
+  static final StoryModel storyWithDateTypeDecade = StoryModel(
+    startYear: null,
+    endYear: null,
+    date: null,
+    creationDate: DateTime.now(),
+    startDate: null,
+    endDate: null,
+    decade: 2020,
+    includeTime: false,
+    id: 123456,
+    author: 123456,
+    authorUsername: 'test',
+    seasonName: null,
+    title: 'test',
+    content: '<p>test</p>',
+    storyTags: <TagModel>[
+      TagModel(
+          name: 'test',
+          label: 'test',
+          wikidataId: '123456',
+          description: 'test')
+    ],
+    dateType: 'decade',
+    locations: <LocationModel>[
+      LocationModel(
+          name: 'test',
+          point: locationModel.PointLocation(
+              type: "point", coordinates: <double>[1.0, 1.0]))
+    ],
+    likes: null,
+    year: null,
+  );
+
+  static final StoryModel storyWithDateTypeIntervalDate = StoryModel(
+    startYear: null,
+    endYear: null,
+    date: null,
+    creationDate: DateTime.now(),
+    startDate: "2023-11-13",
+    endDate: "2023-12-31",
+    decade: null,
+    includeTime: false,
+    id: 123456,
+    author: 123456,
+    authorUsername: 'test',
+    seasonName: null,
+    title: 'test',
+    content: '<p>test</p>',
+    storyTags: <TagModel>[
+      TagModel(
+          name: 'test',
+          label: 'test',
+          wikidataId: '123456',
+          description: 'test')
+    ],
+    dateType: 'interval_date',
+    locations: <LocationModel>[
+      LocationModel(
+          name: 'test',
+          point: locationModel.PointLocation(
+              type: "point", coordinates: <double>[1.0, 1.0]))
+    ],
+    likes: null,
+    year: null,
+  );
+
   static final RecommendationsResponseModel responseSuccess =
       RecommendationsResponseModel(
           success: true,
@@ -125,7 +257,7 @@ void main() {
     ],
   );
 
-  test('getFormattedDate returns formatted date for year type', () {
+  test('getFormattedDate returns formatted date for normal_date type', () {
     final StoryModel story = _Constants.story;
 
     final String result = recommendationsBloc.getFormattedDate(story);
@@ -133,37 +265,69 @@ void main() {
     expect(result, '2022-01-01');
   });
 
-   test('formatDate returns formatted date for valid input', () {
-      // Arrange
-      const String dateString = '2022-01-01';
+  test('getFormattedDate returns formatted date for year type', () {
+    final StoryModel story = _Constants.storyWithDateTypeYear;
 
-      // Act
-      final String? result = recommendationsBloc.formatDate(dateString);
+    final String result = recommendationsBloc.getFormattedDate(story);
 
-      // Assert
-      expect(result, '2022-01-01');
-    });
+    expect(result, 'Year: 2023');
+  });
 
-    test('formatDate returns null for null input', () {
-      // Arrange
-      // ignore: always_specify_types
-      const dateString = null;
+  test('getFormattedDate returns formatted date for year_interval type', () {
+    final StoryModel story = _Constants.storyWithDateTypeYearInterval;
 
-      // Act
-      final String? result = recommendationsBloc.formatDate(dateString);
+    final String result = recommendationsBloc.getFormattedDate(story);
 
-      // Assert
-      expect(result, isNull);
-    });
+    expect(result, 'Start: 2023 \nEnd: 2024');
+  });
 
-    test('formatDate returns null for invalid input', () {
-      // Arrange
-      const String dateString = 'invalid-date';
+  test('getFormattedDate returns formatted date for interval_date type', () {
+    final StoryModel story = _Constants.storyWithDateTypeIntervalDate;
 
-      // Act
-      final String? result = recommendationsBloc.formatDate(dateString);
+    final String result = recommendationsBloc.getFormattedDate(story);
 
-      // Assert
-      expect(result, isNull);
-    });
+    expect(result, 'Start: 2023-11-13 \nEnd: 2023-12-31');
+  });
+
+  test('getFormattedDate returns formatted date for decade type', () {
+    final StoryModel story = _Constants.storyWithDateTypeDecade;
+
+    final String result = recommendationsBloc.getFormattedDate(story);
+
+    expect(result, 'Decade: 2020');
+  });
+
+  test('formatDate returns formatted date for valid input', () {
+    // Arrange
+    const String dateString = '2022-01-01';
+
+    // Act
+    final String? result = recommendationsBloc.formatDate(dateString);
+
+    // Assert
+    expect(result, '2022-01-01');
+  });
+
+  test('formatDate returns null for null input', () {
+    // Arrange
+    // ignore: always_specify_types
+    const dateString = null;
+
+    // Act
+    final String? result = recommendationsBloc.formatDate(dateString);
+
+    // Assert
+    expect(result, isNull);
+  });
+
+  test('formatDate returns null for invalid input', () {
+    // Arrange
+    const String dateString = 'invalid-date';
+
+    // Act
+    final String? result = recommendationsBloc.formatDate(dateString);
+
+    // Assert
+    expect(result, isNull);
+  });
 }
