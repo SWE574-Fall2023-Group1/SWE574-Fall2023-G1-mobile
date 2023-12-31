@@ -258,42 +258,57 @@ void main() {
   );
 
   test('getFormattedDate returns formatted date for normal_date type', () {
+    // Arrange
     final StoryModel story = _Constants.story;
 
+    // Act
     final String result = recommendationsBloc.getFormattedDate(story);
 
+    // Assert
     expect(result, '2022-01-01');
   });
 
   test('getFormattedDate returns formatted date for year type', () {
+    // Arrange
     final StoryModel story = _Constants.storyWithDateTypeYear;
 
+    // Act
     final String result = recommendationsBloc.getFormattedDate(story);
 
+    // Assert
     expect(result, 'Year: 2023');
   });
 
   test('getFormattedDate returns formatted date for year_interval type', () {
+    // Arrange
     final StoryModel story = _Constants.storyWithDateTypeYearInterval;
 
+    // Act
     final String result = recommendationsBloc.getFormattedDate(story);
 
+    // Assert
     expect(result, 'Start: 2023 \nEnd: 2024');
   });
 
   test('getFormattedDate returns formatted date for interval_date type', () {
+    // Arrange
     final StoryModel story = _Constants.storyWithDateTypeIntervalDate;
 
+    // Act
     final String result = recommendationsBloc.getFormattedDate(story);
 
+    // Assert
     expect(result, 'Start: 2023-11-13 \nEnd: 2023-12-31');
   });
 
   test('getFormattedDate returns formatted date for decade type', () {
+    // Arrange
     final StoryModel story = _Constants.storyWithDateTypeDecade;
 
+    // Act
     final String result = recommendationsBloc.getFormattedDate(story);
 
+    // Assert
     expect(result, 'Decade: 2020');
   });
 
