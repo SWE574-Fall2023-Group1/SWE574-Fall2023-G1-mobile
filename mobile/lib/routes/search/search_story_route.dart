@@ -43,8 +43,7 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
   final TextEditingController _endYearController = TextEditingController();
 
   final TextEditingController _datePickerController = TextEditingController();
-  final TextEditingController _endDatePickerController =
-      TextEditingController();
+  final TextEditingController _endDatePickerController = TextEditingController();
 
   String _selectedDecade = '';
 
@@ -55,8 +54,7 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
   final List<CircleMarker> _circleMarkers = <CircleMarker>[];
   final double _currentRadiusInKm = 25;
   late ValueNotifier<double> _radiusNotifier;
-  final TextEditingController _radiusInputController =
-      TextEditingController(text: "25");
+  final TextEditingController _radiusInputController = TextEditingController(text: "25");
 
   @override
   void initState() {
@@ -129,21 +127,14 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
                   ),
                   _buildDateTypeDropdown(),
                   const SizedBox(height: SpaceSizes.x16),
-                  if (selectedDateType == 'Year' ||
-                      selectedDateType == 'Interval Year')
-                    _buildYearSelection(),
-                  if (selectedDateType == 'Normal Date' ||
-                      selectedDateType == 'Interval Date')
-                    _buildDateSelection(),
+                  if (selectedDateType == 'Year' || selectedDateType == 'Interval Year') _buildYearSelection(),
+                  if (selectedDateType == 'Normal Date' || selectedDateType == 'Interval Date') _buildDateSelection(),
                   if (selectedDateType == 'Decade') _buildDecadeDropdown(),
                   _buildLocationInput(context),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.5,
-                    child: Stack(children: <Widget>[
-                      _buildMap(),
-                      if (_circleMarkers.isNotEmpty)
-                        _buildSliderAndRadiusInput()
-                    ]),
+                    child: Stack(
+                        children: <Widget>[_buildMap(), if (_circleMarkers.isNotEmpty) _buildSliderAndRadiusInput()]),
                   ),
                   const SizedBox(
                     height: SpaceSizes.x32,
@@ -162,12 +153,9 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
       if (state is SearchStorySuccess && state.stories != null) {
         AppRoute.searchResults.navigate(context, arguments: state.stories);
       } else if (state is SearchStoryFailure) {
-        ShowsDialog.showAlertDialog(context, 'Oops!', state.error.toString(),
-            isSearchStoryFail: true);
+        ShowsDialog.showAlertDialog(context, 'Oops!', state.error.toString(), isSearchStoryFail: true);
       } else if (state is SearchStoryOffline) {
-        ShowsDialog.showAlertDialog(
-            context, 'Oops!', state.offlineMessage.toString(),
-            isSearchStoryFail: true);
+        ShowsDialog.showAlertDialog(context, 'Oops!', state.offlineMessage.toString(), isSearchStoryFail: true);
       }
     });
   }
@@ -180,8 +168,7 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
         FilledButton(
           child: const Text("Search Stories"),
           onPressed: () {
-            BlocProvider.of<SearchStoryBloc>(context)
-                .add(SearchStoryEventSearchPressed(
+            BlocProvider.of<SearchStoryBloc>(context).add(SearchStoryEventSearchPressed(
               author: _authorController.text,
               date: _datePickerController.text,
               endDate: _endDatePickerController.text,
@@ -195,7 +182,7 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
               year: _yearController.text,
               timeType: selectedDateType,
               decade: _selectedDecade,
-              marker: _circleMarkers.first,
+              marker: _circleMarkers.isNotEmpty ? _circleMarkers.first : null,
               radius: _radiusNotifier.value.toInt(),
               dateDiff: 2,
             ));
@@ -211,13 +198,11 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(SpaceSizes.x8),
-          borderSide:
-              const BorderSide(color: AppColors.disabledButtonTextColor),
+          borderSide: const BorderSide(color: AppColors.disabledButtonTextColor),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(SpaceSizes.x8),
-          borderSide:
-              const BorderSide(color: AppColors.disabledButtonTextColor),
+          borderSide: const BorderSide(color: AppColors.disabledButtonTextColor),
         ),
         labelText: "Search by Title",
       ),
@@ -230,13 +215,11 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(SpaceSizes.x8),
-          borderSide:
-              const BorderSide(color: AppColors.disabledButtonTextColor),
+          borderSide: const BorderSide(color: AppColors.disabledButtonTextColor),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(SpaceSizes.x8),
-          borderSide:
-              const BorderSide(color: AppColors.disabledButtonTextColor),
+          borderSide: const BorderSide(color: AppColors.disabledButtonTextColor),
         ),
         labelText: "Search by Author",
       ),
@@ -283,11 +266,8 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
     return Container(
       height: 150,
       decoration: const BoxDecoration(
-          border: BorderDirectional(
-              top: BorderSide.none,
-              end: BorderSide(),
-              start: BorderSide(),
-              bottom: BorderSide())),
+          border:
+              BorderDirectional(top: BorderSide.none, end: BorderSide(), start: BorderSide(), bottom: BorderSide())),
       child: Scrollbar(
         child: SingleChildScrollView(
           child: Column(
@@ -304,10 +284,8 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
                             setState(() {
                               tags.add(_tagsSearchResults[i].label);
                               _semanticTagSelected = _tagsSearchResults[i];
-                              _searchTagsController.text =
-                                  _tagsSearchResults[i].label;
-                              _tagsLabelController.text =
-                                  _searchTagsController.text;
+                              _searchTagsController.text = _tagsSearchResults[i].label;
+                              _tagsLabelController.text = _searchTagsController.text;
                               _tagsSearchResults.clear();
                             });
                           },
@@ -320,9 +298,7 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
                                 child: Text(
                                   _tagsSearchResults[i].label,
                                   textAlign: TextAlign.start,
-                                  style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
+                                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                                 ),
                               ),
                               Text(
@@ -345,9 +321,8 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
   Widget _buildTagsLabelInput() {
     return TextFormField(
       controller: _tagsLabelController,
-      decoration: const InputDecoration(
-          border: OutlineInputBorder(),
-          labelText: "Enter the label you want to give the tag"),
+      decoration:
+          const InputDecoration(border: OutlineInputBorder(), labelText: "Enter the label you want to give the tag"),
     );
   }
 
@@ -364,13 +339,8 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
           borderRadius: BorderRadius.circular(SpaceSizes.x8),
         ),
       ),
-      items: <String>[
-        'Year',
-        'Interval Year',
-        'Normal Date',
-        'Interval Date',
-        'Decade'
-      ].map<DropdownMenuItem<String>>((String value) {
+      items: <String>['Year', 'Interval Year', 'Normal Date', 'Interval Date', 'Decade']
+          .map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
@@ -425,8 +395,7 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
                 borderRadius: BorderRadius.circular(SpaceSizes.x8),
               ),
             ),
-            items: <String>['Summer', 'Fall', 'Spring', 'Winter']
-                .map<DropdownMenuItem<String>>((String value) {
+            items: <String>['Summer', 'Fall', 'Spring', 'Winter'].map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(value),
@@ -453,15 +422,11 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
         children: <Widget>[
           Column(
             children: <Widget>[
-              SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.5,
-                  child: _buildDatePicker()),
+              SizedBox(width: MediaQuery.of(context).size.width * 0.5, child: _buildDatePicker()),
               const SizedBox(
                 height: SpaceSizes.x8,
               ),
-              SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.5,
-                  child: _buildEndDatePicker()),
+              SizedBox(width: MediaQuery.of(context).size.width * 0.5, child: _buildEndDatePicker()),
             ],
           ),
         ],
@@ -663,9 +628,7 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
               _updateCircleRadius();
             });
           },
-          initialCenter: _circleMarkers.isNotEmpty
-              ? _circleMarkers.last.point
-              : const LatLng(41.05, 29.03),
+          initialCenter: _circleMarkers.isNotEmpty ? _circleMarkers.last.point : const LatLng(41.05, 29.03),
           initialZoom: _circleMarkers.isNotEmpty ? 8 : 5),
       mapController: _mapController,
       children: <Widget>[
@@ -737,8 +700,7 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
                     floatingLabelBehavior: FloatingLabelBehavior.never,
                     filled: true,
                     suffixText: "km",
-                    contentPadding:
-                        const EdgeInsets.symmetric(vertical: 0, horizontal: 8)),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 8)),
               ),
             ),
             const SizedBox(
@@ -763,9 +725,7 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
   }
 
   void placeAutocomplete(String query) async {
-    Uri uri = Uri.https(
-        "maps.googleapis.com",
-        "maps/api/place/autocomplete/json",
+    Uri uri = Uri.https("maps.googleapis.com", "maps/api/place/autocomplete/json",
         <String, dynamic>{"input": query, "key": AppConstants.apiKey});
     String? response = await NetworkManager.fetchMapUrl(uri);
     if (response != null) {
@@ -782,8 +742,7 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
     if (!hasPermission) {
       return;
     }
-    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
-        .then((Position position) {
+    await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high).then((Position position) {
       LatLng point = LatLng(position.latitude, position.longitude);
       setState(() {
         _circleMarkers.clear();
@@ -800,10 +759,7 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
     setState(() {
       _circleMarkers.add(
         CircleMarker(
-            point: point,
-            color: Colors.red.withOpacity(0.5),
-            radius: _currentRadiusInKm,
-            useRadiusInMeter: true),
+            point: point, color: Colors.red.withOpacity(0.5), radius: _currentRadiusInKm, useRadiusInMeter: true),
       );
     });
   }
@@ -814,40 +770,35 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
 
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              'Location services are disabled. Please enable the services')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Location services are disabled. Please enable the services')));
       return false;
     }
     permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Location permissions are denied')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Location permissions are denied')));
         return false;
       }
     }
     if (permission == LocationPermission.deniedForever) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-              'Location permissions are permanently denied, we cannot request permissions.')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Location permissions are permanently denied, we cannot request permissions.')));
       return false;
     }
     return true;
   }
 
   void placeDetailsMarking(String placeId) async {
-    Uri uri = Uri.https(
-        "maps.googleapis.com", "maps/api/place/details/json", <String, dynamic>{
+    Uri uri = Uri.https("maps.googleapis.com", "maps/api/place/details/json", <String, dynamic>{
       "place_id": placeId,
       "fields": <String>["geometry"],
       "key": AppConstants.apiKey
     });
     String? response = await NetworkManager.fetchMapUrl(uri);
     if (response != null) {
-      PlaceDetailsResponse placeDetails =
-          PlaceDetailsResponse.fromJson(json.decode(response));
+      PlaceDetailsResponse placeDetails = PlaceDetailsResponse.fromJson(json.decode(response));
 
       final LatLng point = LatLng(
         placeDetails.result.geometry.location.lat,
@@ -874,8 +825,7 @@ class _SearchStoryRouteState extends State<SearchStoryRoute> {
 
     if (response.statusCode == 200) {
       // Parse the response as a list of tags
-      List<dynamic> tagsJson =
-          json.decode(utf8.decode(response.bodyBytes))['tags'];
+      List<dynamic> tagsJson = json.decode(utf8.decode(response.bodyBytes))['tags'];
 
       // Convert the list of tags to a List<Tag>
       List<Tag> results = tagsJson
